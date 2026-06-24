@@ -1,0 +1,41 @@
+SafeTicket
+
+What is SafeTicket?
+
+SafeTicket is a secure online platform for buying and selling second-hand event tickets in Israel.
+It connects two types of people:
+1. People who bought a ticket to an event and can't attend anymore.
+2. People who want to buy a ticket but the organizer is sold out.
+
+What problem does SafeTicket solve?
+
+There is no safe marketplace for second-hand tickets in Israel.
+Today, people buy/sell on Facebook groups with zero protection — paying via Bit/PayBox/wire and hoping for the best.
+Scams are common. SafeTicket eliminates this risk through escrow.
+
+How does it work?
+
+- Buyers pay SafeTicket (via licensed PSP), not the seller directly.
+- The ticket is delivered immediately to the buyer (email + SMS permanent link).
+- The money is held in escrow until 48 hours after the event.
+- If the ticket doesn't work → full refund, no questions asked.
+- After the event, money is released to the seller (minus 10% commission).
+
+Business model:
+- Buyer pays: ticket price + 10% service fee
+- Seller pays: 10% commission on successful sale only
+- Listing is free for sellers
+
+Anti-scalping:
+- Israeli law prohibits reselling tickets above face value.
+- On SafeTicket, asking price must be ≤ face value (enforced by admin review).
+
+Key decisions:
+- Guest checkout (no account required for buyers)
+- Events are added manually by admins (future: AI-based auto-discovery)
+- Seller flow: pick event → upload ticket → set price (admin extracts details)
+- App-locked tickets (Eventim etc.) excluded at launch
+- Digital tickets only (PDF, screenshot with barcode/QR)
+- Brand: safeticket.co.il
+
+Note: This file was originally written during early brainstorming. Updated to reflect finalized processes (see /doc/processes.txt for full details).

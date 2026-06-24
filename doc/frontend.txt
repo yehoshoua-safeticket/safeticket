@@ -1,0 +1,225 @@
+SafeTicket - Frontend Documentation
+=====================================
+
+Framework: Next.js 16 (App Router) with React 19, TypeScript 5
+Styling: Tailwind CSS v4 with CSS custom properties
+Icons: Lucide React
+Font: Heebo (Google Fonts, via next/font)
+Direction: RTL (Hebrew-first)
+
+WHY NEXT.JS 16:
+- App Router provides file-based routing with layouts, loading states, and error boundaries
+- Server-side rendering for SEO (event pages, homepage)
+- Static generation for pages that don't change often (FAQ, how-it-works, contact)
+- React 19 for latest performance and streaming capabilities
+
+WHY TAILWIND CSS v4:
+- Utility-first approach allows rapid UI iteration without context switching
+- CSS custom properties (var(--accent), var(--card), etc.) enable consistent theming across all components
+- No separate CSS files to maintain; styles live alongside markup
+- v4 brings native CSS layers and improved performance
+
+WHY LUCIDE REACT:
+- Lightweight, tree-shakeable icon library
+- Consistent visual style across all icons
+- Direct React component usage (no font loading overhead)
+
+WHY HEEBO FONT:
+- Designed specifically for Hebrew and Latin text
+- Clean, modern sans-serif that reads well at all sizes
+- Loaded via next/font for zero layout shift
+
+
+PAGES (src/app/)
+================
+
+page.tsx (Homepage)
+- Hero section with trust-focused messaging
+- 3-step escrow explanation for buyers and sellers
+- Trust signals (buyer protection, fair pricing, identity verification)
+- Featured active ticket listings grid
+- FAQ accordion
+- Call-to-action section
+WHY: First impression page must communicate safety and simplicity. No fake statistics.
+
+auth/login/page.tsx
+- Email + password login form
+- Link to forgot-password and signup
+WHY: Standard authentication flow with escrow trust messaging.
+
+auth/signup/page.tsx
+- Registration form (name, email, phone, password)
+- Terms acceptance checkbox
+WHY: Minimal friction signup to get users into the marketplace.
+
+auth/forgot-password/page.tsx
+- Email input for password reset
+WHY: Self-service account recovery.
+
+tickets/page.tsx (Browse)
+- FilterBar component for search, category, city, price range
+- Grid of TicketCard components showing active listings
+- Uses mock data (will connect to Supabase queries)
+WHY: Core marketplace discovery page. Filters help users find exactly what they need.
+
+tickets/[id]/page.tsx (Ticket Detail)
+- Full event details (title, venue, date, section, row, seats)
+- Seller info with verification badge
+- Price breakdown with escrow explanation
+- "Buy with protection" CTA button
+WHY: Decision page where trust signals matter most. Shows exactly what you're getting and how you're protected.
+
+sell/page.tsx (Create Listing)
+- Multi-section form: event details, ticket details, pricing
+- Price enforcement (asking <= face value) with live validation
+- Upload area for ticket files
+- Success state after submission
+WHY: Sellers need a clear, guided process. Price cap prevents scalping.
+
+checkout/page.tsx
+- Two-step flow: review order -> payment
+- Order summary with price breakdown
+- Escrow explanation during payment
+- Success state with order tracking
+WHY: Checkout must reinforce that money is held safely until buyer confirms.
+
+dashboard/page.tsx
+- Role selection: links to buyer or seller dashboard
+WHY: Simple entry point for authenticated users.
+
+dashboard/buyer/page.tsx
+- Active orders list with status tracking
+- Confirm delivery / open dispute actions
+- Order history
+WHY: Buyers need to track their purchases and confirm receipt to release escrow.
+
+dashboard/seller/page.tsx
+- Active listings management
+- Payout timeline and status
+- Stats overview (active, sold, pending)
+WHY: Sellers need visibility into their listings and when they'll get paid.
+
+admin/page.tsx
+- Pending listings for review (approve/reject)
+- Active disputes table
+- Quick approve/reject actions
+WHY: Admin moderation is core to the trust model. Every listing is reviewed before going live.
+
+how-it-works/page.tsx
+- Step-by-step visual guide for buyers (3 steps)
+- Step-by-step visual guide for sellers (3 steps)
+- CTA section
+WHY: Educates new users on the escrow process, reducing support questions.
+
+faq/page.tsx
+- 10 FAQ items in accordion format
+- Topics: escrow, pricing, verification, disputes, payouts
+- Link to contact page for unresolved questions
+WHY: Self-service answers reduce support load and build confidence.
+
+contact/page.tsx
+- Contact form (name, email, subject, message)
+- Contact info sidebar (email, phone, address)
+- Business hours
+WHY: Human support availability builds trust.
+
+support/page.tsx (Disputes)
+- Buyer protection explanation
+- 4-step dispute resolution process visual
+- Dispute form (order number, reason, description)
+- Warning that dispute freezes seller payout
+WHY: Clear dispute process makes buyers feel safe purchasing.
+
+verify/page.tsx (Identity Verification)
+- Personal details form
+- Document upload (ID, passport, license)
+- Privacy/security notice
+- Success state after submission
+WHY: Verification is required for sellers. Clear process encourages completion.
+
+layout.tsx (Root Layout)
+- RTL direction, Hebrew lang attribute
+- Heebo font loading
+- Navbar + Footer wrapping all pages
+WHY: Consistent layout and RTL support across entire app.
+
+
+REUSABLE COMPONENTS (src/components/)
+=====================================
+
+layout/Navbar.tsx
+- Logo with Shield icon (trust symbolism)
+- Navigation links: browse, how-it-works, sell
+- Auth buttons (login/signup)
+WHY: Persistent navigation with trust branding.
+
+layout/Footer.tsx
+- 4-column layout: about, for buyers, for sellers, support
+- Copyright and tagline
+WHY: Standard site footer with organized navigation.
+
+tickets/TicketCard.tsx
+- Event image placeholder
+- Event title, venue, date
+- Seller verification badge
+- Price display with quantity
+WHY: Reusable card for ticket grid. Shows key decision info at a glance.
+
+tickets/FilterBar.tsx
+- Text search input
+- Category dropdown
+- City dropdown
+- Price range (min/max)
+- Clear filters button
+WHY: Helps users narrow results in the browse page.
+
+ui/StatusBadge.tsx
+- Color-coded badges for all system statuses
+- Maps status strings to colors and Hebrew labels
+WHY: Consistent status display across dashboards and admin.
+
+ui/DashboardCard.tsx
+- Stat card with label, value, optional icon and trend
+WHY: Reusable metric display for dashboard overviews.
+
+ui/DisputeCard.tsx
+- Dispute summary: reason, status, resolution
+- Color-coded by dispute status
+WHY: Consistent dispute display in buyer dashboard and admin.
+
+ui/EmptyState.tsx
+- Icon, title, description, optional action button
+WHY: Friendly empty states for dashboards when no data exists.
+
+ui/VerificationBanner.tsx
+- Status-aware banner (unverified, pending, verified, rejected)
+- Different colors and messages per status
+WHY: Prompts sellers to complete verification based on their current status.
+
+ui/AdminTable.tsx
+- Generic table component with column definitions
+- Renders any data type with custom cell renderers
+WHY: Reusable table for admin views (listings, disputes, etc.)
+
+
+THEMING (src/app/globals.css)
+=============================
+
+CSS Custom Properties:
+- --background: #faf9f7 (warm off-white)
+- --foreground: #1c1917 (near-black for text)
+- --card: #ffffff (pure white cards)
+- --card-border: #e7e5e0 (subtle warm border)
+- --accent: #1a7a5c (trust green for primary actions)
+- --accent-soft: rgba(26,122,92,0.07) (light green tint for backgrounds)
+- --accent-text: #167a58 (green for text elements)
+- --muted: #78716c (secondary text)
+- --danger: #c53030 (errors and destructive actions)
+- --input-bg: #f5f4f2 (input field background)
+- --input-border: #d6d3ce (input borders)
+
+WHY THIS PALETTE:
+- Warm neutrals feel approachable and safe (vs cold grays)
+- Green accent communicates trust, safety, money (escrow)
+- High contrast for accessibility
+- Consistent via CSS variables = easy future updates or dark mode toggle

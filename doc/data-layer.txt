@@ -1,0 +1,144 @@
+SafeTicket - Data Layer Documentation
+=======================================
+
+This document covers how data flows through the application: types, mock data, Supabase client, and the transition path to production.
+
+
+TYPESCRIPT TYPES (src/types/database.ts)
+=========================================
+
+All types mirror the Supabase database schema exactly. This ensures that mock data, queries, and UI components all use the same data shape.
+
+Type Unions (status enums):
+- UserRole: buyer | seller | admin
+- VerificationStatus: unverified | pending | verified | rejected
+- ListingStatus: draft | pending_review | active | sold | rejected | expired
+- RiskStatus: clear | flagged | under_review | blocked
+- PaymentStatus: pending | paid | held | released | refunded | failed
+- OrderStatus: pending | confirmed | completed | cancelled | disputed
+- PayoutStatus: pending | held | pending_release | released | cancelled
+- DisputeStatus: open | under_review | resolved_buyer | resolved_seller | closed
+- EventCategory: concert | sports | theater | festival | conference | other
+
+WHY STRING UNIONS:
+- Match PostgreSQL CHECK constraints exactly
+- TypeScript enforces valid values at compile time
+- No enum boilerplate or import issues
+
+Interfaces:
+- Profile: User identity and role
+- Event: Event details (title, venue, date, category)
+- Listing: Ticket listing with pricing and status (optional event/seller relations)
+- Order: Purchase record with three status fields (optional listing/buyer relations)
+- Dispute: Complaint with admin resolution (optional order relation)
+- Payout: Seller payment with release tracking
+- Verification: ID verification submission
+- AdminNote: Internal notes on any entity
+
+WHY OPTIONAL RELATIONS (event?, seller?, order?):
+- When fetching a listing, you may or may not join the event/seller data
+- TypeScript allows both: listing alone or listing with relations
+- Mock data hydrates these after initial creation
+
+
+MOCK DATA (src/data/mock.ts)
+============================
+
+Purpose: Development and demo without a live Supabase instance.
+
+Data sets:
+- mockProfiles (5): 2 sellers, 2 buyers, 1 admin
+- mockEvents (8): Israeli concerts, sports, theater, festivals
+- mockListings (8): Various statuses (active, pending, sold, rejected)
+- mockOrders (3): Different payment/order/payout statuses
+- mockDisputes (2): One open, one resolved
+- mockPayouts (2): One released, one held
+
+Hydration:
+  After arrays are defined, listings are hydrated with their event and seller references:
+    mockListings.forEach(listing => {
+      listing.event = mockEvents.find(e => e.id === listing.event_id)
+      listing.seller = mockProfiles.find(p => p.id === listing.seller_id)
+    })
+
+WHY HYDRATION:
+- Simulates Supabase JOIN behavior
+- Components receive the same shape they'd get from a real query
+- No component changes needed when switching from mock to Supabase
+
+Helper functions:
+- getActiveListings(): Returns listings with status 'active'
+- getListingById(id): Find a specific listing
+- getEventById(id): Find a specific event
+- getOrdersByBuyerId(buyerId): All orders for a buyer
+- getListingsBySellerId(sellerId): All listings for a seller
+- getPayoutsBySellerId(sellerId): All payouts for a seller
+
+WHY HELPER FUNCTIONS:
+- Same API as Supabase queries (filter, find)
+- Easy to replace: swap function body from mock filter to supabase.from().select()
+- Components import helpers, not raw arrays
+
+
+SUPABASE CLIENT (src/lib/supabase.ts)
+======================================
+
+Configuration:
+  import { createClient } from '@supabase/supabase-js'
+  const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+- Uses NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
+- Singleton pattern (one client instance)
+- Anon key respects RLS policies (safe for client-side)
+
+WHY SINGLETON:
+- Avoids creating multiple WebSocket connections
+- Consistent auth state across the app
+- Standard Supabase pattern
+
+
+TRANSITION: MOCK TO PRODUCTION
+================================
+
+The mock layer is designed for a clean swap to real Supabase queries:
+
+1. Mock helper (current):
+   export function getActiveListings(): Listing[] {
+     return mockListings.filter(l => l.status === 'active')
+   }
+
+2. Supabase query (future):
+   export async function getActiveListings(): Promise<Listing[]> {
+     const { data } = await supabase
+       .from('listings')
+       .select('*, event:events(*), seller:profiles(*)')
+       .eq('status', 'active')
+     return data ?? []
+   }
+
+Changes needed:
+- Functions become async
+- Import supabase client instead of mock arrays
+- Add error handling for network failures
+- Components that call these need await or React Suspense
+
+WHY THIS PATTERN:
+- Components don't know or care about the data source
+- Same return types (Listing[], Order[], etc.)
+- Incremental migration: swap one function at a time
+- No UI refactoring required
+
+
+DATA FLOW DIAGRAM
+=================
+
+  [User Action]
+       |
+  [Page Component]
+       |
+  [Helper Function] -- currently --> [Mock Arrays]
+       |                -- future --> [Supabase Client] --> [PostgreSQL + RLS]
+       |
+  [TypeScript Types] -- validate shape at compile time
+       |
+  [UI Component] -- renders data with CSS variables

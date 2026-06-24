@@ -1,0 +1,387 @@
+SafeTicket - Complete Process Definitions
+==========================================
+
+Based on co-founder interview conducted May 2026.
+These processes define the MVP version of the platform.
+
+
+========================================================================
+1. SELLER PROCESS (Full Flow)
+========================================================================
+
+PREREQUISITES:
+- Seller must create an account
+- Seller must complete identity verification:
+  * Full name
+  * Israeli ID number (תעודת זהות)
+  * Photo of ID document
+  * Phone number verified via SMS OTP
+  * Bank account linked (for payouts)
+- Verification reviewed by admin (MVP: manual)
+- Only verified sellers can create listings
+
+LISTING A TICKET:
+
+Step 1: Seller selects an event
+- Picks from SafeTicket's event database (curated by admin)
+- Event name, date, venue auto-fill from database
+- If the event is not in the database, seller cannot list
+  (they can request it via support)
+
+Step 2: Seller uploads ticket file
+- Accepted formats: PDF, photo (JPG, PNG)
+- Uploaded at listing time (mandatory before listing can be submitted)
+- If no price is visible on the ticket, seller must also upload
+  purchase confirmation (email screenshot, receipt)
+
+Step 3: Seller enters selling price
+- Must be ≤ face value printed on the ticket
+- Platform will verify this (MVP: admin checks manually, V1: OCR)
+
+Step 4: Listing submitted for review
+- Status: "pending review"
+- Seller receives email: "Your listing has been submitted for review"
+
+Step 5: Admin reviews the listing
+- Admin opens the ticket file
+- Reads the face value from the ticket (or from purchase confirmation)
+- Verifies selling price ≤ face value
+- Extracts seat info (section, row, seat number) from the ticket
+- Decision: approve or reject
+
+Step 6a: APPROVED
+- Admin enters seat info extracted from ticket
+- Listing goes live on the platform
+- Seller receives email: "Your listing is now live"
+- Listing appears under the event, sorted by price (cheapest first)
+
+Step 6b: REJECTED
+- Admin writes a reason (e.g., "price exceeds face value", "ticket image unreadable")
+- Seller receives email with the rejection reason
+- Seller can fix the issue and resubmit
+
+AFTER LISTING IS LIVE:
+
+- Seller can cancel the listing at any time BEFORE someone buys
+- Cancellation: ticket file is deleted from platform servers, listing removed
+- Seller cannot cancel after a sale is made
+
+WHEN TICKET SELLS:
+- Seller receives email: "Your ticket was sold!"
+- No buyer information is shared with the seller
+- Seller does nothing — the platform handles delivery
+
+PAYOUT:
+- Money is held in escrow until after the event
+- After event + buyer confirmation window (24-48h post-event):
+  * If buyer confirms or takes no action → money released to seller
+  * If buyer disputes → money stays in escrow until admin resolves
+- Seller receives: selling price minus 10% commission
+- Payout sent to linked bank account
+- Seller receives email: "Your payout of ₪X has been released"
+- Payout timeline: 3-5 business days after release
+
+EXAMPLE (300 ILS ticket):
+- Seller lists at 300 ILS
+- Ticket sells
+- Commission: 30 ILS (10%)
+- Seller receives: 270 ILS
+- Seller waited from listing date until after the event for payout
+
+
+========================================================================
+2. BUYER PROCESS (Full Flow)
+========================================================================
+
+PREREQUISITES:
+- No account required (guest checkout)
+- Buyer needs: name, email, payment method
+
+FINDING A TICKET:
+
+Step 1: Buyer browses events
+- Homepage shows events that have tickets available
+- Events displayed as cards (event name, date, venue, number of tickets available)
+- Buyer can search by event name, filter by category, city, date
+
+Step 2: Buyer clicks on an event
+- Sees all available tickets for that event
+- Tickets sorted cheapest first
+- Each ticket shows:
+  * Seat info (section, row, seat)
+  * Ticket price
+  * SafeTicket commission (10%, shown separately)
+  * Total to pay
+- No seller information displayed
+
+Step 3: Buyer selects a ticket
+- Clicks "Buy" on the ticket they want
+
+CHECKOUT:
+
+Step 4: Buyer enters checkout info
+- Name (required for invoice/receipt)
+- Email (required for ticket delivery and communication)
+- Phone number (for SMS ticket link)
+- Payment details (handled by licensed Payment Service Provider)
+- Clear disclosure before payment:
+  * Total amount (ticket price + commission)
+  * "This is an entertainment ticket for a specific date.
+     Cancellation right does not apply per Section 14G(d)
+     of the Consumer Protection Law."
+  * "Payment protected by SafeTicket. Full refund if
+     the ticket doesn't work."
+
+Step 5: Buyer pays
+- Payment processed by licensed PSP (not SafeTicket directly)
+- Money held in escrow by the PSP
+- Buyer pays: ticket price + 10% commission
+
+Step 6: Buyer receives the ticket
+- IMMEDIATELY after payment:
+  * Email with permanent link to download ticket file
+  * SMS with same permanent link
+- Link does not expire
+- Buyer can access the ticket anytime from either channel
+
+EXAMPLE (300 ILS ticket):
+- Ticket price: 300 ILS
+- Commission: 30 ILS (10%)
+- Buyer pays: 330 ILS total
+
+AFTER PURCHASE:
+
+Step 7: Buyer attends the event
+- Uses the ticket file to enter the venue
+- Normal event experience
+
+Step 8: Post-event confirmation window
+- Buyer has 24 hours after the event to:
+  * Do nothing (money auto-releases to seller after 48h)
+  * Open a dispute if something went wrong
+
+Step 9a: NO ACTION (happy path)
+- 48 hours after event, money automatically released to seller
+- Transaction complete
+
+Step 9b: DISPUTE
+- Buyer opens a dispute via the platform
+- Provides: description of the problem (text)
+- Optionally: photos/screenshots as evidence
+- Money stays in escrow until admin resolves
+- Admin reviews within 48 hours (SLA goal)
+- Resolution: refund to buyer OR release to seller
+- Buyer notified of outcome by email
+
+
+========================================================================
+3. ADMIN PROCESS (Full Flow)
+========================================================================
+
+Admin panel accessible to the three co-founders.
+MVP: all tasks manual, email-based communication.
+
+DAILY TASKS:
+
+A. Review New Listings
+- Dashboard shows pending listings
+- For each listing:
+  1. Open the uploaded ticket file
+  2. Read face value from ticket (or purchase confirmation)
+  3. Verify selling price ≤ face value
+  4. Extract seat info (section, row, seat)
+  5. Decision:
+     * APPROVE: Enter seat info, listing goes live
+     * REJECT: Write reason, seller notified by email
+- Push notification to co-founders when new listing arrives
+  (MVP: email notification)
+
+B. Add New Events
+- Manually add events to the database
+- Required fields: event name, date, venue, city, category
+- Events must be added BEFORE sellers can list tickets for them
+- Future: AI scrapes ticketing websites twice daily to auto-detect new events
+
+C. Manage Users
+- View registered users
+- Ban users (scammers, policy violators)
+- Banning: account disabled, ID/phone/bank blacklisted
+  (cannot create new account with same details)
+
+D. Handle Disputes
+- Dashboard shows open disputes
+- For each dispute:
+  1. Read buyer's description and evidence
+  2. Check if SafeTicket team was at the event (cross-reference)
+  3. Decision:
+     * REFUND BUYER: Money returned from escrow to buyer
+     * RELEASE TO SELLER: Money released to seller
+  4. If scam confirmed: ban the seller
+- Buyer and seller notified of outcome by email
+
+E. Read Support Messages
+- Contact form submissions appear in admin panel
+- Admin reads the message and sender's email
+- Reply sent from Gmail (support@safeticket.co.il)
+- Future: in-app reply system
+
+
+========================================================================
+4. COMMERCIAL PROCESS
+========================================================================
+
+REVENUE MODEL:
+- Seller commission: 10% of selling price (deducted from payout)
+- Buyer commission: 10% of ticket price (added to purchase total)
+- Total platform revenue per transaction: ~20% of ticket price
+- No listing fees (sellers list for free)
+- Commission charged only on successful sales
+
+EXAMPLE TRANSACTION (300 ILS ticket):
+  Seller receives:     270 ILS  (300 - 10% commission)
+  Buyer pays:          330 ILS  (300 + 10% commission)
+  Platform earns:       60 ILS  (30 from seller + 30 from buyer)
+
+MONEY FLOW:
+  1. Buyer pays 330 ILS → PSP holds in escrow
+  2. Event happens
+  3. Confirmation window passes (24-48h post-event)
+  4. PSP releases 270 ILS to seller's bank account
+  5. PSP releases 60 ILS to SafeTicket's bank account
+  (If dispute → PSP refunds 330 ILS to buyer, nobody else gets paid)
+
+PAYMENT PROCESSING:
+- All payments handled by a licensed Israeli PSP
+- SafeTicket NEVER holds money directly
+- PSP handles: card processing, escrow holding, payouts, AML compliance
+- PSP takes a per-transaction fee (~1.5-3% of transaction value)
+- This fee comes out of SafeTicket's 60 ILS revenue
+
+INVOICING:
+- SafeTicket issues receipt (קבלה) to buyer for the commission
+- SafeTicket issues receipt to seller for the commission deducted
+- Requires registered חברה בע"מ with tax number
+
+LEGAL ENTITY:
+- חברה בע"מ (Israeli LLC)
+- 3 co-founders, equal ownership (33/33/33)
+- Founders agreement with vesting schedule (4 years recommended)
+- Registered before accepting any payments
+- Monthly accountant required (~300-500 ILS/month)
+
+STARTUP COSTS:
+- Company registration: ~1,500 ILS
+- Founders agreement (lawyer): ~3,000-5,000 ILS
+- Domain: owned (safeticket.co.il)
+- Hosting (Vercel): free tier
+- Supabase: free tier
+- PSP setup: typically free (they earn on transaction fees)
+- Accountant: ~300-500 ILS/month
+- Total to launch: ~5,000-8,000 ILS + ~500 ILS/month ongoing
+
+
+========================================================================
+5. ESCROW TIMELINE (Visual)
+========================================================================
+
+SELLER                    SAFETICKET/PSP              BUYER
+  |                            |                         |
+  |-- Lists ticket ----------->|                         |
+  |   (uploads file,           |                         |
+  |    sets price)             |                         |
+  |                            |                         |
+  |<-- Listing approved -------|                         |
+  |                            |                         |
+  |                            |<--- Buyer pays ---------|
+  |                            |     (330 ILS)           |
+  |                            |                         |
+  |<-- "Ticket sold!" --------|--- Ticket file sent ---->|
+  |                            |    (email + SMS link)    |
+  |                            |                         |
+  |                            |     [ESCROW: 330 ILS]   |
+  |                            |                         |
+  |      ... weeks pass ...    |    ... EVENT DAY ...    |
+  |                            |                         |
+  |                            |    24-48h window        |
+  |                            |                         |
+  |                            |    No dispute?          |
+  |                            |                         |
+  |<-- 270 ILS payout --------|--- auto-release -------->|
+  |    (price - 10%)           |                         |
+  |                            |--- 60 ILS to SafeTicket |
+  |                            |                         |
+  |         DONE               |         DONE            |
+
+
+========================================================================
+6. DISPUTE TIMELINE (Visual)
+========================================================================
+
+BUYER                     SAFETICKET/PSP              SELLER
+  |                            |                         |
+  | "Ticket didn't work"       |                         |
+  |--- Opens dispute --------->|                         |
+  |    (text + optional photos)|                         |
+  |                            |                         |
+  |                            |     [ESCROW FROZEN]     |
+  |                            |                         |
+  |                            |-- Admin reviews ------->|
+  |                            |   (checks evidence,     |
+  |                            |    cross-refs event     |
+  |                            |    presence if any)     |
+  |                            |                         |
+  |                     DECISION:                        |
+  |                            |                         |
+  | Option A: Buyer wins       |                         |
+  |<-- 330 ILS refund --------|                         |
+  |                            |--- Seller banned? ----->|
+  |                            |                         |
+  | Option B: Seller wins      |                         |
+  |                            |--- 270 ILS payout ----->|
+  |                            |--- 60 ILS to SafeTicket |
+  |                            |                         |
+
+
+========================================================================
+7. TICKET TYPES SUPPORTED (MVP)
+========================================================================
+
+SUPPORTED:
+- PDF tickets (digital file)
+- Photo/screenshot of tickets
+- Open digital tickets (QR/barcode not tied to specific account)
+
+NOT SUPPORTED (MVP):
+- App-locked tickets (Eventim, Leaan, etc. — tied to buyer's account/phone)
+- Physical paper tickets (no way to transfer digitally)
+
+FUTURE:
+- App-locked tickets if a transfer mechanism is found
+- Physical tickets via meetup or courier (requires different flow)
+
+
+========================================================================
+8. NOTIFICATION SCHEDULE (MVP — Email Only)
+========================================================================
+
+SELLER NOTIFICATIONS:
+- "Your listing has been submitted for review"
+- "Your listing has been approved — it's now live!"
+- "Your listing was rejected: [reason]"
+- "Your ticket was sold!"
+- "Your payout of ₪X has been released to your bank account"
+
+BUYER NOTIFICATIONS:
+- "Your ticket for [event name]" (with permanent download link)
+- "Reminder: [event name] is tomorrow" (nice-to-have for MVP)
+- "Your dispute has been resolved: [outcome]"
+
+ADMIN NOTIFICATIONS:
+- "New listing to review from [seller name]"
+- "New dispute opened for [event name]"
+- "New support message from [sender]"
+
+FUTURE:
+- SMS notifications
+- In-app push notifications
+- Real-time status updates

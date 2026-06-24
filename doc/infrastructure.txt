@@ -1,0 +1,167 @@
+SafeTicket - Infrastructure & Configuration Documentation
+===========================================================
+
+
+TECH STACK
+==========
+
+| Layer          | Technology            | Version  |
+|----------------|-----------------------|----------|
+| Framework      | Next.js               | 16.2.6   |
+| Language       | TypeScript            | 5.9+     |
+| UI Library     | React                 | 19.2.4   |
+| Styling        | Tailwind CSS          | 4.x      |
+| Icons          | Lucide React          | 1.16+    |
+| Backend/DB     | Supabase (PostgreSQL) | -        |
+| Supabase Client| @supabase/supabase-js | 2.105+   |
+| SSR Auth       | @supabase/ssr         | 0.10+    |
+| Linting        | ESLint                | 9.x      |
+| PostCSS        | @tailwindcss/postcss  | 4.x      |
+
+
+PROJECT STRUCTURE
+=================
+
+safe_ticket/
++-- src/
+|   +-- app/                    # Next.js App Router pages
+|   |   +-- page.tsx            # Homepage
+|   |   +-- layout.tsx          # Root layout (RTL, font, nav, footer)
+|   |   +-- globals.css         # CSS variables and global styles
+|   |   +-- auth/               # Authentication pages
+|   |   |   +-- login/page.tsx
+|   |   |   +-- signup/page.tsx
+|   |   |   +-- forgot-password/page.tsx
+|   |   +-- tickets/            # Marketplace browse & detail
+|   |   |   +-- page.tsx
+|   |   |   +-- [id]/page.tsx
+|   |   +-- sell/page.tsx       # Create listing form
+|   |   +-- checkout/page.tsx   # Purchase flow
+|   |   +-- dashboard/          # User dashboards
+|   |   |   +-- page.tsx
+|   |   |   +-- buyer/page.tsx
+|   |   |   +-- seller/page.tsx
+|   |   +-- admin/page.tsx      # Admin panel
+|   |   +-- how-it-works/page.tsx
+|   |   +-- faq/page.tsx
+|   |   +-- contact/page.tsx
+|   |   +-- support/page.tsx
+|   |   +-- verify/page.tsx
+|   +-- components/             # Reusable React components
+|   |   +-- layout/
+|   |   |   +-- Navbar.tsx
+|   |   |   +-- Footer.tsx
+|   |   +-- tickets/
+|   |   |   +-- TicketCard.tsx
+|   |   |   +-- FilterBar.tsx
+|   |   +-- ui/
+|   |       +-- StatusBadge.tsx
+|   |       +-- DashboardCard.tsx
+|   |       +-- DisputeCard.tsx
+|   |       +-- EmptyState.tsx
+|   |       +-- VerificationBanner.tsx
+|   |       +-- AdminTable.tsx
+|   +-- data/
+|   |   +-- mock.ts             # Mock data for development
+|   +-- lib/
+|   |   +-- supabase.ts         # Supabase client singleton
+|   +-- types/
+|       +-- database.ts         # TypeScript type definitions
++-- supabase/
+|   +-- schema.sql              # Database schema with RLS
+|   +-- seed.sql                # Israeli event seed data
++-- public/                     # Static assets
++-- doc/                        # Documentation (this directory)
++-- package.json
++-- tsconfig.json
++-- next.config.ts
++-- postcss.config.mjs
++-- eslint.config.mjs
++-- .env.local                  # Environment variables (not in git)
++-- .env.example                # Environment template
+
+
+ENVIRONMENT VARIABLES
+=====================
+
+| Variable                       | Purpose                        | Exposure    |
+|--------------------------------|--------------------------------|-------------|
+| NEXT_PUBLIC_SUPABASE_URL       | Supabase project URL           | Client-side |
+| NEXT_PUBLIC_SUPABASE_ANON_KEY  | Supabase anonymous/public key  | Client-side |
+
+Note: service_role key is NOT included as an env variable in the current setup.
+It would be added server-side only when implementing admin API routes.
+
+WHY NEXT_PUBLIC_ PREFIX:
+- Next.js convention: only NEXT_PUBLIC_ variables are bundled into client code
+- Supabase anon key is safe to expose (RLS protects data)
+- Service role key must NEVER have this prefix
+
+
+BUILD & DEPLOYMENT
+==================
+
+Development:
+  npm run dev          # Starts dev server on localhost:3000
+
+Build:
+  npm run build        # Produces optimized production build
+                       # Static pages pre-rendered, dynamic pages server-rendered
+
+Production:
+  npm run start        # Serves production build
+
+Lint:
+  npm run lint         # ESLint check
+
+Current build output: 17 routes (16 static + 1 dynamic)
+- Static (pre-rendered): All pages except ticket detail
+- Dynamic (server-rendered): /tickets/[id] (needs ticket ID at request time)
+
+WHY STATIC WHERE POSSIBLE:
+- Faster page loads (served from CDN)
+- Lower server costs
+- FAQ, how-it-works, contact pages rarely change
+- Dynamic pages only where data depends on the URL parameter
+
+
+DEPLOYMENT TARGET
+=================
+
+Recommended: Vercel
+WHY:
+- Built by the Next.js team, best-in-class support
+- Automatic preview deployments for PRs
+- Edge network for global performance
+- Built-in analytics and monitoring
+- Free tier sufficient for MVP
+
+Alternative: Any Node.js hosting (Railway, Render, AWS, etc.)
+
+
+DEPENDENCIES RATIONALE
+======================
+
+@supabase/supabase-js:
+  WHY: Official Supabase client. Handles auth, database queries, storage, real-time.
+
+@supabase/ssr:
+  WHY: Cookie-based auth for server-side rendering. Required for Next.js App Router.
+
+lucide-react:
+  WHY: Tree-shakeable icon library. Only icons used are bundled. Consistent style.
+
+next (16.2.6):
+  WHY: Latest stable. App Router, React Server Components, optimized builds.
+
+react / react-dom (19.2.4):
+  WHY: Latest stable. Required by Next.js 16. Streaming, transitions, improved performance.
+
+@tailwindcss/postcss:
+  WHY: PostCSS plugin for Tailwind v4. Processes utility classes at build time.
+
+typescript (5.9+):
+  WHY: Type safety across the entire codebase. Catches errors at compile time.
+
+eslint + eslint-config-next:
+  WHY: Code quality. Next.js-specific rules catch common mistakes.

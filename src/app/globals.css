@@ -1,0 +1,240 @@
+@import "tailwindcss";
+
+/* ============================================================
+   SafeTicket — Ticketmaster-benchmarked dark design system
+   See docs/DESIGN.md for the spec. Reference tokens only.
+   ============================================================ */
+
+:root {
+  /* SafeTicket logo-derived palette
+     Midnight #09152f · Navy #0d1d45 · Blue #1a55e3 · Bright #2a72ff */
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #edf2ff;
+  --card: #ffffff;
+  --card-border: #cdd6f0;
+  --card-border-soft: #dfe6f5;
+  --ink: #0d1d45;
+  --foreground: #0d1d45;        /* logo navy */
+  --muted: #4a5d82;
+
+  --accent: #1a55e3;            /* logo blue */
+  --accent-hover: #1548cc;
+  --accent-text: #1548cc;       /* text-safe on white */
+  --accent-soft: rgba(26, 85, 227, 0.08);
+
+  --accent-2: #0d1d45;          /* logo navy */
+  --accent-2-text: #0d1d45;
+  --accent-2-soft: rgba(13, 29, 69, 0.08);
+
+  --danger: #d33b33;
+  --urgency: #e0531f;
+  --success: #1e9e63;
+  --warning: #b8860b;
+
+  --input-bg: #f4f7ff;
+  --input-border: #c4d0ea;
+  --ring: #1a55e3;
+
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-2) transparent;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+/* ─── Accessibility: visible focus on every interactive element ─── */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ─── Overline label (uppercase bold sans) ─── */
+.overline {
+  font-family: var(--font-sans), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.font-mono-nums { font-feature-settings: "tnum"; }
+
+/* ─── Elevation ─── */
+.elev-1 { box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.06); }
+.elev-2 { box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+.shadow-stub { box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.hover-stub { transition: transform .18s ease, box-shadow .18s ease; }
+.hover-stub:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,.12); }
+
+/* ─── Event tile photo + scrim (full colour, image-forward) ─── */
+.cover-photo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform .4s ease;
+}
+.cover-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,.82) 100%);
+}
+.tile-hover { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.tile-hover:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 14px 30px rgba(0,0,0,.14); }
+.tile-hover:hover .cover-photo { transform: scale(1.05); }
+
+/* ─── Skeleton loader ─── */
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 37%, var(--surface) 63%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--r-sm);
+}
+
+/* ─── Horizontal carousel ─── */
+.carousel {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.carousel::-webkit-scrollbar { display: none; }
+.carousel > * { scroll-snap-align: start; flex: 0 0 auto; }
+
+/* ─── Category gradient fallbacks (used behind photos / chips) ─── */
+.event-cover-concert { background: #3a1d5c; }
+.event-cover-sports { background: #0d3b66; }
+.event-cover-theater { background: #4a1d4f; }
+.event-cover-festival { background: #5c1d3a; }
+.event-cover-other { background: #26262e; }
+
+/* ─── Dot grid (subtle, dark) ─── */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* ─── Marquee ticker ─── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track { display: inline-flex; white-space: nowrap; animation: marquee 30s linear infinite; }
+[dir="rtl"] .marquee-track { animation-direction: reverse; }
+
+/* ─── Cinematic hero zoom ─── */
+@keyframes hero-zoom {
+  from { transform: scale(1.06); }
+  to { transform: scale(1.18); }
+}
+.hero-zoom { animation: hero-zoom 22s ease-in-out infinite alternate; will-change: transform; }
+@media (prefers-reduced-motion: reduce) { .hero-zoom { animation: none; } }
+
+/* ─── Motion ─── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stagger-children > * { opacity: 0; animation: count-up 0.5s ease forwards; }
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+
+/* ─── Animated buttons (public website only) ─── */
+@media (prefers-reduced-motion: no-preference) {
+  .site-anim button,
+  .site-anim a[class*="bg-["],
+  .site-anim a[class*="border-["] {
+    transition: transform .14s cubic-bezier(.2, .8, .3, 1), box-shadow .14s ease, filter .14s ease;
+  }
+  .site-anim button:active,
+  .site-anim a[class*="bg-["]:active,
+  .site-anim a[class*="border-["]:active { transform: translateY(1px) scale(0.99); }
+  .site-anim button:hover,
+  .site-anim a[class*="bg-["]:hover { filter: brightness(1.08); }
+}
+.no-anim button, .no-anim a { transition: none !important; }
+.no-anim button:hover, .no-anim a:hover { filter: none !important; }
+.no-anim button:active, .no-anim a:active { transform: none !important; }
+
+/* ─── Noise texture overlay ─── */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.04;
+}
+
+/* ─── Pulse ring ─── */
+@keyframes pulse-ring-anim {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.pulse-ring {
+  animation: pulse-ring-anim 2.2s ease-out infinite;
+}
+@media (prefers-reduced-motion: reduce) { .pulse-ring { animation: none; } }
+
+/* ─── Floating gradient orb ─── */
+.hero-gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(64px);
+  animation: orb-float 14s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes orb-float {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(24px, -24px) scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) { .hero-gradient-orb { animation: none; } }

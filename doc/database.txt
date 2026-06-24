@@ -1,0 +1,214 @@
+SafeTicket - Database Documentation
+=====================================
+
+Engine: PostgreSQL (via Supabase)
+Schema location: supabase/schema.sql
+Seed data: supabase/seed.sql
+TypeScript types: src/types/database.ts
+
+
+TABLES OVERVIEW
+===============
+
++------------------+     +------------------+     +------------------+
+|    profiles      |     |      events      |     |   admin_notes    |
+|  (users/auth)    |     |  (event catalog) |     |  (internal)      |
++--------+---------+     +--------+---------+     +------------------+
+         |                         |
+         |  seller_id              |  event_id
+         v                         v
++------------------+
+|    listings      |  <-- Core marketplace entity
++--------+---------+
+         |
+         |  listing_id
+         v
++------------------+
+|     orders       |  <-- Purchase + escrow tracking
++--------+---------+
+         |
+    +----+----+
+    |         |
+    v         v
++--------+ +--------+
+| payouts| |disputes|
++--------+ +--------+
+
+         +------------------+
+         |  verifications   |  <-- Linked to profiles
+         +------------------+
+
+
+TABLE: profiles
+===============
+Purpose: Store user identity and role information
+Links to: Supabase auth.users (same UUID primary key)
+
+| Column              | Type         | Constraint                    |
+|---------------------|--------------|-------------------------------|
+| id                  | UUID (PK)    | References auth.users         |
+| full_name           | TEXT         | NOT NULL                      |
+| email               | TEXT         | NOT NULL, UNIQUE              |
+| phone               | TEXT         | Nullable                      |
+| role                | TEXT         | buyer/seller/admin            |
+| verification_status | TEXT         | unverified/pending/verified/rejected |
+| avatar_url          | TEXT         | Nullable                      |
+| created_at          | TIMESTAMPTZ  | DEFAULT NOW()                 |
+
+WHY: Extends Supabase's auth system with app-specific fields. Role determines what actions a user can take and which dashboard they see.
+
+
+TABLE: events
+=============
+Purpose: Catalog of events that tickets are sold for
+
+| Column     | Type         | Constraint                         |
+|------------|--------------|------------------------------------|
+| id         | UUID (PK)    | Auto-generated                     |
+| title      | TEXT         | NOT NULL                           |
+| venue      | TEXT         | NOT NULL                           |
+| city       | TEXT         | NOT NULL                           |
+| event_date | TIMESTAMPTZ  | NOT NULL                           |
+| category   | TEXT         | concert/sports/theater/festival/conference/other |
+| image_url  | TEXT         | Nullable                           |
+| created_at | TIMESTAMPTZ  | DEFAULT NOW()                      |
+
+WHY: Normalized event data. Multiple listings can reference the same event. Enables browse-by-event and category filtering.
+
+
+TABLE: listings
+===============
+Purpose: Individual ticket listings posted by sellers
+
+| Column          | Type          | Constraint                    |
+|-----------------|---------------|-------------------------------|
+| id              | UUID (PK)     | Auto-generated                |
+| seller_id       | UUID (FK)     | -> profiles                   |
+| event_id        | UUID (FK)     | -> events                     |
+| section         | TEXT          | Nullable                      |
+| row             | TEXT          | Nullable                      |
+| seat_info       | TEXT          | Nullable                      |
+| quantity        | INTEGER       | > 0                           |
+| face_value      | NUMERIC(10,2) | > 0                           |
+| asking_price    | NUMERIC(10,2) | > 0, <= face_value            |
+| currency        | TEXT          | DEFAULT 'ILS'                 |
+| status          | TEXT          | draft/pending_review/active/sold/rejected/expired |
+| ticket_file_url | TEXT          | Nullable                      |
+| risk_status     | TEXT          | clear/flagged/under_review/blocked |
+| created_at      | TIMESTAMPTZ   | DEFAULT NOW()                 |
+
+KEY CONSTRAINT: asking_price <= face_value
+WHY: Prevents scalping/price gouging. This is a core business rule enforced at the database level so it cannot be bypassed.
+
+STATUS WORKFLOW:
+draft -> pending_review -> active -> sold
+                       \-> rejected
+                       \-> expired
+
+WHY: Every listing goes through admin review (pending_review) before becoming visible (active). This prevents fraud and fake tickets.
+
+
+TABLE: orders
+=============
+Purpose: Track purchases and the escrow lifecycle
+
+| Column         | Type          | Constraint                       |
+|----------------|---------------|----------------------------------|
+| id             | UUID (PK)     | Auto-generated                   |
+| buyer_id       | UUID (FK)     | -> profiles                      |
+| listing_id     | UUID (FK)     | -> listings                      |
+| total_amount   | NUMERIC(10,2) | > 0                              |
+| payment_status | TEXT          | pending/paid/held/released/refunded/failed |
+| order_status   | TEXT          | pending/confirmed/completed/cancelled/disputed |
+| payout_status  | TEXT          | pending/held/pending_release/released/cancelled |
+| created_at     | TIMESTAMPTZ   | DEFAULT NOW()                    |
+
+WHY THREE STATUS FIELDS:
+- payment_status: Where is the money? (buyer's concern)
+- order_status: What's happening with the order? (both parties)
+- payout_status: When does seller get paid? (seller's concern)
+These are independent state machines because payment, delivery, and payout can move at different speeds, especially during disputes.
+
+
+TABLE: payouts
+==============
+Purpose: Track seller payment disbursements
+
+| Column      | Type          | Constraint      |
+|-------------|---------------|-----------------|
+| id          | UUID (PK)     | Auto-generated  |
+| order_id    | UUID (FK)     | -> orders       |
+| seller_id   | UUID (FK)     | -> profiles     |
+| amount      | NUMERIC(10,2) | > 0             |
+| status      | TEXT          | pending/held/pending_release/released/cancelled |
+| released_at | TIMESTAMPTZ   | Nullable        |
+| created_at  | TIMESTAMPTZ   | DEFAULT NOW()   |
+
+WHY SEPARATE TABLE: Payouts have their own lifecycle and audit trail. Amount may differ from order total (platform commission of 10% deducted from seller). released_at provides proof of payment timing.
+
+
+TABLE: disputes
+===============
+Purpose: Formal buyer complaints and admin resolution
+
+| Column           | Type         | Constraint                |
+|------------------|--------------|---------------------------|
+| id               | UUID (PK)    | Auto-generated            |
+| order_id         | UUID (FK)    | -> orders                 |
+| opened_by        | UUID (FK)    | -> profiles               |
+| reason           | TEXT         | NOT NULL                  |
+| status           | TEXT         | open/under_review/resolved_buyer/resolved_seller/closed |
+| admin_resolution | TEXT         | Nullable                  |
+| created_at       | TIMESTAMPTZ  | DEFAULT NOW()             |
+
+WHY: Disputes are the last-resort trust mechanism. Admin resolution with documented reasoning provides transparency. Opening a dispute freezes the seller's payout automatically.
+
+
+TABLE: verifications
+====================
+Purpose: Track identity verification for sellers
+
+| Column        | Type         | Constraint               |
+|---------------|--------------|--------------------------|
+| id            | UUID (PK)    | Auto-generated           |
+| user_id       | UUID (FK)    | -> profiles              |
+| document_type | TEXT         | NOT NULL                 |
+| document_url  | TEXT         | Nullable                 |
+| status        | TEXT         | unverified/pending/verified/rejected |
+| reviewed_at   | TIMESTAMPTZ  | Nullable                 |
+| created_at    | TIMESTAMPTZ  | DEFAULT NOW()            |
+
+WHY: Required for sellers. Verification builds buyer trust. Document stored in Supabase Storage (URL reference). reviewed_at for SLA tracking.
+
+
+TABLE: admin_notes
+==================
+Purpose: Internal team notes attached to any entity
+
+| Column      | Type         | Constraint                    |
+|-------------|--------------|-------------------------------|
+| id          | UUID (PK)    | Auto-generated                |
+| target_type | TEXT         | user/listing/order/dispute    |
+| target_id   | UUID         | NOT NULL                      |
+| author_id   | UUID (FK)    | -> profiles                   |
+| note        | TEXT         | NOT NULL                      |
+| created_at  | TIMESTAMPTZ  | DEFAULT NOW()                 |
+
+WHY: Polymorphic notes allow admin team to annotate any entity. Useful for tracking decisions, suspicious patterns, or customer communication history.
+
+
+PERFORMANCE INDEXES
+===================
+
+| Index                       | Table    | Column(s)  | Purpose                    |
+|-----------------------------|----------|------------|----------------------------|
+| idx_listings_seller_id      | listings | seller_id  | Seller dashboard queries   |
+| idx_listings_event_id       | listings | event_id   | Event detail page          |
+| idx_listings_status         | listings | status     | Browse page (active only)  |
+| idx_orders_buyer_id         | orders   | buyer_id   | Buyer dashboard            |
+| idx_orders_listing_id       | orders   | listing_id | Order-to-listing lookup    |
+| idx_disputes_order_id       | disputes | order_id   | Dispute-to-order lookup    |
+| idx_payouts_seller_id       | payouts  | seller_id  | Seller payout queries      |
+| idx_verifications_user_id   | verifications | user_id | Verification status check |
+
+WHY: Every index corresponds to a primary UI query pattern. Without these, PostgreSQL would do sequential scans on commonly accessed data.

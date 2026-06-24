@@ -1,0 +1,185 @@
+SafeTicket - Payment Flow Documentation (App → Web Checkout → App)
+===================================================================
+
+This document describes the full payment flow when a user buys a ticket
+through the mobile app, gets redirected to the website for payment
+(bypassing Apple/Google 30% fee), and returns to the app.
+
+
+PREREQUISITE
+============
+
+Both the app and the website share the SAME Supabase backend.
+Same database, same users table, same auth system.
+It is not two separate systems — it is one system with two frontends.
+
+
+FULL FLOW: STEP BY STEP
+========================
+
+Step 1: User browses in the app
+- User opens SafeTicket app on their phone
+- App loads listings from Supabase (same API as the website)
+- User is logged in — Supabase session exists with their user_id JWT token
+
+Step 2: User taps "Buy" on a listing
+- App does NOT show a payment form
+- App creates a pending order in the database:
+    INSERT INTO orders (buyer_id, listing_id, total_amount, payment_status, order_status)
+    VALUES ('user-2', 'listing-1', 640, 'pending', 'pending')
+    → returns order_id = 'order-abc123'
+- The order exists in the DB with status 'pending'. No money moved yet.
+
+Step 3: App generates a secure checkout URL
+- App builds a URL:
+    https://safeticket.co.il/checkout?order_id=order-abc123&token=eyJhbG...
+- The token is a short-lived signed JWT (expires in 15 minutes) containing:
+    - order_id
+    - user_id
+    - amount
+    - expiry timestamp
+- Token is signed with a server-side secret — cannot be forged or tampered with
+
+Step 4: App opens the system browser
+- App calls the OS to open that URL in Safari (iOS) or Chrome (Android)
+- User leaves the app and is now in their browser
+- This is the moment that bypasses Apple/Google's payment system
+
+Step 5: Website receives the request
+- Browser hits safeticket.co.il/checkout?order_id=order-abc123&token=eyJhbG...
+- Server validates the token:
+    - Is the signature valid? (not forged)
+    - Is it expired? (15 min window)
+    - Does order_id exist in DB with status 'pending'?
+    - Does user_id in token match the order's buyer_id?
+- If any check fails → error page, nothing happens
+
+Step 6: Website shows the checkout page
+- User sees: order summary (event, seats, price), payment form
+- User is NOT asked to log in again — the token already identifies them
+- User enters credit card details
+- Card details go directly to the payment provider (Stripe, PayPlus, etc.)
+  — never touch your server
+
+Step 7: Payment provider processes the card
+- Payment provider charges the card
+- Money goes into the PSP's escrow account (not SafeTicket, not the seller)
+- Payment provider returns a payment_intent_id or transaction_id to your server
+
+Step 8: Website updates the database
+    UPDATE orders
+    SET payment_status = 'held',
+        order_status = 'confirmed'
+    WHERE id = 'order-abc123'
+
+    INSERT INTO payouts (order_id, seller_id, amount, status)
+    VALUES ('order-abc123', 'user-1', 608, 'held')
+- Money is now in escrow
+- Seller payout record created but status = 'held'
+
+Step 9: Website redirects back to the app
+- After successful payment, the website redirects to a deep link:
+    safeticket://order-complete?order_id=order-abc123
+- On iOS/Android, this URL scheme opens the SafeTicket app directly
+- If the app is not installed (edge case), falls back to a "success" web page
+
+Step 10: App receives the deep link
+- App wakes up, reads order_id from the deep link
+- App queries the database:
+    SELECT * FROM orders WHERE id = 'order-abc123'
+    → payment_status = 'held', order_status = 'confirmed'
+- App shows: "Payment successful! Your ticket has been sent to your email and SMS."
+
+Step 11: Ticket delivered + Seller notified
+- Platform sends ticket file to buyer immediately (email + SMS with permanent link)
+- Ticket file was already uploaded by seller at listing time
+- Seller receives email: "Your ticket was sold!"
+- Seller sees no buyer information and takes no action
+
+Step 12: Escrow resolution (after the event)
+- Money stays in escrow with PSP until after the event
+- Buyer has 24h post-event to dispute, auto-release at 48h
+- If dispute → payout frozen, admin reviews
+- This part is identical whether they paid from app or web
+
+
+ERROR HANDLING
+==============
+
+User closes browser before paying:
+  Order stays 'pending', expires after 15 minutes.
+  Listing remains available for other buyers.
+
+Payment fails (card declined):
+  Payment provider returns error.
+  Order stays 'pending'. User can retry.
+
+Token expired:
+  Website shows "Link expired, please try again from the app."
+
+User tampers with URL (changes amount):
+  Server-side token validation catches the mismatch. Rejected.
+
+Browser does not redirect back to app:
+  User can manually open the app.
+  App polls order status on next open and shows confirmation.
+
+App crashes during redirect:
+  Same recovery — next app open checks pending orders and shows updated status.
+
+
+VISUAL SUMMARY
+==============
+
+  +---------------+     +-------------------+     +--------------+
+  |  APP          |     |  BROWSER (WEB)    |     |  PAYMENT     |
+  |               |     |                   |     |  PROVIDER    |
+  | 1. Browse     |     |                   |     |              |
+  | 2. Tap Buy    |     |                   |     |              |
+  | 3. Create     |---->| 5. Validate       |     |              |
+  |    order +    |open |    token          |     |              |
+  |    token      |URL  | 6. Show form      |     |              |
+  |               |     | 7. Card details   |---->| Process      |
+  |               |     |                   |<----| Result       |
+  |               |     | 8. Update DB      |     |              |
+  | 10. Read      |<----| 9. Deep link      |     |              |
+  |     order     |back |    redirect       |     |              |
+  | 11. Show      |     |                   |     |              |
+  |    success    |     |                   |     |              |
+  +---------------+     +-------------------+     +--------------+
+          |                      |                        |
+          +----------------------+------------------------+
+                                 |
+                      +----------+----------+
+                      |    SUPABASE DB      |
+                      |   (shared state)    |
+                      +---------------------+
+
+The magic is that both the app and the website talk to the SAME database.
+The order created in step 2 is the same order the website reads in step 5
+and the app reads in step 10. The signed token is the bridge that securely
+connects the two frontends.
+
+
+WHY THIS ARCHITECTURE
+=====================
+
+- 0% platform fee: Payments happen on the web, Apple/Google get nothing
+- Security: Signed JWT tokens prevent tampering, short expiry prevents replay
+- UX: User only sees a brief browser switch, then returns to the app
+- Simplicity: One database, one backend, two frontends reading the same data
+- Resilience: If any step fails, the order stays 'pending' and no money moves
+
+
+PAYMENT PROVIDER NOTES
+======================
+
+Recommended for Israeli market:
+- PayPlus: Israeli payment processor, supports ILS natively, escrow-friendly
+- Stripe: Global, excellent API, supports Israeli merchants
+- Tranzila: Israeli legacy provider, wide merchant adoption
+
+The PSP holds funds in escrow (not in SafeTicket's account).
+SafeTicket never holds buyer or seller money directly.
+Seller payouts are triggered by your server when escrow is released.
+The PSP sends payout directly to the seller's bank account.

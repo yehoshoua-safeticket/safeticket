@@ -1,0 +1,178 @@
+SafeTicket - Escrow System Documentation
+==========================================
+
+The escrow system is the core trust mechanism of SafeTicket. A licensed
+Payment Service Provider (PSP) holds buyer payments in escrow until after
+the event, protecting both parties from fraud. SafeTicket never holds
+money directly.
+
+
+HOW IT WORKS
+============
+
+Step 1: Buyer Pays
+- Buyer completes checkout for a listing
+- Payment captured by the PSP (not SafeTicket)
+- Money held in escrow by the PSP
+- payment_status = 'held'
+- order_status = 'confirmed'
+- payout_status = 'held'
+
+Step 2: Platform Delivers Ticket
+- Ticket file was already uploaded by seller at listing time
+- Platform immediately sends the ticket file to buyer (email + SMS, permanent link)
+- Seller is notified: "Your ticket was sold!"
+- Seller does nothing — delivery is automatic
+- Seller sees no buyer information
+
+Step 3: Event Takes Place
+- Money remains in escrow with the PSP
+- Buyer attends the event using the ticket
+
+Step 4a: Happy Path (No Dispute)
+- Buyer has 24 hours after the event to open a dispute
+- If no dispute within 48 hours post-event: auto-release
+- payment_status = 'released'
+- order_status = 'completed'
+- payout_status = 'pending_release' -> 'released'
+- Seller payout disbursed (selling price minus 10% commission)
+
+Step 4b: Problem Path (Buyer Disputes)
+- Buyer opens dispute within 24 hours after event
+- Provides description (text) and optional photos
+- order_status = 'disputed'
+- payout_status stays 'held' (frozen)
+- Dispute record created with status = 'open'
+- Admin notified for review
+
+Step 5: Dispute Resolution
+- Admin reviews buyer's evidence
+- Admin cross-references with event presence (if co-founder was at the event)
+- Decision: resolved_buyer (refund) OR resolved_seller (release payout)
+- If resolved_buyer: PSP refunds buyer, payout_status = 'cancelled'
+- If resolved_seller: PSP releases to seller, payout_status = 'released'
+
+
+WHY ESCROW
+==========
+
+Problem it solves:
+- Buyer fear: "What if the tickets are fake and I lose my money?"
+- Seller fear: "What if I upload my ticket and never get paid?"
+
+Without escrow:
+- Buyer pays seller directly -> seller disappears (scam)
+- Buyer gets ticket, claims it didn't work -> seller loses money (fraud)
+
+With escrow:
+- Buyer's money is safe until after the event
+- Seller knows money exists and will be released after the event
+- Neither party can scam the other easily
+- Admin arbitration for edge cases
+
+
+STATUS TRANSITIONS
+==================
+
+payment_status:
+  pending -> paid -> held -> released (happy path)
+                         \-> refunded (dispute won by buyer)
+                         \-> failed (payment error)
+
+order_status:
+  pending -> confirmed -> completed (happy path)
+                      \-> disputed -> resolved
+                      \-> cancelled (payment error)
+
+payout_status:
+  pending -> held -> pending_release -> released (happy path)
+                 \-> cancelled (dispute won by buyer)
+
+
+COMMISSION MODEL
+================
+
+- Sellers: 10% commission on successful sale (deducted from payout)
+- Buyers: 10% commission on ticket price (added to purchase total)
+- Total platform revenue: ~20% of ticket price per transaction
+- No listing fees (sellers list for free)
+- Commission charged only on successful sales
+
+Example (300 ILS ticket):
+  Seller lists at:      300 ILS
+  Seller receives:      270 ILS  (300 - 10%)
+  Buyer pays:           330 ILS  (300 + 10%)
+  Platform earns:        60 ILS  (30 from each side)
+  PSP fee (~2%):         ~6 ILS  (deducted from platform's 60)
+  Net platform revenue: ~54 ILS
+
+
+TIMEOUTS & RULES
+=================
+
+- Money held in escrow by PSP until after the event
+- Buyer has 24 hours after the event to open a dispute
+- If no action within 48 hours post-event: auto-release to seller
+- Admin has 48 hours SLA to resolve disputes
+- Seller payout disbursement: 3-5 business days after release
+
+WHY THESE TIMEOUTS:
+- Escrow until after event = fake tickets are caught before money moves
+- 24h dispute window is enough to report a problem at the gate
+- 48h auto-release prevents indefinite holds on seller money
+- Admin SLA keeps disputes moving
+
+
+EDGE CASES
+==========
+
+Event Cancelled:
+- Admin monitors event cancellations (MVP: manually)
+- Refund all buyers for that event from escrow
+- Sellers not penalized (they get refund from original purchase)
+
+Ticket Doesn't Work at Gate:
+- Buyer opens dispute within 24h with description
+- Optional: photos/screenshots as evidence
+- Admin reviews and decides (cross-references event presence if applicable)
+- Default: refund buyer if seller can't prove ticket was valid
+
+Duplicate Ticket (sold on SafeTicket + elsewhere):
+- One buyer gets rejected at gate
+- Dispute opened, buyer refunded from escrow
+- Seller banned from platform
+
+Payment Fails:
+- Order not created
+- Listing remains active for other buyers
+- No impact on seller
+
+
+MONEY FLOW (WHO HOLDS WHAT)
+============================
+
+IMPORTANT: SafeTicket NEVER holds buyer or seller money.
+
+1. Buyer pays → money goes to PSP's escrow account
+2. PSP holds the funds (not SafeTicket)
+3. After event + confirmation window:
+   - PSP releases seller payout to seller's bank account
+   - PSP releases commission to SafeTicket's bank account
+4. If dispute:
+   - PSP refunds buyer directly
+   - Nobody else gets paid
+
+This architecture keeps SafeTicket out of financial services regulation.
+The PSP carries AML/KYC compliance obligations, not SafeTicket.
+
+
+IMPLEMENTATION NOTES
+====================
+
+Current state: Mock data layer simulates the escrow flow.
+Future: PSP integration (Stripe, PayPlus, or Tranzila for Israeli market).
+
+The PSP must support:
+- Delayed capture / hold-and-release (escrow for weeks)
+- Payouts to third-party bank accounts (seller payouts)
+- Per-transaction fee model

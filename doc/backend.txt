@@ -1,0 +1,171 @@
+SafeTicket - Backend Documentation
+====================================
+
+Platform: Supabase (PostgreSQL + Auth + Storage + RLS)
+ORM/Client: @supabase/supabase-js v2
+SSR Integration: @supabase/ssr
+Runtime: Next.js server components + API routes (when needed)
+
+WHY SUPABASE:
+- Built-in authentication (email/password, magic link, OAuth) with zero backend code
+- PostgreSQL with Row Level Security (RLS) = authorization at the database layer
+- Real-time subscriptions for order status updates (future)
+- Storage for ticket files and verification documents
+- Hosted and managed, no server maintenance
+- Generous free tier for MVP, scales with paid plans
+- Israeli data residency options available
+
+
+DATABASE SCHEMA (supabase/schema.sql)
+=====================================
+
+profiles
+- Extends Supabase auth.users (same UUID)
+- Fields: full_name, email, phone, role, verification_status, avatar_url
+- role: buyer | seller | admin
+- verification_status: unverified | pending | verified | rejected
+WHY: Separates app-level user data from auth system. Role determines dashboard access and permissions.
+
+events
+- Fields: title, venue, city, event_date, category, image_url
+- category: concert | sports | theater | festival | conference | other
+WHY: Normalized event data so multiple listings can reference the same event. Enables browse-by-event.
+
+listings
+- Fields: seller_id, event_id, section, row, seat_info, quantity, face_value, asking_price, currency, status, ticket_file_url, risk_status
+- status: draft | pending_review | active | sold | rejected | expired
+- risk_status: clear | flagged | under_review | blocked
+- CONSTRAINT: asking_price <= face_value (prevents scalping)
+WHY: Core marketplace entity. Status workflow ensures admin review before going live. Price constraint enforces fair pricing policy.
+
+orders
+- Fields: buyer_id, listing_id, total_amount, payment_status, order_status, payout_status
+- payment_status: pending | paid | held | released | refunded | failed
+- order_status: pending | confirmed | completed | cancelled | disputed
+- payout_status: pending | held | pending_release | released | cancelled
+WHY: Tracks the full lifecycle of a purchase. Three separate status fields reflect that payment, delivery, and seller payout are independent concerns in an escrow system.
+
+payouts
+- Fields: order_id, seller_id, amount, status, released_at
+- status: pending | held | pending_release | released | cancelled
+WHY: Explicit payout tracking separate from orders. Seller needs visibility into when they'll receive money. Released_at for audit trail.
+
+disputes
+- Fields: order_id, opened_by, reason, status, admin_resolution
+- status: open | under_review | resolved_buyer | resolved_seller | closed
+WHY: Formal dispute resolution is core to the trust model. Admin resolution field documents the decision.
+
+verifications
+- Fields: user_id, document_type, document_url, status, reviewed_at
+WHY: Track identity verification submissions and outcomes. Required for sellers.
+
+admin_notes
+- Fields: target_type, target_id, author_id, note
+- target_type: user | listing | order | dispute
+WHY: Internal notes for admin team. Polymorphic target allows notes on any entity.
+
+
+ROW LEVEL SECURITY (RLS)
+=========================
+
+All tables have RLS enabled. Policies:
+
+- events: Readable by everyone (public marketplace)
+- listings: Active listings readable by everyone; sellers can manage their own
+- profiles: Users can view and update only their own profile
+- orders: Buyers can view their own orders
+- disputes: Users can view disputes they opened
+- payouts: Sellers can view their own payouts
+- verifications: Users can view their own verification status
+
+WHY RLS:
+- Authorization at the database level, not in application code
+- Even if frontend code is manipulated, unauthorized data access is blocked
+- Admin access handled via service_role key (server-side only)
+- Reduces attack surface significantly
+
+
+INDEXES
+=======
+
+- listings(seller_id) - seller dashboard queries
+- listings(event_id) - event detail page
+- listings(status) - browse page filtering
+- orders(buyer_id) - buyer dashboard
+- orders(listing_id) - order lookup by listing
+- disputes(order_id) - dispute lookup
+- payouts(seller_id) - seller payout queries
+- verifications(user_id) - verification status check
+
+WHY: All indexes match the primary query patterns from the frontend. Prevents sequential scans on the most common lookups.
+
+
+AUTHENTICATION (Supabase Auth)
+==============================
+
+- Email + password registration and login
+- Password reset via email
+- Session management via @supabase/ssr (cookie-based for SSR)
+- JWT tokens with user UUID for RLS policy matching
+
+WHY SUPABASE AUTH:
+- Integrates directly with RLS (auth.uid() in policies)
+- Handles email verification, password hashing, session refresh
+- No custom auth server to maintain or secure
+
+
+CLIENT CONFIGURATION (src/lib/supabase.ts)
+==========================================
+
+- Creates a singleton Supabase client using environment variables
+- NEXT_PUBLIC_SUPABASE_URL: Project URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: Public (anon) key for client-side queries
+- Service role key (not exposed to client) for admin operations
+
+WHY SINGLETON:
+- Single connection per client instance
+- Environment variables keep credentials out of code
+
+
+SEED DATA (supabase/seed.sql)
+=============================
+
+- 5 user profiles (2 sellers, 2 buyers, 1 admin)
+- 8 Israeli events (concerts, sports, theater, festivals)
+- 8 listings with various statuses
+- 3 orders in different states
+- 2 disputes (one open, one resolved)
+- 2 payouts
+
+WHY: Provides realistic data for development and demonstration without requiring a live Supabase instance.
+
+
+MOCK DATA LAYER (src/data/mock.ts)
+===================================
+
+- TypeScript mock data matching the Supabase schema exactly
+- Hydrates relationships (listing.event, listing.seller)
+- Helper functions: getActiveListings, getListingById, getOrdersByBuyerId, etc.
+
+WHY:
+- Allows frontend development without a running Supabase instance
+- Type-safe: uses the same interfaces as the real database types
+- Easy swap to real Supabase queries (same data shape)
+- Demo-ready: app works out of the box with npm run dev
+
+
+ESCROW FLOW (Business Logic)
+=============================
+
+1. Buyer pays -> payment_status = 'held' (money held by PSP in escrow)
+2. Platform delivers ticket file to buyer immediately (already uploaded at listing time)
+3. Event takes place -> money stays in escrow until 48h post-event
+4a. No dispute within 48h -> auto-release to seller (minus 10% commission)
+4b. Buyer disputes within 24h post-event -> payout frozen, admin reviews
+5. Admin resolves dispute -> refund buyer OR release to seller
+
+WHY THIS MODEL:
+- Neither party can scam the other
+- Admin arbitration as last resort
+- Clear status progression = transparency for all parties
+- Payout frozen on dispute = seller can't run with money

@@ -1,0 +1,172 @@
+SafeTicket - Styling & Design System Documentation
+====================================================
+
+Framework: Tailwind CSS v4
+Approach: Utility-first with CSS custom properties
+Direction: RTL (Right-to-Left) for Hebrew
+Font: Heebo (Google Fonts)
+Icons: Lucide React
+
+
+DESIGN PHILOSOPHY
+=================
+
+1. TRUST FIRST: Every design choice should make users feel safe
+2. SIMPLICITY: Clear visual hierarchy, no clutter
+3. WARMTH: Approachable colors and rounded shapes
+4. ACCESSIBILITY: High contrast, readable text sizes
+
+
+COLOR SYSTEM (CSS Custom Properties)
+=====================================
+
+Defined in: src/app/globals.css
+
+| Variable        | Value                    | Usage                          |
+|-----------------|--------------------------|--------------------------------|
+| --background    | #faf9f7                  | Page background (warm off-white)|
+| --foreground    | #1c1917                  | Primary text (near-black)      |
+| --card          | #ffffff                  | Card backgrounds               |
+| --card-border   | #e7e5e0                  | Card borders (subtle warm)     |
+| --accent        | #1a7a5c                  | Primary buttons, CTAs (green)  |
+| --accent-soft   | rgba(26,122,92,0.07)     | Light green background tint    |
+| --accent-text   | #167a58                  | Green text (links, highlights) |
+| --muted         | #78716c                  | Secondary text, labels         |
+| --danger        | #c53030                  | Errors, destructive actions    |
+| --input-bg      | #f5f4f2                  | Input field backgrounds        |
+| --input-border  | #d6d3ce                  | Input field borders            |
+
+WHY THESE COLORS:
+- Warm neutrals (#faf9f7 background, #e7e5e0 borders) feel friendly vs cold grays
+- Green accent (#1a7a5c) communicates: trust, safety, money - perfect for an escrow platform
+- High contrast (foreground on background) meets WCAG AA standards
+- CSS variables enable future dark mode toggle without touching component code
+
+SEMANTIC COLOR USAGE:
+- Success/Trust: emerald-50 background + emerald-700 text (escrow messages, verification)
+- Warning: amber-50 background + amber-700 text (pending states, caution notes)
+- Error/Danger: red-50 background + red-600 text (rejected, failed)
+- Info: blue-50 background + blue-600 text (buyer actions)
+- Purple: purple-50 background + purple-600 text (payout/finance)
+
+
+TYPOGRAPHY
+==========
+
+Font Family: Heebo
+- Loaded via next/font/google for zero layout shift
+- Variable font: weights 400 (body), 600 (semibold), 700 (bold), 800 (extrabold)
+
+Size Scale (Tailwind defaults):
+- text-xs (12px): Fine print, metadata
+- text-sm (14px): Body text, labels, descriptions
+- text-base (16px): Default body
+- text-lg (18px): Section headings
+- text-xl (20px): Card titles
+- text-2xl (24px): Page subtitles
+- text-4xl (36px): Page titles, hero text
+
+WHY HEEBO:
+- Purpose-built for Hebrew and Latin scripts
+- Clear at all sizes, even small text
+- Modern sans-serif matches the clean UI aesthetic
+- Widely supported, fast to load
+
+
+COMPONENT PATTERNS
+==================
+
+Cards:
+  rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6
+  WHY: Rounded corners feel friendly. White on off-white creates subtle depth without shadows.
+
+Inputs:
+  w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3
+  focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]
+  WHY: Visible input background differentiates from card. Green focus ring matches brand.
+
+Primary Buttons (accent background):
+  rounded-xl bg-[var(--accent)] py-3.5 font-semibold text-white transition hover:opacity-90
+  WHY: High contrast white text on green. Opacity hover is subtle and universal.
+
+Secondary Buttons (outlined):
+  rounded-xl border border-[var(--input-border)] px-6 py-3 font-semibold text-[var(--foreground)]
+  hover:bg-[var(--input-bg)]
+  WHY: Less prominent than primary. Background fill on hover provides clear feedback.
+
+Status Badges:
+  rounded-full px-3 py-1 text-xs font-medium
+  + color combo based on status (emerald/amber/red/blue/purple)
+  WHY: Pill shape is universally recognized as a status indicator. Color codes match severity.
+
+Trust Banners:
+  rounded-xl border border-emerald-200 bg-emerald-50 p-4
+  + ShieldCheck icon + text-[var(--accent-text)]
+  WHY: Green tinted box with shield icon = safety signal. Used wherever trust messaging appears.
+
+
+RTL SUPPORT
+===========
+
+- HTML dir="rtl" on root element
+- lang="he" for accessibility
+- Tailwind utilities work naturally in RTL (margin-start/end)
+- text-start/text-end instead of text-left/text-right
+- Flex layouts flow naturally in RTL
+- Icons don't flip (they're symmetrical or direction-independent)
+
+WHY RTL:
+- Hebrew is the primary language of the platform
+- Israeli market = Hebrew-first UX
+- All text, layout, and reading direction must respect RTL
+
+
+RESPONSIVE DESIGN
+=================
+
+Breakpoints (Tailwind defaults):
+- Mobile first (default): < 640px
+- sm (640px): Small tablets
+- md (768px): Tablets
+- lg (1024px): Desktops
+- xl (1280px): Large desktops
+
+Patterns:
+- Single column -> multi-column grids (grid-cols-1 -> sm:grid-cols-2 -> lg:grid-cols-3)
+- Stacked -> side-by-side layouts at sm/md
+- Full-width -> max-w-2xl/4xl centered containers
+- Padding increases at larger sizes (px-4 -> sm:px-6)
+
+WHY MOBILE FIRST:
+- Israeli users primarily browse on mobile
+- Event ticket purchases are often impulsive (mobile-friendly checkout matters)
+- Progressive enhancement from small to large is more natural than degrading
+
+
+SPACING & LAYOUT
+================
+
+- Page containers: max-w-2xl (forms), max-w-4xl (content), max-w-6xl (grids)
+- Section spacing: py-12 to py-16
+- Card internal padding: p-6 to p-8
+- Element spacing: space-y-4 to space-y-6
+- Grid gaps: gap-4 to gap-6
+
+WHY:
+- Generous spacing creates breathing room and reduces cognitive load
+- Consistent spacing scale (multiples of 4px) creates visual rhythm
+- Larger containers for data-dense pages, smaller for focused flows
+
+
+ANIMATIONS & TRANSITIONS
+=========================
+
+Current: Minimal (hover opacity, focus rings)
+- transition hover:opacity-90 on buttons
+- transition-colors on interactive cards
+
+WHY MINIMAL:
+- Trust-focused product should feel stable and reliable, not flashy
+- Reduces motion sickness issues
+- Better performance on lower-end devices
+- Can be enhanced later without breaking the design

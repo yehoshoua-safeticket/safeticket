@@ -1,0 +1,110 @@
+SAFE-TICKET — ROLES & PERMISSIONS
+==================================
+
+ROLES
+-----
+  admin          — Full backoffice access. Can manage all users, including other admins.
+  internal_user  — Backoffice access. Can manage external users and tasks, but cannot manage other internal users or admins.
+  external_user  — User space only. Can buy/sell tickets, manage own listings and orders.
+
+
+WHAT ADMIN CAN DO
+-----------------
+  Backoffice (UI)
+  - Access all backoffice pages (/admin/*)
+  - View, create, edit, and delete external users
+  - View, create, edit, and delete internal users and admins
+  - Change any user's role, name, email, phone
+  - Change any external user's verification status
+
+  Tasks
+  - Create, edit, archive, restore, and permanently delete tasks
+  - Assign tasks to any internal user or admin
+
+  Events / Listings / Disputes / Support
+  - Full read and write access
+
+  User Management API (/api/admin/users, /api/admin/team)
+  - Create new external users
+  - Create new internal users
+  - Update any user's profile fields and auth email
+  - Delete any user (except own account)
+
+  Database (RLS)
+  - Full access to tasks table
+  - Read all profiles
+  - Update own profile
+
+
+WHAT INTERNAL_USER CAN DO
+--------------------------
+  Backoffice (UI)
+  - Access all backoffice pages (/admin/*)
+  - View, create, edit, and delete external users
+  - View internal users list (read-only by default — editing requires admin)
+  - Change external users' role, name, email, phone, verification status
+
+  Tasks
+  - Create, edit, archive, restore, and permanently delete tasks  ← requires is_admin() fix on live DB
+  - Assign tasks to any internal user or admin
+
+  Events / Listings / Disputes / Support
+  - Full read and write access
+
+  User Management API (/api/admin/users, /api/admin/team)
+  - Create new external users
+  - Delete external users
+  - Update user profiles
+
+  Database (RLS)
+  - Full access to tasks table (same policy as admin via is_admin())
+  - Read all profiles
+  - Update own profile
+
+
+WHAT EXTERNAL_USER CAN DO
+--------------------------
+  User space (/dashboard/*)
+  - View own dashboard, orders, listings
+  - Create and manage own ticket listings
+  - Complete purchases (checkout)
+  - Submit identity verification request
+  - View own disputes and payouts
+  - Update own profile (name, phone — via account settings)
+
+  Database (RLS)
+  - Read own profile row
+  - Update own profile row
+  - Read active listings (all sellers)
+  - Manage own listings (create, update, delete)
+  - Read own orders
+  - Read own disputes
+  - Read own payouts
+  - Read own verifications
+
+
+WHAT NO ONE CAN DO (even admin)
+--------------------------------
+  - Delete own account via the UI (safeguard — API blocks self-deletion)
+  - Read other users' orders, disputes, payouts, or verifications via RLS
+    (only the owner can; admins bypass this only via the service role key server-side)
+  - Write directly to auth.users from the client — all auth mutations go through
+    the service role API server-side (/api/admin/*)
+
+
+PENDING: LIVE DB FIXES REQUIRED
+---------------------------------
+  1. Run supabase/fix-auth-trigger.sql
+     — Fixes "Database error creating new user" on public sign-up
+     — Updates profiles_role_check constraint and on_auth_user_created trigger
+
+  2. Run supabase/add-task-device.sql
+     — Adds the `device` column to the tasks table
+
+  3. Run the is_admin() patch (until schema is re-applied):
+     CREATE OR REPLACE FUNCTION is_admin()
+     RETURNS boolean LANGUAGE sql SECURITY DEFINER STABLE AS $$
+       SELECT EXISTS (
+         SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('admin', 'internal_user')
+       );
+     $$;

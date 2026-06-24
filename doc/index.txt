@@ -1,0 +1,83 @@
+SafeTicket - Documentation Index
+==================================
+
+This directory contains the full technical documentation for SafeTicket,
+a secure marketplace for second-hand event tickets with escrow protection.
+
+
+FILES
+=====
+
+1. frontend.txt
+   Frontend architecture: Next.js 16 pages, React components, routing.
+   Covers every page and reusable component with purpose and rationale.
+
+2. backend.txt
+   Backend architecture: Supabase setup, database schema overview,
+   authentication, RLS policies, mock data layer, escrow business logic.
+
+3. database.txt
+   Full database schema reference: all 8 tables with columns, types,
+   constraints, relationships diagram, indexes, and RLS policies.
+
+4. authentication.txt
+   Authentication and authorization: Supabase Auth setup, session
+   management, role-based access (buyer/seller/admin), RLS policies,
+   verification flow, security considerations.
+
+5. escrow.txt
+   Escrow system deep dive: payment flow, status transitions, dispute
+   resolution, commission model, timeouts, edge cases.
+
+6. styling.txt
+   Design system: color palette (CSS variables), typography (Heebo),
+   component patterns, RTL support, responsive design, spacing.
+
+7. data-layer.txt
+   Data flow: TypeScript types, mock data structure, Supabase client,
+   helper functions, transition plan from mock to production.
+
+8. infrastructure.txt
+   Tech stack, project directory structure, environment variables,
+   build configuration, deployment, dependency rationale.
+
+9. payment-flow.txt
+   Full App → Web Checkout → App flow: every step from "tap Buy" to
+   "payment confirmed", deep links, token security, error handling,
+   visual diagram, payment provider recommendations.
+
+10. processes.txt
+    Complete process definitions: seller flow (listing to payout),
+    buyer flow (browse to confirmation), admin flow (review, events,
+    disputes, support), commercial model (commissions, money flow,
+    legal entity), escrow timeline, notification schedule.
+
+11. insights.txt
+    Strategic insights, non-obvious ideas, and observations from
+    co-founder interviews: brand positioning, operational ideas,
+    growth insights, technical notes, defensive strategies.
+
+12. open-questions.txt
+    Open questions to resolve: legal blockers (PSP, founders agreement,
+    terms of service), operational decisions (ticket types, verification,
+    edge cases), strategic questions (hiring, fundraising, expansion).
+
+13. index.txt
+    This file. Table of contents for the doc directory.
+
+
+QUICK REFERENCE
+===============
+
+- Tech stack:          infrastructure.txt
+- How escrow works:    escrow.txt
+- DB schema:           database.txt
+- Add a new page:      frontend.txt (see page patterns)
+- Add a component:     frontend.txt (see reusable components)
+- Change colors:       styling.txt (see color system)
+- Auth/permissions:    authentication.txt
+- Mock -> Supabase:    data-layer.txt (see transition section)
+- App payment flow:    payment-flow.txt (App → Web → App)
+- Seller/buyer flows:  processes.txt
+- Business decisions:  open-questions.txt
+- Ideas & strategy:    insights.txt

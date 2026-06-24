@@ -1,0 +1,147 @@
+SafeTicket - Authentication & Authorization Documentation
+==========================================================
+
+Provider: Supabase Auth
+Integration: @supabase/ssr (cookie-based sessions for Next.js SSR)
+Client: @supabase/supabase-js
+
+
+AUTHENTICATION METHODS
+======================
+
+1. Email + Password
+   - Registration: email, password, full_name, phone
+   - Login: email, password
+   - Password reset: email-based reset link
+
+WHY EMAIL/PASSWORD:
+- Universal method, no dependency on third-party OAuth providers
+- Supabase handles hashing (bcrypt), rate limiting, and email verification
+
+
+
+SESSION MANAGEMENT
+==================
+
+- Cookie-based sessions via @supabase/ssr
+- JWT tokens with auto-refresh
+- Server-side session validation for protected routes
+- Client-side session for UI state (logged in/out)
+
+WHY COOKIE-BASED:
+- Works with Next.js server components (no client-side token in localStorage)
+- Secure HttpOnly cookies prevent XSS token theft
+- Automatic refresh without user intervention
+
+
+AUTHORIZATION MODEL
+===================
+
+Three roles: buyer, seller, admin
+
+BUYER:
+- Browse and search listings
+- Purchase tickets (create orders)
+- View own orders and their status
+- Confirm ticket delivery (releases escrow)
+- Open disputes
+- Request verification (becomes seller)
+
+SELLER (requires verification):
+- All buyer permissions
+- Create and manage listings
+- View payout status and history
+- Upload ticket files
+
+ADMIN:
+- All permissions
+- Review and approve/reject listings
+- Resolve disputes
+- View all users, orders, payouts
+- Add internal notes to any entity
+- Override statuses
+
+WHY THIS MODEL:
+- Simple 3-tier hierarchy covers all use cases
+- Buyer is the default role (lowest barrier to entry)
+- Seller requires verification = trust building
+- Admin is internal only, never self-assigned
+
+
+ROW LEVEL SECURITY (RLS) POLICIES
+===================================
+
+RLS is the primary authorization mechanism. Policies are enforced at the PostgreSQL level regardless of how queries are made.
+
+profiles:
+- SELECT: Users can view their own profile (id = auth.uid())
+- UPDATE: Users can update their own profile (id = auth.uid())
+
+events:
+- SELECT: Everyone can view events (public marketplace)
+
+listings:
+- SELECT: Active listings visible to all; sellers see their own regardless of status
+- INSERT/UPDATE/DELETE: Only the listing's seller (seller_id = auth.uid())
+
+orders:
+- SELECT: Only the order's buyer (buyer_id = auth.uid())
+
+disputes:
+- SELECT: Only the user who opened it (opened_by = auth.uid())
+
+payouts:
+- SELECT: Only the payout's seller (seller_id = auth.uid())
+
+verifications:
+- SELECT: Only the user it belongs to (user_id = auth.uid())
+
+WHY RLS OVER APPLICATION-LEVEL AUTH:
+- Defense in depth: even if frontend code is manipulated, DB rejects unauthorized access
+- Single source of truth for permissions (not scattered across API routes)
+- Impossible to accidentally expose data through a new endpoint
+- Supabase client queries respect RLS automatically via the JWT
+
+
+ADMIN ACCESS
+============
+
+Admin operations use the service_role key (server-side only):
+- Bypasses RLS entirely
+- Used for: listing review, dispute resolution, payout release, user management
+- NEVER exposed to the client
+
+WHY:
+- service_role key has full database access, must stay server-side
+- Admin actions need cross-user access that RLS would block
+- Next.js server actions / API routes use this key securely
+
+
+VERIFICATION FLOW
+=================
+
+1. User submits documents via /verify page
+2. verification record created with status = 'pending'
+3. Admin reviews document (manual process)
+4. Admin updates verification status to 'verified' or 'rejected'
+5. Profile verification_status updated accordingly
+6. Verified users can now create listings
+
+WHY MANUAL VERIFICATION:
+- MVP approach: human review is more accurate than automated ID verification
+- Lower cost than integrating a KYC provider initially
+- Can be upgraded to automated verification (e.g., Onfido, Veriff) later
+- Israeli ID format requires Hebrew-aware OCR if automated
+
+
+SECURITY CONSIDERATIONS
+========================
+
+- Passwords: Hashed by Supabase (bcrypt), never stored in plaintext
+- Sessions: HttpOnly cookies, no localStorage tokens
+- CSRF: Supabase handles via cookie SameSite policy
+- Rate limiting: Built into Supabase Auth
+- Email verification: Optional (can be enabled per project)
+- RLS: All tables protected, no direct public access to sensitive data
+- Service key: Server-side only, never in NEXT_PUBLIC_ variables
+- File uploads: Signed URLs with expiration for verification documents

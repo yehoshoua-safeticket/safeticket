@@ -1,0 +1,210 @@
+SafeTicket - Open Questions
+=============================
+
+Questions the co-founders need to discuss, research, or get
+professional advice on before launch. Organized by priority.
+
+
+========================================================================
+MUST RESOLVE BEFORE LAUNCH (Blockers)
+========================================================================
+
+Q1: FINANCIAL SERVICES CLASSIFICATION
+    Does SafeTicket's escrow model classify the platform as a
+    "payment service provider" under Israeli law?
+    ACTION: Consult an Israeli fintech/payments attorney.
+    If YES: you need a license from the Bank of Israel.
+    If NO (because PSP holds the money): you're clear.
+    This is the single most important legal question.
+    COST: ~1,000-2,000 ILS for a legal consultation.
+
+Q2: WHICH PSP TO USE?
+    Options: Stripe, PayPlus, Tranzila, PayMe.
+    Questions to ask each provider:
+    - Do you support escrow / delayed capture / hold-and-release?
+    - What are your per-transaction fees?
+    - Can you hold funds for weeks (until after the event)?
+    - Do you handle AML/KYC on behalf of the platform?
+    - What's the onboarding process for a new חברה בע"מ?
+    - Do you support payouts to third-party bank accounts (sellers)?
+    ACTION: Contact 2-3 PSPs and compare. This choice affects
+    your entire payment architecture.
+
+Q3: FOUNDERS AGREEMENT
+    Must be signed BEFORE registering the חברה בע"מ.
+    Must include:
+    - Ownership split (33/33/33 agreed)
+    - Vesting schedule (recommend 4 years with 1-year cliff)
+    - What happens if a co-founder leaves
+    - What happens if co-founders disagree (2 vs 1 = majority?)
+    - IP assignment (who owns the code?)
+    - Non-compete during and after
+    - What constitutes "cause" for removal
+    ACTION: Find a startup lawyer. Budget ~3,000-5,000 ILS.
+
+Q4: TERMS OF SERVICE & PRIVACY POLICY
+    Required before accepting any users or payments.
+    Must include:
+    - SafeTicket as intermediary, not seller
+    - Cancellation policy (exempt per Section 14G(d)(4))
+    - Dispute resolution process
+    - Seller obligations (accurate listing, valid ticket, no cancellation after sale)
+    - Commission structure clearly stated
+    - Data collection and retention policy
+    - Hebrew language (mandatory for Israeli consumers)
+    ACTION: Lawyer drafts this. Can often be bundled with founders agreement.
+
+Q5: COMPANY REGISTRATION
+    Register חברה בע"מ with the Israeli Registrar of Companies.
+    Need: company name, registered address, directors, articles of association.
+    ACTION: Lawyer or accountant can handle. ~1,500 ILS.
+    Must be done before PSP onboarding.
+
+
+========================================================================
+SHOULD RESOLVE BEFORE LAUNCH (Important)
+========================================================================
+
+Q6: WHAT IF THE TICKET FILE LEAKS?
+    Buyer receives the ticket file immediately. They could share it
+    with friends. Now multiple people have the same ticket file.
+    - Can you watermark the file? (adds buyer's name/order number)
+    - Can you convert to a SafeTicket-branded ticket? (wrap the
+      original in a new PDF with your branding + order reference)
+    - Or do you accept this risk as part of the 99% trust model?
+    DISCUSS: Is this a real risk or a theoretical one?
+
+Q7: WHAT ABOUT PHYSICAL TICKETS?
+    MVP supports digital tickets only. But some events still use
+    physical paper tickets (especially smaller venues, box office sales).
+    - Do you turn away sellers with physical tickets?
+    - Or do you plan a future flow (courier, meetup at venue)?
+    DISCUSS: How many potential sellers are lost by excluding physical?
+
+Q8: DUPLICATE LISTING ACROSS PLATFORMS
+    A seller lists the same ticket on SafeTicket AND in a Facebook group.
+    Ticket sells on Facebook first. Seller cancels on SafeTicket (allowed
+    before sale). No harm done.
+    But: what if the ticket sells on SafeTicket AND Facebook simultaneously?
+    Seller can't cancel on SafeTicket (already sold). Two buyers have
+    the same ticket. One gets rejected at the gate.
+    - Terms of service can forbid this, but enforcement is hard.
+    - Is this covered by the escrow refund? (Buyer gets money back)
+    DISCUSS: Is a warning in terms of service enough, or do you need
+    a technical solution?
+
+Q9: HOW DO YOU VERIFY SELLER IDENTITY?
+    MVP: seller uploads ID + selfie. Admin reviews manually.
+    - What exactly does the admin check? Name matches? Photo matches?
+    - Do you store the ID image? For how long? (Privacy law implications)
+    - Is a selfie holding the ID required, or just the ID alone?
+    DISCUSS: Define the exact verification checklist for admins.
+
+Q10: ACCOUNTANT
+     A חברה בע"מ requires monthly bookkeeping and annual tax filing.
+     - Find an accountant familiar with marketplace/platform businesses
+     - They need to understand the escrow model (money flowing through
+       is not all revenue — only the commission is)
+     ACTION: Get referrals. Budget ~300-500 ILS/month.
+
+
+========================================================================
+SHOULD RESOLVE EARLY ON (After Launch)
+========================================================================
+
+Q11: WHAT IF AN EVENT IS CANCELLED?
+     Tickets were sold on SafeTicket, money is in escrow, event gets
+     cancelled by the organizer.
+     - Auto-refund all buyers for that event?
+     - Who monitors event cancellations? (Admin manually for MVP)
+     - Does the seller get anything? (No — they'll get refund from
+       original purchase)
+     DISCUSS: Process and communication plan for cancellations.
+
+Q12: WHAT IF AN EVENT IS RESCHEDULED?
+     Similar to cancellation but trickier:
+     - Buyer might be able to attend the new date (no refund needed)
+     - Buyer might NOT be able to attend (wants refund)
+     - Seller's ticket might still be valid for new date
+     DISCUSS: Policy for rescheduled events.
+
+Q13: WHAT ABOUT MULTIPLE TICKETS IN ONE LISTING?
+     Seller has 3 tickets together (friends group, can't all go).
+     - Can they list as a bundle? (3 tickets, must buy all 3)
+     - Or must each ticket be listed separately?
+     - Bundle: simpler for seller, but buyer might only need 2
+     - Separate: more flexible, but more admin work (3 reviews)
+     DISCUSS: MVP approach.
+
+Q14: HOW DO YOU HANDLE EVENTS WITH SAME NAME, DIFFERENT DATES?
+     Example: "Idan Raichel" performs 3 nights in a row at the same venue.
+     The event database needs: name + date + venue as unique identifier.
+     A seller must pick the exact date, not just the event name.
+     DISCUSS: Is the admin data entry process clear enough to avoid
+     confusion?
+
+Q15: INSURANCE
+     If something catastrophic happens (data breach exposing seller IDs,
+     PSP goes bankrupt with escrow money, platform bug causes wrong payouts):
+     - Is there insurance for this? (Cyber insurance, professional liability)
+     - At what stage does it make sense to get insured?
+     DISCUSS: Research costs vs. risks. Probably not needed at MVP
+     but worth knowing about.
+
+Q16: WHAT IF SAFETICKET SHUTS DOWN?
+     Money is in escrow for upcoming events. Platform shuts down.
+     What happens to that money?
+     - PSP holds it, not SafeTicket. So it's safe from SafeTicket bankruptcy.
+     - But who triggers the release/refund if SafeTicket isn't operating?
+     - Terms of service should address this.
+     DISCUSS: Include a wind-down clause in terms of service.
+
+
+========================================================================
+STRATEGIC QUESTIONS (Think About Over Time)
+========================================================================
+
+Q17: WHEN TO HIRE?
+     Three co-founders with side jobs. At what point does the volume
+     require hiring? Possible first hires:
+     - Part-time admin reviewer (when listing volume exceeds what
+       3 people can handle in evenings)
+     - Freelance event verifiers (when you can't cover enough events)
+     - Customer support person (when Gmail isn't enough)
+     THINK: What metric triggers each hire?
+
+Q18: WHEN TO RAISE MONEY?
+     Current model is bootstrapped (split costs 3 ways).
+     Investment might be needed for:
+     - Marketing spend to grow beyond organic
+     - Hiring
+     - Building the mobile app
+     - International expansion
+     THINK: At what traction level do you approach investors?
+     (Number of transactions, revenue, growth rate)
+
+Q19: INTERNATIONAL EXPANSION
+     Israel first. Then where?
+     - Same concept works anywhere (ticket fraud is universal)
+     - Each country has different consumer protection laws
+     - Language, payment methods, event landscape all differ
+     - France? (co-founder connection?) US? Europe?
+     THINK: What makes a good second market?
+
+Q20: REVENUE DIVERSIFICATION
+     Currently: commission only (10% each side).
+     Future possibilities:
+     - Featured listings (seller pays to appear at top)
+     - Event analytics for organizers (anonymous data about resale patterns)
+     - Seller subscription (unlimited listings for monthly fee)
+     - Buyer alerts ("notify me when tickets for X become available")
+     THINK: Which of these aligns with the trust-first brand?
+
+Q21: WHAT IF A COMPETITOR APPEARS?
+     Someone builds the same thing in Israel.
+     Your moat is:
+     - First mover (if you launch soon)
+     - Trust / brand recognition
+     - Seller and buyer base (network effects)
+     - Real stories / social proof from event presence
+     THINK: How do you build defensibility beyond just features?
