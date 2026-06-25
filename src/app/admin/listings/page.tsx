@@ -157,7 +157,9 @@ export default function AdminListingsPage() {
         ) : filtered.length === 0 ? (
           <div className="py-12 text-center text-sm text-[var(--muted)]">{t.admin.listings.empty}</div>
         ) : (
-          <table className="w-full">
+          <>
+          {/* Desktop: table */}
+          <table className="hidden w-full lg:table">
             <thead>
               <tr className="border-b border-[var(--card-border)]">
                 <th className="w-10 px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
@@ -197,6 +199,38 @@ export default function AdminListingsPage() {
               ))}
             </tbody>
           </table>
+
+          {/* Mobile: stacked cards */}
+          <ul className="divide-y divide-[var(--card-border)] lg:hidden">
+            {filtered.map((l) => (
+              <li
+                key={l.id}
+                onClick={() => router.push(`/admin/listings/${l.id}`)}
+                className="cursor-pointer space-y-2 p-4 transition-colors hover:bg-[var(--input-bg)]"
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(l.id)}
+                    onChange={() => toggleSelect(l.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
+                  />
+                  <p className="min-w-0 flex-1 text-sm font-semibold text-[var(--foreground)]">{l.event?.title || '-'}</p>
+                  <span className="shrink-0 text-sm font-semibold text-[var(--foreground)]">₪{l.asking_price}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
+                  <span>{t.admin.listings.colSeller}: {l.seller?.full_name || '-'}</span>
+                  <span>{new Date(l.created_at).toLocaleDateString('he-IL')}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 ps-7">
+                  <StatusBadge status={l.status} />
+                  <StatusBadge status={l.risk_status} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          </>
         )}
       </div>
     </div>

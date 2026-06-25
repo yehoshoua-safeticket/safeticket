@@ -105,7 +105,9 @@ export default function AdminSupportPage() {
         {filtered.length === 0 ? (
           <div className="py-12 text-center text-sm text-[var(--muted)]">{t.admin.support.empty}</div>
         ) : (
-          <table className="w-full">
+          <>
+          {/* Desktop: table */}
+          <table className="hidden w-full lg:table">
             <thead>
               <tr className="border-b border-[var(--card-border)]">
                 <th className="w-10 px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
@@ -149,6 +151,38 @@ export default function AdminSupportPage() {
               ))}
             </tbody>
           </table>
+
+          {/* Mobile: stacked cards */}
+          <ul className="divide-y divide-[var(--card-border)] lg:hidden">
+            {filtered.map((msg) => (
+              <li
+                key={msg.id}
+                className="cursor-pointer space-y-2 p-4 transition-colors hover:bg-[var(--input-bg)]"
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(msg.id)}
+                    onChange={() => toggleSelect(msg.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
+                  />
+                  <p className="min-w-0 flex-1 text-sm font-semibold text-[var(--foreground)]">{msg.subject}</p>
+                  <MessageCircle className={`mt-0.5 h-4 w-4 shrink-0 ${msg.status === 'open' ? 'text-amber-500' : 'text-[var(--muted)]'}`} />
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
+                  <span>{msg.from}</span>
+                  <span>{new Date(msg.date).toLocaleDateString('he-IL')}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 ps-7">
+                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${msg.status === 'open' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                    {msg.status === 'open' ? t.admin.support.statusOpen : t.admin.support.statusReplied}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+          </>
         )}
       </div>
 

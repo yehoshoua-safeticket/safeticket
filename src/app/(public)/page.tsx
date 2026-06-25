@@ -115,8 +115,8 @@ export default function Home() {
         <motion.h1
           initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.22 }}
-          className="max-w-4xl text-5xl font-black text-white sm:text-6xl lg:text-[5.5rem]"
-          style={{ fontFamily: 'var(--font-display)', lineHeight: 1.0, letterSpacing: '-0.03em' }}
+          className="max-w-4xl text-[2.75rem] font-black text-white sm:text-6xl lg:text-[5.5rem]"
+          style={{ fontFamily: 'var(--font-display)', lineHeight: 1.05, letterSpacing: '-0.03em' }}
         >
           {t.home.heroLine1}
         </motion.h1>
@@ -126,7 +126,7 @@ export default function Home() {
         <motion.p
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.38 }}
-          className="mt-6 max-w-2xl text-2xl leading-relaxed text-white/60"
+          className="mt-5 max-w-2xl text-lg leading-relaxed text-white/60 sm:mt-6 sm:text-2xl"
         >
           {t.home.whySafeSubtitle}
         </motion.p>
@@ -151,10 +151,45 @@ export default function Home() {
           </button>
         </motion.form>
 
-        {/* ── HERO CAROUSEL — right below the arrow ── */}
+        {/* ── FEATURED EVENTS ── */}
         {events.length > 0 && (
-          <div className="mt-24 w-full px-14">
-            <div className="relative mx-auto max-w-5xl">
+          <div className="mt-12 w-full sm:mt-16 md:mt-24 md:px-14">
+
+            {/* Mobile: vertical stack of full-width cards (no carousel) */}
+            <div className="mx-auto flex max-w-md flex-col gap-3 md:hidden">
+              {events.slice(0, 5).map((ev, i) => (
+                <motion.div
+                  key={ev.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.07 }}
+                  className="overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md"
+                >
+                  <Link href={`/tickets/${ev.id}`} className="flex items-stretch">
+                    <div className="relative h-auto w-28 shrink-0 overflow-hidden">
+                      <div className="cover-photo" style={{ backgroundImage: `url(${photoUrl(ev.category)})` }} />
+                      <div className="cover-scrim" />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col justify-center p-3.5">
+                      <span className="mb-1 inline-block w-fit rounded-full bg-[#1a55e3] px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-white">
+                        {t.eventCategory[ev.category] ?? ev.category}
+                      </span>
+                      <p className="truncate text-sm font-semibold text-white">{ev.title}</p>
+                      <p className="mt-0.5 text-xs text-white/50">
+                        {new Date(ev.event_date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
+                        {ev.city && ` · ${ev.city}`}
+                      </p>
+                      {ev.lowestPrice > 0 && (
+                        <p className="mt-1 text-sm font-bold text-[#5599ff]">₪{ev.lowestPrice}</p>
+                      )}
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Desktop: 4-up carousel with chevrons */}
+            <div className="relative mx-auto hidden max-w-5xl md:block">
             {/* Track — 4 cards visible */}
             <div
               ref={carouselRef}
@@ -216,9 +251,9 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS — simple 5-step flow ── */}
-      <div ref={flowRef} className="py-20">
+      <div ref={flowRef} className="py-12 sm:py-20">
         <div className="mx-auto max-w-5xl px-6 sm:px-10">
-          <h2 className="mb-12 text-center text-2xl font-bold text-white sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
+          <h2 className="mb-8 text-center text-2xl font-bold text-white sm:mb-12 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
             {t.home.flowTitle}
           </h2>
 

@@ -329,16 +329,59 @@ export default function AdminUsersPage() {
     );
   }
 
+  function renderCard(p: Profile) {
+    return (
+      <li
+        key={p.id}
+        onClick={() => router.push(`/admin/external_users/${p.id}`)}
+        className="cursor-pointer space-y-2 p-4 transition-colors hover:bg-[var(--input-bg)]"
+      >
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            checked={selected.has(p.id)}
+            onChange={() => toggleSelect(p.id)}
+            onClick={e => e.stopPropagation()}
+            className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
+          />
+          <p className="min-w-0 flex-1 text-sm font-semibold text-[var(--foreground)]">
+            {p.full_name}
+            {p.id === currentUserId && (
+              <span className="mr-1.5 rounded-full bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--accent-text)]">{t.common.you}</span>
+            )}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
+          <span className="min-w-0 truncate">{p.email}</span>
+          <span>{t.admin.users.colJoined}: {new Date(p.created_at).toLocaleDateString('he-IL')}</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 ps-7">
+          <span className={`${roleBadgeClass(p.role)} rounded-lg px-2.5 py-1 text-xs font-medium`}>
+            {roleLabel(p.role)}
+          </span>
+          <span className={`${verificationBadgeClass(p.verification_status)} rounded-lg px-2.5 py-1 text-xs font-medium`}>
+            {verificationLabel(p.verification_status)}
+          </span>
+        </div>
+      </li>
+    );
+  }
+
   function renderTable(rows: Profile[], onSelectAll: () => void) {
     return (
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>{renderTableHead(rows, onSelectAll)}</thead>
-          <tbody className="divide-y divide-[var(--card-border)]">
-            {rows.map(renderRow)}
-          </tbody>
-        </table>
-      </div>
+      <>
+        <div className="hidden overflow-x-auto lg:block">
+          <table className="hidden w-full lg:table">
+            <thead>{renderTableHead(rows, onSelectAll)}</thead>
+            <tbody className="divide-y divide-[var(--card-border)]">
+              {rows.map(renderRow)}
+            </tbody>
+          </table>
+        </div>
+        <ul className="divide-y divide-[var(--card-border)] lg:hidden">
+          {rows.map(renderCard)}
+        </ul>
+      </>
     );
   }
 

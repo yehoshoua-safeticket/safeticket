@@ -32,7 +32,7 @@ export default function ContactPage() {
         <p className="text-lg text-[var(--muted)]">{t.contact.subtitle}</p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
         <div className="space-y-6 lg:col-span-2">
           <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 sm:p-8">
             <div className="space-y-5">

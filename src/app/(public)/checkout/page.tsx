@@ -169,7 +169,7 @@ function CheckoutInner() {
         <h1 className="text-3xl font-bold text-[var(--foreground)]">{t.checkout.title}</h1>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
         <div className="space-y-6 lg:col-span-2">
           <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
             <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">{t.checkout.ticketDetails}</h2>

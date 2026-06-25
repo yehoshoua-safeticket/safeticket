@@ -67,12 +67,12 @@ export default function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
+      <div className="mb-8 flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-[var(--foreground)]">{t.dashboard.title.replace('{name}', profile.full_name)}</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">{t.dashboard.subtitle}</p>
         </div>
-        <Link href="/settings" className="rounded-lg bg-[var(--input-bg)] p-2 text-[var(--muted)] transition hover:text-[var(--foreground)]">
+        <Link href="/settings" className="shrink-0 rounded-lg bg-[var(--input-bg)] p-2 text-[var(--muted)] transition hover:text-[var(--foreground)]">
           <Settings className="h-5 w-5" />
         </Link>
       </div>

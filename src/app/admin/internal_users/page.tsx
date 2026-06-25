@@ -229,7 +229,9 @@ export default function TeamPage() {
         ) : filtered.length === 0 ? (
           <div className="py-12 text-center text-sm text-[var(--muted)]">{members.length === 0 ? t.admin.team.emptyNoMembers : t.admin.team.emptyNoResults}</div>
         ) : (
-          <table className="w-full">
+          <>
+          {/* Desktop: table */}
+          <table className="hidden w-full lg:table">
             <thead>
               <tr className="border-b border-[var(--card-border)]">
                 <th className="w-10 px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
@@ -269,6 +271,41 @@ export default function TeamPage() {
               ))}
             </tbody>
           </table>
+
+          {/* Mobile: stacked cards */}
+          <ul className="divide-y divide-[var(--card-border)] lg:hidden">
+            {filtered.map((m) => (
+              <li
+                key={m.id}
+                onClick={() => router.push(`/admin/internal_users/${m.id}`)}
+                className="cursor-pointer space-y-2 p-4 transition-colors hover:bg-[var(--input-bg)]"
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(m.id)}
+                    onChange={() => toggleSelect(m.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
+                  />
+                  <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+                      {m.full_name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}
+                    </div>
+                    <span className="min-w-0 flex-1 text-sm font-semibold text-[var(--foreground)]">{m.full_name}</span>
+                  </div>
+                  {m.id === currentUserId && (
+                    <span className="shrink-0 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[10px] font-medium text-[var(--accent-text)]">{t.common.you}</span>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
+                  <span>{m.email}</span>
+                  <span>{new Date(m.created_at).toLocaleDateString('he-IL')}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+          </>
         )}
       </div>
     </div>

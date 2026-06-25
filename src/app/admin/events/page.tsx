@@ -191,7 +191,9 @@ export default function AdminEventsPage() {
         ) : filtered.length === 0 ? (
           <div className="py-12 text-center text-sm text-[var(--muted)]">{t.admin.events.empty}</div>
         ) : (
-          <table className="w-full">
+          <>
+          {/* Desktop: table */}
+          <table className="hidden w-full lg:table">
             <thead>
               <tr className="border-b border-[var(--card-border)]">
                 <th className="w-10 px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
@@ -241,6 +243,38 @@ export default function AdminEventsPage() {
               ))}
             </tbody>
           </table>
+
+          {/* Mobile: stacked cards */}
+          <ul className="divide-y divide-[var(--card-border)] lg:hidden">
+            {filtered.map((e) => (
+              <li
+                key={e.id}
+                onClick={() => router.push(`/admin/events/${e.id}`)}
+                className="cursor-pointer space-y-2 p-4 transition-colors hover:bg-[var(--input-bg)]"
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(e.id)}
+                    onChange={() => toggleSelect(e.id)}
+                    onClick={(ev) => ev.stopPropagation()}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
+                  />
+                  <p className="min-w-0 flex-1 text-sm font-semibold text-[var(--foreground)]">{e.title}</p>
+                  <span className="shrink-0 text-sm text-[var(--foreground)]">{t.admin.events.colActiveListings}: {e.activeListingCount}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
+                  <span>{e.venue}, {e.city}</span>
+                  <span>{new Date(e.event_date).toLocaleDateString('he-IL', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                  <span>{(t.eventCategory as Record<string, string>)[e.category] ?? e.category}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 ps-7">
+                  <StatusBadge status={e.status ?? 'active'} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          </>
         )}
       </div>
     </div>

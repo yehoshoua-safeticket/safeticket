@@ -135,7 +135,9 @@ export default function AdminDisputesPage() {
         ) : filtered.length === 0 ? (
           <div className="py-12 text-center text-sm text-[var(--muted)]">{t.admin.disputes.empty}</div>
         ) : (
-          <table className="w-full">
+          <>
+          {/* Desktop: table */}
+          <table className="hidden w-full lg:table">
             <thead>
               <tr className="border-b border-[var(--card-border)]">
                 <th className="w-10 px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
@@ -175,6 +177,37 @@ export default function AdminDisputesPage() {
               ))}
             </tbody>
           </table>
+
+          {/* Mobile: stacked cards */}
+          <ul className="divide-y divide-[var(--card-border)] lg:hidden">
+            {filtered.map((d) => (
+              <li
+                key={d.id}
+                onClick={() => router.push(`/admin/disputes/${d.id}`)}
+                className="cursor-pointer space-y-2 p-4 transition-colors hover:bg-[var(--input-bg)]"
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(d.id)}
+                    onChange={() => toggleSelect(d.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
+                  />
+                  <p className="min-w-0 flex-1 truncate text-sm font-semibold text-[var(--foreground)]">{d.reason}</p>
+                  <span className="shrink-0 font-mono text-xs text-[var(--muted)]">#{d.id.slice(-6)}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
+                  <span>{new Date(d.created_at).toLocaleDateString('he-IL')}</span>
+                  <span>{t.admin.disputes.colResolution}: {d.admin_resolution ? d.admin_resolution.slice(0, 40) + (d.admin_resolution.length > 40 ? '...' : '') : t.admin.disputes.pending}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 ps-7">
+                  <StatusBadge status={d.status} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          </>
         )}
       </div>
     </div>

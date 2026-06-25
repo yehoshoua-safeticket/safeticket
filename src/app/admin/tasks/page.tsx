@@ -261,6 +261,46 @@ export default function TasksPage() {
     );
   }
 
+  function renderCard(task: EmployeeTask) {
+    const show = (key: string) => !hiddenCols.has(key);
+    return (
+      <li
+        key={task.id}
+        onClick={() => router.push(`/admin/tasks/${task.id}`)}
+        className="cursor-pointer space-y-2 p-4 transition-colors hover:bg-[var(--input-bg)]"
+      >
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            checked={selected.has(task.id)}
+            onChange={() => toggleSelect(task.id)}
+            onClick={(e) => e.stopPropagation()}
+            className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
+          />
+          <p className="min-w-0 flex-1 text-sm font-semibold text-[var(--foreground)]">
+            <span className="flex items-center gap-1.5">
+              {task.name}
+              {task.files.length > 0 && (
+                <span className="flex items-center gap-0.5 text-[var(--muted)]">
+                  <Paperclip className="h-3 w-3" /><span className="text-[10px]">{task.files.length}</span>
+                </span>
+              )}
+            </span>
+          </p>
+          {show('status') && <span className="shrink-0"><StatusBadge status={task.status} /></span>}
+        </div>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
+          {show('description') && task.description && <span className="min-w-0 truncate">{task.description}</span>}
+          {show('section') && <span>{t.admin.tasks.colSection}: {task.section ? SECTION_LABELS[task.section] : '—'}</span>}
+          {show('page') && task.page && <span className="font-mono text-xs">{task.page}</span>}
+          {show('user') && <span className="font-medium text-[var(--foreground)]">{task.assignee?.full_name || '—'}</span>}
+          {show('created_at') && <span>{new Date(task.created_at).toLocaleDateString('he-IL')}</span>}
+          {show('created_by') && <span>{t.admin.tasks.colCreatedBy}: {task.creator?.full_name || '—'}</span>}
+        </div>
+      </li>
+    );
+  }
+
   function renderTableHead() {
     return (
       <tr className="border-b border-[var(--card-border)]">
@@ -459,12 +499,15 @@ export default function TasksPage() {
                   <span className="mr-auto rounded-full bg-[var(--input-bg)] px-2.5 py-0.5 text-xs text-[var(--muted)]">{groupTasks.length}</span>
                 </button>
                 {!isCollapsed && (
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>{renderTableHead()}</thead>
-                      <tbody className="divide-y divide-[var(--card-border)]">{groupTasks.map(renderRow)}</tbody>
-                    </table>
-                  </div>
+                  <>
+                    <div className="hidden overflow-x-auto lg:block">
+                      <table className="hidden w-full lg:table">
+                        <thead>{renderTableHead()}</thead>
+                        <tbody className="divide-y divide-[var(--card-border)]">{groupTasks.map(renderRow)}</tbody>
+                      </table>
+                    </div>
+                    <ul className="divide-y divide-[var(--card-border)] lg:hidden">{groupTasks.map(renderCard)}</ul>
+                  </>
                 )}
               </div>
             );
@@ -472,10 +515,11 @@ export default function TasksPage() {
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
-          <table className="w-full">
+          <table className="hidden w-full lg:table">
             <thead>{renderTableHead()}</thead>
             <tbody className="divide-y divide-[var(--card-border)]">{sortedTasks.map(renderRow)}</tbody>
           </table>
+          <ul className="divide-y divide-[var(--card-border)] lg:hidden">{sortedTasks.map(renderCard)}</ul>
         </div>
       )}
     </div>

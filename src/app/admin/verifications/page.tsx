@@ -106,7 +106,9 @@ export default function AdminVerificationsPage() {
         ) : filtered.length === 0 ? (
           <div className="py-12 text-center text-sm text-[var(--muted)]">{t.admin.verifications.empty}</div>
         ) : (
-          <table className="w-full">
+          <>
+          {/* Desktop: table */}
+          <table className="hidden w-full lg:table">
             <thead>
               <tr className="border-b border-[var(--card-border)]">
                 <th className="w-10 px-3 py-3.5">
@@ -135,6 +137,35 @@ export default function AdminVerificationsPage() {
               ))}
             </tbody>
           </table>
+
+          {/* Mobile: stacked cards */}
+          <ul className="divide-y divide-[var(--card-border)] lg:hidden">
+            {filtered.map((r) => (
+              <li
+                key={r.id}
+                onClick={() => router.push(`/admin/verifications/${r.id}`)}
+                className="cursor-pointer space-y-2 p-4 transition-colors hover:bg-[var(--input-bg)]"
+              >
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(r.id)}
+                    onChange={() => toggleSelect(r.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
+                  />
+                  <p className="min-w-0 flex-1 text-sm font-semibold text-[var(--foreground)]">{r.user?.full_name || '—'}</p>
+                  <span className="shrink-0"><StatusBadge status={r.status} /></span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
+                  <span>{r.user?.email}</span>
+                  <span>{docLabel(r.document_type)}</span>
+                  <span>{new Date(r.created_at).toLocaleDateString(dateLocale)}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+          </>
         )}
       </div>
     </div>

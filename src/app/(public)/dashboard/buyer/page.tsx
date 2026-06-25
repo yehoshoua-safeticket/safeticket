@@ -76,7 +76,7 @@ export default function BuyerDashboardPage() {
                   </div>
                   <StatusBadge status={order.order_status} />
                 </div>
-                <div className="mt-4 grid grid-cols-3 gap-4 border-t border-[var(--card-border)] pt-4 text-sm">
+                <div className="mt-4 grid grid-cols-1 gap-4 border-t border-[var(--card-border)] pt-4 text-sm sm:grid-cols-3">
                   <div>
                     <p className="text-[var(--muted)]">{t.buyer.amount}</p>
                     <p className="font-medium text-[var(--foreground)]">₪{order.total_amount}</p>
