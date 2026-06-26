@@ -33,9 +33,9 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="flex h-16 items-center justify-between gap-4">
+        <div className="flex h-14 items-center justify-between gap-4">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <img src="/logos/st-logo.png" alt="SafeTicket" className="h-9 w-auto" />
+            <img src="/logos/st-logo.png" alt="SafeTicket" className="h-8 w-auto" />
             <span className="font-[family-name:var(--font-display)] text-[1.15rem] font-extrabold tracking-tight">
               <span style={{ color: '#ffffff' }}>Safe</span><span style={{ color: '#5599ff' }}>Ticket</span>
             </span>

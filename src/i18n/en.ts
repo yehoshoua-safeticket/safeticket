@@ -12,6 +12,7 @@ export const en: Translations = {
     saved: 'Saved ✓',
     cancel: 'Cancel',
     delete: 'Delete',
+    remove: 'Remove',
     deleting: 'Deleting...',
     confirm: 'Confirm',
     back: 'Back',
@@ -136,6 +137,8 @@ export const en: Translations = {
     logout: 'Log Out',
     overview: 'Overview',
     events: 'Events',
+    featured: 'Featured',
+    categoryCovers: 'Category covers',
     externalUsers: 'External users',
     listings: 'Listings',
     disputes: 'Disputes',
@@ -432,6 +435,7 @@ export const en: Translations = {
 
   home: {
     heroLine1: 'SELL TICKET',
+    categoriesTitle: 'Browse by category',
     flowTitle: 'How it works',
     flowSteps: [
       'Seller publishes a ticket',
@@ -807,6 +811,38 @@ export const en: Translations = {
       cityPlaceholder: 'City',
       requiredError: 'Please fill in all required fields',
       deleteConfirm: 'Delete?',
+      imageLabel: 'Event image',
+      imageUpload: 'Upload an image',
+      imageError: 'Image upload failed',
+    },
+
+    featured: {
+      title: 'Featured events',
+      subtitle: 'Choose up to 5 events to showcase on the homepage. Only events with an image will appear.',
+      selectedTitle: 'On the homepage',
+      selectedCount: '{n} / 5 selected',
+      availableTitle: 'All events',
+      searchPlaceholder: 'Search events...',
+      add: 'Add',
+      moveUp: 'Move up',
+      moveDown: 'Move down',
+      remove: 'Remove',
+      maxReached: 'You can feature up to 5 events',
+      noImageHint: 'No image — upload one on the event page so it can appear',
+      empty: 'No events selected yet',
+      emptyAvailable: 'No events found',
+      saved: 'Saved ✓',
+      saveError: 'Could not save',
+    },
+
+    categoryCovers: {
+      title: 'Category covers',
+      subtitle: 'Pick the event whose image represents each category on the homepage. Only events with an image will show.',
+      chooseEvent: 'Choose an event',
+      none: 'No cover',
+      noImageHint: 'This event has no image yet',
+      saved: 'Saved ✓',
+      saveError: 'Could not save',
     },
 
     listings: {

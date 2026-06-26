@@ -10,6 +10,7 @@ export const he = {
     saved: 'נשמר ✓',
     cancel: 'בטל',
     delete: 'מחק',
+    remove: 'הסר',
     deleting: 'מוחק...',
     confirm: 'אשר',
     back: 'חזרה',
@@ -134,6 +135,8 @@ export const he = {
     logout: 'התנתק',
     overview: 'סקירה כללית',
     events: 'אירועים',
+    featured: 'אירועים נבחרים',
+    categoryCovers: 'תמונות קטגוריות',
     externalUsers: 'משתמשים חיצוניים',
     listings: 'מודעות',
     disputes: 'סכסוכים',
@@ -430,6 +433,7 @@ export const he = {
 
   home: {
     heroLine1: 'כרטיסים בראש שקט',
+    categoriesTitle: 'עיון לפי קטגוריה',
     flowTitle: 'איך זה עובד',
     flowSteps: [
       'המוכר מפרסם כרטיס',
@@ -805,6 +809,38 @@ export const he = {
       cityPlaceholder: 'עיר',
       requiredError: 'יש למלא את כל שדות החובה',
       deleteConfirm: 'מחק?',
+      imageLabel: 'תמונת האירוע',
+      imageUpload: 'העלאת תמונה',
+      imageError: 'העלאת התמונה נכשלה',
+    },
+
+    featured: {
+      title: 'אירועים נבחרים',
+      subtitle: 'בחרו עד 5 אירועים להצגה בדף הבית. רק אירועים עם תמונה יופיעו.',
+      selectedTitle: 'בדף הבית',
+      selectedCount: '{n} / 5 נבחרו',
+      availableTitle: 'כל האירועים',
+      searchPlaceholder: 'חיפוש אירועים...',
+      add: 'הוסף',
+      moveUp: 'הזז למעלה',
+      moveDown: 'הזז למטה',
+      remove: 'הסר',
+      maxReached: 'אפשר להציג עד 5 אירועים',
+      noImageHint: 'אין תמונה — העלו תמונה בעמוד האירוע כדי שיופיע',
+      empty: 'לא נבחרו אירועים עדיין',
+      emptyAvailable: 'לא נמצאו אירועים',
+      saved: 'נשמר ✓',
+      saveError: 'השמירה נכשלה',
+    },
+
+    categoryCovers: {
+      title: 'תמונות קטגוריות',
+      subtitle: 'בחרו את האירוע שהתמונה שלו תייצג כל קטגוריה בדף הבית. רק אירועים עם תמונה יוצגו.',
+      chooseEvent: 'בחרו אירוע',
+      none: 'ללא תמונה',
+      noImageHint: 'לאירוע הזה אין תמונה עדיין',
+      saved: 'נשמר ✓',
+      saveError: 'השמירה נכשלה',
     },
 
     listings: {

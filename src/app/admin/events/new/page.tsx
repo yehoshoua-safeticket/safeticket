@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Save } from 'lucide-react';
+import { ArrowRight, Save, Upload, X, Loader2 } from 'lucide-react';
 import { useLocale } from '@/i18n/LocaleProvider';
 import type { EventCategory } from '@/types/database';
 
@@ -15,8 +15,26 @@ export default function NewEventPage() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [category, setCategory] = useState<EventCategory>('concert');
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  async function handleImageUpload(file: File) {
+    setUploadingImage(true);
+    setError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/admin/event-image', { method: 'POST', body: fd });
+    setUploadingImage(false);
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      setError(d.error || t.admin.eventForm.imageError);
+      return;
+    }
+    const { url } = await res.json();
+    setImageUrl(url);
+  }
 
   const CATEGORY_OPTIONS: { value: EventCategory; label: string }[] = [
     { value: 'concert', label: t.eventCategory.concert },
@@ -40,7 +58,7 @@ export default function NewEventPage() {
     const res = await fetch('/api/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: title.trim(), venue: venue.trim(), city: city.trim(), event_date, category }),
+      body: JSON.stringify({ title: title.trim(), venue: venue.trim(), city: city.trim(), event_date, category, image_url: imageUrl || null }),
     });
     setSaving(false);
     if (!res.ok) {
@@ -154,6 +172,36 @@ export default function NewEventPage() {
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.admin.eventForm.imageLabel}</label>
+            {imageUrl ? (
+              <div className="relative inline-block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imageUrl} alt="" className="h-32 w-full rounded-lg border border-[var(--card-border)] object-cover sm:w-64" />
+                <button
+                  type="button"
+                  onClick={() => setImageUrl('')}
+                  className="absolute end-2 top-2 rounded-full bg-black/60 p-1 text-white transition hover:bg-black/80"
+                  aria-label={t.common.remove}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-6 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]">
+                {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                <span>{uploadingImage ? t.common.loading : t.admin.eventForm.imageUpload}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={uploadingImage}
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }}
+                />
+              </label>
+            )}
           </div>
         </div>
       </div>

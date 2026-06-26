@@ -19,13 +19,18 @@ export default function TicketsPage() {
   const [allEvents, setAllEvents] = useState<EventWithListings[]>([]);
   const [filters, setFilters] = useState<FilterState>({ search: '', city: '', category: '', minPrice: '', maxPrice: '' });
   const [initialSearch, setInitialSearch] = useState('');
+  const [initialCategory, setInitialCategory] = useState('');
 
-  // Seed search from the hero's ?q= (read from the URL without a Suspense boundary).
+  // Seed filters from the URL (?q= from search, ?category= from the homepage tiles).
+  // Read directly to avoid needing a Suspense boundary.
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get('q') ?? '';
-    if (q) {
-      setInitialSearch(q);
-      setFilters((prev) => ({ ...prev, search: q }));
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q') ?? '';
+    const category = params.get('category') ?? '';
+    if (q) setInitialSearch(q);
+    if (category) setInitialCategory(category);
+    if (q || category) {
+      setFilters((prev) => ({ ...prev, ...(q ? { search: q } : {}), ...(category ? { category } : {}) }));
     }
   }, []);
 
@@ -83,7 +88,7 @@ export default function TicketsPage() {
         </div>
       </FadeIn>
       <FadeIn delay={0.1}>
-        <FilterBar onFilter={setFilters} initialSearch={initialSearch} />
+        <FilterBar onFilter={setFilters} initialSearch={initialSearch} initialCategory={initialCategory} />
         <div className="mt-5 text-sm text-[var(--muted)]">{t.tickets.count.replace('{n}', String(filteredEvents.length))}</div>
       </FadeIn>
       {filteredEvents.length > 0 ? (

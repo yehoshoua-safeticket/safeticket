@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { title, venue, city, event_date, category } = body;
+  const { title, venue, city, event_date, category, image_url } = body;
 
   if (!title || !venue || !city || !event_date || !category) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
 
   const validCategories = ['concert', 'sports', 'theater', 'festival', 'conference', 'other'];
   const safeCategory = validCategories.includes(category) ? category : 'other';
+  const safeImageUrl = typeof image_url === 'string' && image_url.trim() ? image_url.trim() : null;
 
   // The events table has RLS enabled with no INSERT policy, so the user-session
   // client cannot insert. Sellers are allowed to create events as part of the
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   const { data, error } = await admin
     .from('events')
-    .insert({ title, venue, city, event_date, category: safeCategory })
+    .insert({ title, venue, city, event_date, category: safeCategory, image_url: safeImageUrl })
     .select()
     .single();
 

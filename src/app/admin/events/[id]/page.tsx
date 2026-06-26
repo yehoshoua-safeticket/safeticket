@@ -3,7 +3,7 @@
 import { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
-import { ArrowRight, Save, Trash2 } from 'lucide-react';
+import { ArrowRight, Save, Trash2, Upload, X, Loader2 } from 'lucide-react';
 import { useLocale } from '@/i18n/LocaleProvider';
 import type { Event, EventCategory } from '@/types/database';
 
@@ -19,11 +19,29 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [category, setCategory] = useState<EventCategory>('concert');
+  const [imageUrl, setImageUrl] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
+
+  async function handleImageUpload(file: File) {
+    setUploadingImage(true);
+    setError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/admin/event-image', { method: 'POST', body: fd });
+    setUploadingImage(false);
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      setError(d.error || t.admin.eventForm.imageError);
+      return;
+    }
+    const { url } = await res.json();
+    setImageUrl(url);
+  }
 
   const CATEGORY_OPTIONS: { value: EventCategory; label: string }[] = [
     { value: 'concert', label: t.eventCategory.concert },
@@ -48,6 +66,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
         setDate(dt.toISOString().slice(0, 10));
         setTime(dt.toISOString().slice(11, 16));
         setCategory(ev.category);
+        setImageUrl(ev.image_url || '');
       }
       setLoading(false);
     }
@@ -62,17 +81,30 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
     setSaving(true);
     setError('');
     setSaved(false);
-    const supabase = createClient();
     const event_date = time ? `${date}T${time}:00` : `${date}T00:00:00`;
-    const { error: err } = await supabase.from('events').update({
-      title: title.trim(),
-      venue: venue.trim(),
-      city: city.trim(),
-      event_date,
-      category,
-    }).eq('id', id);
+    // Route through the service-role PATCH — the events table has no UPDATE RLS
+    // policy, so a session-key client update would not persist.
+    const res = await fetch('/api/admin/events', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventId: id,
+        fields: {
+          title: title.trim(),
+          venue: venue.trim(),
+          city: city.trim(),
+          event_date,
+          category,
+          image_url: imageUrl || null,
+        },
+      }),
+    });
     setSaving(false);
-    if (err) { setError(err.message); return; }
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      setError(d.error || t.admin.eventForm.requiredError);
+      return;
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -224,6 +256,36 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                   <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.admin.eventForm.imageLabel}</label>
+              {imageUrl ? (
+                <div className="relative inline-block">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={imageUrl} alt="" className="h-32 w-full rounded-lg border border-[var(--card-border)] object-cover sm:w-64" />
+                  <button
+                    type="button"
+                    onClick={() => setImageUrl('')}
+                    className="absolute end-2 top-2 rounded-full bg-black/60 p-1 text-white transition hover:bg-black/80"
+                    aria-label={t.common.remove}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-6 text-sm text-[var(--muted)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]">
+                  {uploadingImage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  <span>{uploadingImage ? t.common.loading : t.admin.eventForm.imageUpload}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploadingImage}
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f); }}
+                  />
+                </label>
+              )}
             </div>
 
             <div className="sm:col-span-2">

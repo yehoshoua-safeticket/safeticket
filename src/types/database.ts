@@ -32,6 +32,22 @@ export interface Event {
   created_at: string;
 }
 
+// Homepage curation (add-homepage-curation.sql). Both degrade gracefully:
+// a missing table just yields an empty result, so the homepage hides the section.
+export interface FeaturedEvent {
+  event_id: string;
+  position: number;
+  created_at: string;
+  event?: Event; // joined in the admin GET
+}
+
+export interface CategoryCover {
+  category: EventCategory;
+  event_id: string;
+  updated_at: string;
+  event?: Event; // joined in the admin GET
+}
+
 export interface Listing {
   id: string;
   seller_id: string;

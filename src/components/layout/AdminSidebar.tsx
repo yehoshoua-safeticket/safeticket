@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, CalendarDays, Tag, AlertTriangle, MessageCircle, ClipboardList, UserCog, ShieldCheck, Ticket, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarDays, Tag, AlertTriangle, MessageCircle, ClipboardList, UserCog, ShieldCheck, Ticket, Star, Image as ImageIcon, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useLocale } from '@/i18n/LocaleProvider';
 import LocaleSwitcher from '@/components/ui/LocaleSwitcher';
@@ -15,6 +15,8 @@ export default function AdminSidebar() {
   const navItems = [
     { href: '/admin', label: t.sidebar.overview, icon: LayoutDashboard },
     { href: '/admin/events', label: t.sidebar.events, icon: CalendarDays },
+    { href: '/admin/featured', label: t.sidebar.featured, icon: Star },
+    { href: '/admin/category_covers', label: t.sidebar.categoryCovers, icon: ImageIcon },
     { href: '/admin/external_users', label: t.sidebar.externalUsers, icon: Users },
     { href: '/admin/verifications', label: t.sidebar.verifications, icon: ShieldCheck },
     { href: '/admin/listings', label: t.sidebar.listings, icon: Tag },

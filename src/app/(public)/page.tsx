@@ -1,62 +1,50 @@
 'use client';
 
-import { motion, useInView } from 'motion/react';
+import { motion } from 'motion/react';
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
-  Search, ChevronRight, ChevronLeft,
+  ChevronRight, ChevronLeft,
   Tag, CreditCard, Lock, DoorOpen, Wallet,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useLocale } from '@/i18n/LocaleProvider';
 import type { Event, EventCategory } from '@/types/database';
 
-type EventWithListings = Event & { listingCount: number; lowestPrice: number };
+type EventWithListings = Event & { lowestPrice: number };
+type CategoryTile = { category: EventCategory; image_url: string };
 
-const PHOTO: Record<string, string> = {
-  concert:    'photo-1470229722913-7c0e2dbbafd3',
-  sports:     'photo-1459865264687-595d652de67e',
-  theater:    'photo-1516450360452-9312f5e86fc7',
-  festival:   'photo-1533174072545-7a4b6ad7a6c3',
-  conference: 'photo-1540575467063-178a50c2df87',
-  other:      'photo-1524368535928-5b5e00ddc76b',
-};
+const CATEGORY_ORDER: EventCategory[] = ['concert', 'sports', 'theater', 'festival', 'conference', 'other'];
 
 const FLOW_ICONS = [Tag, CreditCard, Lock, DoorOpen, Wallet];
 
 const FLOW_SCHEME = {
-  activeIcon: '#ffffff', activeBorder: '#ffffff', activeBg: 'rgba(26,85,227,0.45)',
-  activeGlow: '0 0 16px rgba(255,255,255,0.95), 0 0 36px rgba(255,255,255,0.7), 0 0 60px rgba(120,180,255,0.55)',
-  pulse: 'bg-white/70',
-  doneIcon: '#5599ff', doneBorder: 'rgba(85,153,255,0.6)', doneBg: 'rgba(26,85,227,0.18)', connector: '#5599ff',
+  activeIcon: '#ffffff',
+  doneIcon: '#5599ff',
 };
 
 export default function Home() {
   const { t, locale } = useLocale();
-  const router = useRouter();
   const dateLocale = locale === 'he' ? 'he-IL' : 'en-US';
 
-  const [query, setQuery]   = useState('');
-  const [events, setEvents] = useState<EventWithListings[]>([]);
-  const [index, setIndex]   = useState(0);
+  const [featured, setFeatured] = useState<EventWithListings[]>([]);
+  const [categories, setCategories] = useState<CategoryTile[]>([]);
+  const [index, setIndex] = useState(0);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const VISIBLE = 4;
 
   const [flowStep, setFlowStep] = useState(0);
   const flowRef = useRef<HTMLDivElement>(null);
-  const flowInView = useInView(flowRef, { once: false, margin: '-120px' });
 
-  // Auto-advance the "how it works" flow while it is on screen
+  // Auto-advance the "how it works" flow on an interval.
   useEffect(() => {
-    if (!flowInView) return;
     const id = setInterval(() => setFlowStep((s) => (s + 1) % 6), 1500);
     return () => clearInterval(id);
-  }, [flowInView]);
+  }, []);
 
   function scrollCarousel(dir: 'prev' | 'next') {
-    const maxIndex = Math.max(0, events.length - VISIBLE);
+    const maxIndex = Math.max(0, featured.length - VISIBLE);
     setIndex((prev) => {
       if (dir === 'next') return prev >= maxIndex ? 0 : prev + 1;
       return prev <= 0 ? maxIndex : prev - 1;
@@ -66,52 +54,65 @@ export default function Home() {
   // Apply the index to the track — RTL-safe (scrollLeft is negative in RTL)
   useEffect(() => {
     const el = carouselRef.current;
-    if (!el || !events.length) return;
-    const stride = el.scrollWidth / events.length; // one card + gap
+    if (!el || !featured.length) return;
+    const stride = el.scrollWidth / featured.length; // one card + gap
     const isRTL = getComputedStyle(el).direction === 'rtl';
     const target = index * stride;
     el.scrollTo({ left: isRTL ? -target : target, behavior: 'smooth' });
-  }, [index, events]);
+  }, [index, featured]);
 
-  // Auto-scroll every 3.5 s
+  // Auto-scroll every 3.5 s (desktop carousel)
   useEffect(() => {
-    if (!events.length) return;
+    if (featured.length <= VISIBLE) return;
     const id = setInterval(() => scrollCarousel('next'), 3500);
     return () => clearInterval(id);
-  }, [events]);
-
-  function submitSearch(e: React.FormEvent) {
-    e.preventDefault();
-    router.push(query.trim() ? `/tickets?q=${encodeURIComponent(query.trim())}` : '/tickets');
-  }
+  }, [featured]);
 
   useEffect(() => {
     const supabase = createClient();
     Promise.all([
-      supabase.from('events').select('*').order('event_date', { ascending: true }).limit(10),
+      // Curated homepage data. A missing table just yields an empty result
+      // (PostgREST 404 → error, data null), so each section hides cleanly.
+      supabase.from('featured_events').select('event_id, position, event:events(*)').order('position', { ascending: true }),
+      supabase.from('category_covers').select('category, event:events(*)'),
       supabase.from('listings').select('event_id, asking_price').eq('status', 'active'),
-    ]).then(([evR, liR]) => {
+    ]).then(([featR, covR, liR]) => {
+      // Lowest active price per event.
       const prices = new Map<string, number[]>();
       for (const l of liR.data || []) {
         if (!prices.has(l.event_id)) prices.set(l.event_id, []);
         prices.get(l.event_id)!.push(l.asking_price);
       }
-      const enriched = (evR.data || []).map((e) => {
-        const p = prices.get(e.id) || [];
-        return { ...e, listingCount: p.length, lowestPrice: p.length ? Math.min(...p) : 0 };
-      });
-      setEvents(enriched as EventWithListings[]);
+
+      // Featured: only events that actually have an image (hide-until-set).
+      type FeatRow = { event: Event | null };
+      const feat = ((featR.data as FeatRow[] | null) || [])
+        .map((row) => row.event)
+        .filter((e): e is Event => !!e && !!e.image_url)
+        .slice(0, 5)
+        .map((e) => {
+          const p = prices.get(e.id) || [];
+          return { ...e, lowestPrice: p.length ? Math.min(...p) : 0 } as EventWithListings;
+        });
+      setFeatured(feat);
+
+      // Category tiles: one per category that has a cover event WITH an image.
+      type CovRow = { category: EventCategory; event: Event | null };
+      const coverByCat = new Map<EventCategory, string>();
+      for (const row of (covR.data as CovRow[] | null) || []) {
+        if (row.event?.image_url) coverByCat.set(row.category, row.event.image_url);
+      }
+      const tiles = CATEGORY_ORDER
+        .filter((c) => coverByCat.has(c))
+        .map((c) => ({ category: c, image_url: coverByCat.get(c)! }));
+      setCategories(tiles);
     });
   }, []);
 
-  function photoUrl(cat: EventCategory) {
-    return `https://images.unsplash.com/${PHOTO[cat] ?? PHOTO.other}?w=700&q=75&auto=format`;
-  }
-
   return (
     <>
-      {/* ── HERO ── */}
-      <section className="relative flex min-h-[92vh] flex-col items-center justify-center px-6 pb-20 pt-8 text-center">
+      {/* ── HERO (only — events sit below the fold) ── */}
+      <section className="relative flex min-h-[88vh] flex-col items-center justify-center px-6 pb-16 pt-8 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.22 }}
@@ -121,8 +122,6 @@ export default function Home() {
           {t.home.heroLine1}
         </motion.h1>
 
-
-
         <motion.p
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.38 }}
@@ -130,44 +129,27 @@ export default function Home() {
         >
           {t.home.whySafeSubtitle}
         </motion.p>
+      </section>
 
-        {/* Search bar */}
-        <motion.form
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, delay: 0.5 }}
-          onSubmit={submitSearch}
-          className="mt-10 flex w-full max-w-2xl items-center gap-2 rounded-2xl border border-white/20 bg-white/12 p-2 shadow-2xl shadow-black/40 backdrop-blur-xl"
-        >
-          <Search className="ms-3 h-5 w-5 shrink-0 text-white/40" />
-          <input
-            type="text"
-            placeholder={t.filterBar.searchPlaceholder}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent px-2 py-2.5 text-base text-white placeholder-white/35 focus:outline-none"
-          />
-          <button type="submit" className="rounded-xl bg-[#1a55e3] px-6 py-3 text-sm font-bold text-white shadow-md shadow-[#1a55e3]/40 transition hover:bg-[#1548cc]">
-            {t.fieldSearch.search}
-          </button>
-        </motion.form>
-
-        {/* ── FEATURED EVENTS ── */}
-        {events.length > 0 && (
-          <div className="mt-12 w-full sm:mt-16 md:mt-24 md:px-14">
-
-            {/* Mobile: vertical stack of full-width cards (no carousel) */}
+      {/* ── FEATURED EVENTS (only rendered when there are image-backed featured events) ── */}
+      {featured.length > 0 && (
+        <section className="px-6 pb-8 pt-4 sm:pb-12 md:px-14">
+          <div className="mx-auto max-w-5xl">
+            {/* Mobile: vertical stack of full-width cards */}
             <div className="mx-auto flex max-w-md flex-col gap-3 md:hidden">
-              {events.slice(0, 5).map((ev, i) => (
+              {featured.map((ev, i) => (
                 <motion.div
                   key={ev.id}
                   initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.07 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
                   className="overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md"
                 >
                   <Link href={`/tickets/${ev.id}`} className="flex items-stretch">
                     <div className="relative h-auto w-28 shrink-0 overflow-hidden">
-                      <div className="cover-photo" style={{ backgroundImage: `url(${photoUrl(ev.category)})` }} />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover" />
                       <div className="cover-scrim" />
                     </div>
                     <div className="flex min-w-0 flex-1 flex-col justify-center p-3.5">
@@ -190,65 +172,100 @@ export default function Home() {
 
             {/* Desktop: 4-up carousel with chevrons */}
             <div className="relative mx-auto hidden max-w-5xl md:block">
-            {/* Track — 4 cards visible */}
-            <div
-              ref={carouselRef}
-              className="flex overflow-x-hidden"
-              style={{ gap: '1rem' }}
-            >
-              {events.map((ev, i) => (
+              <div ref={carouselRef} className="flex overflow-x-hidden" style={{ gap: '1rem' }}>
+                {featured.map((ev, i) => (
+                  <motion.div
+                    key={ev.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.07 }}
+                    className="flex-none overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md"
+                    style={{ width: 'calc((100% - 3rem) / 4)', flexShrink: 0, flexGrow: 0 }}
+                  >
+                    <Link href={`/tickets/${ev.id}`}>
+                      <div className="relative h-28 overflow-hidden">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                        <div className="cover-scrim" />
+                        <span className="absolute bottom-2 start-2 rounded-full bg-[#1a55e3] px-1.5 py-0.5 text-[0.58rem] font-bold uppercase tracking-wide text-white">
+                          {t.eventCategory[ev.category] ?? ev.category}
+                        </span>
+                      </div>
+                      <div className="p-2.5">
+                        <p className="truncate text-xs font-semibold text-white">{ev.title}</p>
+                        <p className="mt-0.5 text-[0.65rem] text-white/50">
+                          {new Date(ev.event_date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
+                          {ev.city && ` · ${ev.city}`}
+                        </p>
+                        {ev.lowestPrice > 0 && (
+                          <p className="mt-1 text-xs font-bold text-[#5599ff]">₪{ev.lowestPrice}</p>
+                        )}
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              {featured.length > VISIBLE && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => scrollCarousel('prev')}
+                    className="absolute -start-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-white/20"
+                    aria-label="Previous"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => scrollCarousel('next')}
+                    className="absolute -end-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-white/20"
+                    aria-label="Next"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── CATEGORIES (only rendered when at least one category has an image cover) ── */}
+      {categories.length > 0 && (
+        <section className="px-6 py-8 sm:py-10">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="mb-4 text-lg font-bold text-white sm:text-xl" style={{ fontFamily: 'var(--font-display)' }}>
+              {t.home.categoriesTitle}
+            </h2>
+            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {categories.map((tile, i) => (
                 <motion.div
-                  key={ev.id}
+                  key={tile.category}
                   initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.07 }}
-                  className="flex-none overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md"
-                  style={{ width: 'calc((100% - 3rem) / 4)', flexShrink: 0, flexGrow: 0 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                  className="snap-start"
                 >
-                  <Link href={`/tickets/${ev.id}`}>
-                    <div className="relative h-24 overflow-hidden">
-                      <div className="cover-photo" style={{ backgroundImage: `url(${photoUrl(ev.category)})` }} />
-                      <div className="cover-scrim" />
-                      <span className="absolute bottom-2 start-2 rounded-full bg-[#1a55e3] px-1.5 py-0.5 text-[0.58rem] font-bold uppercase tracking-wide text-white">
-                        {t.eventCategory[ev.category] ?? ev.category}
-                      </span>
-                    </div>
-                    <div className="p-2.5">
-                      <p className="truncate text-xs font-semibold text-white">{ev.title}</p>
-                      <p className="mt-0.5 text-[0.65rem] text-white/50">
-                        {new Date(ev.event_date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
-                        {ev.city && ` · ${ev.city}`}
-                      </p>
-                      {ev.lowestPrice > 0 && (
-                        <p className="mt-1 text-xs font-bold text-[#5599ff]">₪{ev.lowestPrice}</p>
-                      )}
-                    </div>
+                  <Link
+                    href={`/tickets?category=${tile.category}`}
+                    className="group relative block h-36 w-44 shrink-0 overflow-hidden rounded-2xl border border-white/15 sm:h-44 sm:w-60"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <span className="absolute bottom-3 start-3 text-base font-bold text-white sm:text-lg" style={{ fontFamily: 'var(--font-display)' }}>
+                      {t.eventCategory[tile.category] ?? tile.category}
+                    </span>
                   </Link>
                 </motion.div>
               ))}
             </div>
-
-            {/* Chevron buttons — sit outside the cards */}
-            <button
-              type="button"
-              onClick={() => scrollCarousel('prev')}
-              className="absolute -start-12 top-1/2 z-20 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-white/20"
-              aria-label="Previous"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollCarousel('next')}
-              className="absolute -end-12 top-1/2 z-20 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-white/20"
-              aria-label="Next"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
           </div>
-        </div>
+        </section>
       )}
-      </section>
 
       {/* ── HOW IT WORKS — simple 5-step flow ── */}
       <div ref={flowRef} className="py-12 sm:py-20">
@@ -324,7 +341,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
     </>
   );
 }

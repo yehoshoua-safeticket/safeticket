@@ -7,6 +7,7 @@ import { useLocale } from '@/i18n/LocaleProvider';
 interface FilterBarProps {
   onFilter: (filters: FilterState) => void;
   initialSearch?: string;
+  initialCategory?: string;
 }
 
 export interface FilterState {
@@ -22,7 +23,7 @@ export interface FilterState {
 // so filtering keeps matching the stored event.city.
 const CANONICAL_CITIES = ['', 'תל אביב', 'ירושלים', 'חיפה', 'הרצליה', 'אילת'];
 
-export default function FilterBar({ onFilter, initialSearch = '' }: FilterBarProps) {
+export default function FilterBar({ onFilter, initialSearch = '', initialCategory = '' }: FilterBarProps) {
   const { t } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({ search: '', city: '', category: '', minPrice: '', maxPrice: '' });
@@ -31,6 +32,15 @@ export default function FilterBar({ onFilter, initialSearch = '' }: FilterBarPro
   useEffect(() => {
     if (initialSearch) setFilters((prev) => ({ ...prev, search: initialSearch }));
   }, [initialSearch]);
+
+  // Seed the category from a parent-provided initial value (homepage tiles ?category=);
+  // open the filter panel so the active category is visible.
+  useEffect(() => {
+    if (initialCategory) {
+      setFilters((prev) => ({ ...prev, category: initialCategory }));
+      setIsOpen(true);
+    }
+  }, [initialCategory]);
 
   const categories = [
     { value: '', label: t.filterBar.categoryAll },
