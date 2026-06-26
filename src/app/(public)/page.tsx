@@ -274,19 +274,19 @@ export default function Home() {
             {t.home.flowTitle}
           </h2>
 
-          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:justify-center sm:gap-2">
+          <div className="mx-auto flex max-w-2xl flex-row flex-wrap items-start justify-center gap-x-0 gap-y-6 sm:gap-y-8">
             {FLOW_ICONS.map((Icon, i) => {
               const active = i === flowStep;
               const done = i < flowStep;
               const s = FLOW_SCHEME;
               return (
-                <div key={i} className="flex items-center justify-center gap-3 sm:flex-col sm:gap-0">
+                <div key={i} className="flex basis-1/3 flex-col items-center">
                   <motion.div
                     animate={{ scale: active ? 1.06 : 1, opacity: active || done ? 1 : 0.85 }}
                     transition={{ duration: 0.4 }}
-                    className="flex flex-col items-center gap-3 text-center sm:w-36"
+                    className="flex w-full flex-col items-center gap-3 text-center"
                   >
-                    <div className="relative flex h-20 w-20 items-center justify-center">
+                    <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
                       {/* Smoke halo */}
                       {active && (
                         <motion.span
@@ -301,7 +301,7 @@ export default function Home() {
                         />
                       )}
                       <Icon
-                        className="relative h-16 w-16 transition-colors duration-300"
+                        className="relative h-12 w-12 transition-colors duration-300 sm:h-16 sm:w-16"
                         strokeWidth={1}
                         style={{
                           color: active ? s.activeIcon : done ? s.doneIcon : 'rgba(255,255,255,0.95)',
@@ -331,7 +331,7 @@ export default function Home() {
                         </svg>
                       )}
                     </div>
-                    <p className="mt-3 max-w-[8rem] text-xs font-bold leading-snug text-white">
+                    <p className="mt-3 max-w-[6.5rem] px-1 text-[0.7rem] font-bold leading-snug text-white sm:max-w-[8rem] sm:text-xs">
                       {t.home.flowSteps[i]}
                     </p>
                   </motion.div>
