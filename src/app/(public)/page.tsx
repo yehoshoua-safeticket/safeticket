@@ -133,43 +133,42 @@ export default function Home() {
 
       {/* ── FEATURED EVENTS (only rendered when there are image-backed featured events) ── */}
       {featured.length > 0 && (
-        <section className="px-6 pb-8 pt-4 sm:pb-12 md:px-14">
-          <div className="mx-auto max-w-5xl">
-            {/* Mobile: vertical stack of full-width cards */}
-            <div className="mx-auto flex max-w-md flex-col gap-3 md:hidden">
-              {featured.map((ev, i) => (
-                <motion.div
-                  key={ev.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.4, delay: i * 0.06 }}
-                  className="overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md"
-                >
-                  <Link href={`/tickets/${ev.id}`} className="flex items-stretch">
-                    <div className="relative h-auto w-28 shrink-0 overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                      <div className="cover-scrim" />
-                    </div>
-                    <div className="flex min-w-0 flex-1 flex-col justify-center p-3.5">
-                      <span className="mb-1 inline-block w-fit rounded-full bg-[#1a55e3] px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-white">
-                        {t.eventCategory[ev.category] ?? ev.category}
-                      </span>
-                      <p className="truncate text-sm font-semibold text-white">{ev.title}</p>
-                      <p className="mt-0.5 text-xs text-white/50">
-                        {new Date(ev.event_date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
-                        {ev.city && ` · ${ev.city}`}
+        <section className="pb-8 pt-4 sm:pb-12 md:px-14">
+          {/* Mobile: full-bleed banner cards, edge-to-edge, stacked */}
+          <div className="flex flex-col md:hidden">
+            {featured.map((ev, i) => (
+              <motion.div
+                key={ev.id}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.4, delay: i * 0.06 }}
+              >
+                <Link href={`/tickets/${ev.id}`} className="relative block h-56 w-full overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+                  <div className="absolute inset-x-0 bottom-0 flex flex-col items-start gap-1.5 p-5">
+                    <span className="inline-block rounded-full bg-[#1a55e3] px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                      {t.eventCategory[ev.category] ?? ev.category}
+                    </span>
+                    <p className="text-2xl font-extrabold leading-tight text-white" style={{ fontFamily: 'var(--font-display)' }}>{ev.title}</p>
+                    <p className="text-sm text-white/70">
+                      {new Date(ev.event_date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long' })}
+                      {ev.city && ` · ${ev.city}`}
+                    </p>
+                    {ev.lowestPrice > 0 && (
+                      <p className="mt-0.5 text-base font-bold text-white">
+                        {t.home.fromPrice.replace('{price}', String(ev.lowestPrice))}
                       </p>
-                      {ev.lowestPrice > 0 && (
-                        <p className="mt-1 text-sm font-bold text-[#5599ff]">₪{ev.lowestPrice}</p>
-                      )}
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                    )}
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
 
+          <div className="mx-auto max-w-5xl">
             {/* Desktop: 4-up carousel with chevrons */}
             <div className="relative mx-auto hidden max-w-5xl md:block">
               <div ref={carouselRef} className="flex overflow-x-hidden" style={{ gap: '1rem' }}>
@@ -234,12 +233,36 @@ export default function Home() {
 
       {/* ── CATEGORIES (only rendered when at least one category has an image cover) ── */}
       {categories.length > 0 && (
-        <section className="px-6 py-8 sm:py-10">
+        <section className="py-8 sm:py-10 md:px-6">
           <div className="mx-auto max-w-5xl">
-            <h2 className="mb-4 text-lg font-bold text-white sm:text-xl" style={{ fontFamily: 'var(--font-display)' }}>
+            <h2 className="mb-4 px-6 text-lg font-bold text-white sm:text-xl md:px-0" style={{ fontFamily: 'var(--font-display)' }}>
               {t.home.categoriesTitle}
             </h2>
-            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+            {/* Mobile: full-bleed stacked banners (edge-to-edge, square corners, tall) */}
+            <div className="flex flex-col md:hidden">
+              {categories.map((tile, i) => (
+                <motion.div
+                  key={tile.category}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                >
+                  <Link href={`/tickets?category=${tile.category}`} className="relative block h-64 w-full overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                    <span className="absolute bottom-4 start-5 text-2xl font-extrabold text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                      {t.eventCategory[tile.category] ?? tile.category}
+                    </span>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Desktop: horizontal scroll row of tiles */}
+            <div className="hidden snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {categories.map((tile, i) => (
                 <motion.div
                   key={tile.category}
@@ -251,12 +274,12 @@ export default function Home() {
                 >
                   <Link
                     href={`/tickets?category=${tile.category}`}
-                    className="group relative block h-36 w-44 shrink-0 overflow-hidden rounded-2xl border border-white/15 sm:h-44 sm:w-60"
+                    className="group relative block h-44 w-60 shrink-0 overflow-hidden rounded-2xl border border-white/15"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <span className="absolute bottom-3 start-3 text-base font-bold text-white sm:text-lg" style={{ fontFamily: 'var(--font-display)' }}>
+                    <span className="absolute bottom-3 start-3 text-lg font-bold text-white" style={{ fontFamily: 'var(--font-display)' }}>
                       {t.eventCategory[tile.category] ?? tile.category}
                     </span>
                   </Link>

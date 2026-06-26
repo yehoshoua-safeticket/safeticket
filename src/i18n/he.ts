@@ -434,6 +434,7 @@ export const he = {
   home: {
     heroLine1: 'כרטיסים בראש שקט',
     categoriesTitle: 'עיון לפי קטגוריה',
+    fromPrice: 'החל מ-₪{price}',
     flowTitle: 'איך זה עובד',
     flowSteps: [
       'המוכר מפרסם כרטיס',
