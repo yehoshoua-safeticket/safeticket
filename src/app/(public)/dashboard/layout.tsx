@@ -53,9 +53,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div style={{ position: 'relative', background: '#09152f', minHeight: '100vh' }}>
-      {/* Fixed stage background */}
-      <div style={{ position: 'fixed', inset: 0, zIndex: 0, backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', pointerEvents: 'none' }} />
-      <div style={{ position: 'fixed', inset: 0, zIndex: 1, pointerEvents: 'none', background: 'linear-gradient(140deg, rgba(9,21,47,0.88) 0%, rgba(26,85,227,0.38) 45%, rgba(9,21,47,0.92) 100%)' }} />
       <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', ...darkVars }}>
         <div className="no-anim flex min-h-screen flex-col lg:flex-row-reverse">
           <AccountSidebar

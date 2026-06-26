@@ -27,12 +27,29 @@ export default function Home() {
   const { t, locale } = useLocale();
   const dateLocale = locale === 'he' ? 'he-IL' : 'en-US';
 
+  // Carousel arrow glyphs: in RTL (Hebrew) the "previous" arrow points right and
+  // "next" points left, so swap which chevron each control renders.
+  const PrevIcon = locale === 'he' ? ChevronRight : ChevronLeft;
+  const NextIcon = locale === 'he' ? ChevronLeft : ChevronRight;
+
   const [featured, setFeatured] = useState<EventWithListings[]>([]);
   const [categories, setCategories] = useState<CategoryTile[]>([]);
   const [index, setIndex] = useState(0);
 
   const carouselRef = useRef<HTMLDivElement>(null);
+  const catRef = useRef<HTMLDivElement>(null);
   const VISIBLE = 4;
+
+  // Category carousel: scroll one full card at a time (RTL-aware).
+  function scrollCategories(dir: 'prev' | 'next') {
+    const el = catRef.current;
+    if (!el) return;
+    const card = el.querySelector('[data-cat-card]') as HTMLElement | null;
+    const step = card ? card.offsetWidth + 12 : el.clientWidth; // card width + gap-3
+    const isRTL = getComputedStyle(el).direction === 'rtl';
+    const sign = (dir === 'next' ? 1 : -1) * (isRTL ? -1 : 1);
+    el.scrollBy({ left: sign * step, behavior: 'smooth' });
+  }
 
   const [flowStep, setFlowStep] = useState(0);
   const flowRef = useRef<HTMLDivElement>(null);
@@ -112,11 +129,24 @@ export default function Home() {
   return (
     <>
       {/* ── HERO (only — events sit below the fold) ── */}
-      <section className="relative flex min-h-[88vh] flex-col items-center justify-center px-6 pb-16 pt-8 text-center">
+      <section className="relative flex min-h-[88vh] flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-8 text-center">
+        {/* Stage wallpaper — scoped to the hero only */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
+        />
+        {/* Logo-blue colour-grade overlay */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0"
+          style={{ background: 'linear-gradient(140deg, rgba(9,21,47,0.85) 0%, rgba(26,85,227,0.42) 45%, rgba(9,21,47,0.88) 100%)' }}
+        />
+
         <motion.h1
           initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.22 }}
-          className="max-w-4xl text-[2.75rem] font-black text-white sm:text-6xl lg:text-[5.5rem]"
+          className="relative z-10 max-w-4xl text-[2.75rem] font-black text-white sm:text-6xl lg:text-[5.5rem]"
           style={{ fontFamily: 'var(--font-display)', lineHeight: 1.05, letterSpacing: '-0.03em' }}
         >
           {t.home.heroLine1}
@@ -125,7 +155,7 @@ export default function Home() {
         <motion.p
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.38 }}
-          className="mt-5 max-w-2xl text-lg leading-relaxed text-white/60 sm:mt-6 sm:text-2xl"
+          className="relative z-10 mt-5 max-w-2xl text-lg leading-relaxed text-white/60 sm:mt-6 sm:text-2xl"
         >
           {t.home.whySafeSubtitle}
         </motion.p>
@@ -214,7 +244,7 @@ export default function Home() {
                     className="absolute -start-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-white/20"
                     aria-label="Previous"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <PrevIcon className="h-5 w-5" />
                   </button>
                   <button
                     type="button"
@@ -222,7 +252,7 @@ export default function Home() {
                     className="absolute -end-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-white/20"
                     aria-label="Next"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <NextIcon className="h-5 w-5" />
                   </button>
                 </>
               )}
@@ -233,36 +263,64 @@ export default function Home() {
 
       {/* ── CATEGORIES (only rendered when at least one category has an image cover) ── */}
       {categories.length > 0 && (
-        <section className="py-8 sm:py-10 md:px-6">
+        <section className="px-5 py-8 sm:py-10 md:px-6">
           <div className="mx-auto max-w-5xl">
-            <h2 className="mb-4 px-6 text-lg font-bold text-white sm:text-xl md:px-0" style={{ fontFamily: 'var(--font-display)' }}>
+            <h2 className="mb-6 text-center text-2xl font-bold text-white sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
               {t.home.categoriesTitle}
             </h2>
 
-            {/* Mobile: full-bleed stacked banners (edge-to-edge, square corners, tall) */}
-            <div className="flex flex-col md:hidden">
-              {categories.map((tile, i) => (
-                <motion.div
-                  key={tile.category}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-40px' }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
-                >
-                  <Link href={`/tickets?category=${tile.category}`} className="relative block h-64 w-full overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-                    <span className="absolute bottom-4 start-5 text-2xl font-extrabold text-white" style={{ fontFamily: 'var(--font-display)' }}>
-                      {t.eventCategory[tile.category] ?? tile.category}
-                    </span>
-                  </Link>
-                </motion.div>
-              ))}
+            {/* Mobile: one-card-at-a-time carousel (native swipe + arrows) */}
+            <div className="relative md:hidden">
+              <div
+                ref={catRef}
+                className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {categories.map((tile, i) => (
+                  <motion.div
+                    key={tile.category}
+                    data-cat-card
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.4, delay: i * 0.05 }}
+                    className="w-full shrink-0 snap-center"
+                  >
+                    <Link href={`/tickets?category=${tile.category}`} className="group relative block h-56 w-full overflow-hidden rounded-2xl border border-white/15">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                      <span className="absolute bottom-4 start-4 text-2xl font-extrabold text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                        {t.eventCategory[tile.category] ?? tile.category}
+                      </span>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              {categories.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => scrollCategories('prev')}
+                    aria-label="Previous"
+                    className="absolute start-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition active:bg-white/20"
+                  >
+                    <PrevIcon className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => scrollCategories('next')}
+                    aria-label="Next"
+                    className="absolute end-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition active:bg-white/20"
+                  >
+                    <NextIcon className="h-5 w-5" />
+                  </button>
+                </>
+              )}
             </div>
 
-            {/* Desktop: horizontal scroll row of tiles */}
-            <div className="hidden snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {/* Desktop: horizontal scroll row of (larger) tiles */}
+            <div className="hidden snap-x snap-mandatory justify-center gap-4 overflow-x-auto pb-2 md:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {categories.map((tile, i) => (
                 <motion.div
                   key={tile.category}
@@ -274,12 +332,12 @@ export default function Home() {
                 >
                   <Link
                     href={`/tickets?category=${tile.category}`}
-                    className="group relative block h-44 w-60 shrink-0 overflow-hidden rounded-2xl border border-white/15"
+                    className="group relative block h-52 w-72 shrink-0 overflow-hidden rounded-2xl border border-white/15"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <span className="absolute bottom-3 start-3 text-lg font-bold text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                    <span className="absolute bottom-3 start-3 text-xl font-bold text-white" style={{ fontFamily: 'var(--font-display)' }}>
                       {t.eventCategory[tile.category] ?? tile.category}
                     </span>
                   </Link>

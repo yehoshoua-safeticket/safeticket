@@ -26,20 +26,12 @@ const darkVars: CSSProperties = {
   '--ring':              '#1a55e3',
 } as CSSProperties;
 
-// Overlay uses the exact logo blue (#1a55e3 = rgba(26,85,227))
-// so background and brand feel intrinsically connected.
-const OVERLAY = 'linear-gradient(140deg, rgba(9,21,47,0.85) 0%, rgba(26,85,227,0.42) 45%, rgba(9,21,47,0.88) 100%)';
-
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <div style={{ position: 'relative', background: '#09152f' }}>
 
-      {/* Fixed stage background */}
-      <div style={{ position: 'fixed', inset: 0, zIndex: 0, backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', pointerEvents: 'none' }} />
-      {/* Logo-blue colour-grade overlay */}
-      <div style={{ position: 'fixed', inset: 0, zIndex: 1, pointerEvents: 'none', background: OVERLAY }} />
-
-      {/* All public content */}
+      {/* All public content. The stage wallpaper is no longer a fixed full-page
+          layer — it now lives only inside the homepage hero section. */}
       <div className="site-anim flex min-h-screen flex-col" style={{ position: 'relative', zIndex: 2, ...darkVars }}>
         <Navbar />
         <SearchStrip />
