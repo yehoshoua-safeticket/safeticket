@@ -129,7 +129,7 @@ export default function Home() {
   return (
     <>
       {/* ── HERO (only — events sit below the fold) ── */}
-      <section className="relative flex min-h-[88vh] flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-8 text-center">
+      <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden px-6 pb-10 pt-4 text-center sm:min-h-[88vh] sm:pb-16 sm:pt-8">
         {/* Stage wallpaper — scoped to the hero only */}
         <div
           aria-hidden
@@ -155,7 +155,7 @@ export default function Home() {
         <motion.p
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.38 }}
-          className="relative z-10 mt-5 max-w-2xl text-lg leading-relaxed text-white/60 sm:mt-6 sm:text-2xl"
+          className="relative z-10 mt-4 max-w-2xl text-lg leading-relaxed text-white/60 sm:mt-6 sm:text-2xl"
         >
           {t.home.whySafeSubtitle}
         </motion.p>
