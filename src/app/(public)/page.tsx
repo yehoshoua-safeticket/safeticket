@@ -128,10 +128,8 @@ export default function Home() {
 
   return (
     <>
-      {/* ── HERO (only — events sit below the fold) ──
-          Pulled up under the sticky translucent navbar + search strip (~106px)
-          so the wallpaper fills behind them — no dark page-bg band shows. */}
-      <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden px-6 pb-10 pt-4 text-center sm:min-h-[88vh] sm:pb-16 sm:pt-8">
+      {/* ── HERO (only — events sit below the fold) ── */}
+      <section className="relative flex min-h-[34vh] flex-col items-center justify-center overflow-hidden px-6 pb-6 pt-2 text-center sm:min-h-[46vh] sm:pb-10 sm:pt-6">
         {/* Logo-blue colour-grade overlay — temporarily disabled */}
         {/* <div
           aria-hidden
