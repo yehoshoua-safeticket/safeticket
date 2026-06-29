@@ -122,6 +122,7 @@ export const en: Translations = {
     legal: 'Legal',
     terms: 'Terms of Service',
     privacy: 'Privacy Policy',
+    cookies: 'Cookie Policy',
     copyright: '© 2026 SafeTicket. All rights reserved.',
   },
 

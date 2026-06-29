@@ -120,6 +120,7 @@ export const he = {
     legal: 'משפטי',
     terms: 'תנאי שימוש',
     privacy: 'פרטיות',
+    cookies: 'מדיניות עוגיות',
     copyright: '© 2026 SafeTicket. כל הזכויות שמורות.',
   },
 
