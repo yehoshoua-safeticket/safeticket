@@ -18,19 +18,19 @@ export default function SearchStrip() {
   }
 
   return (
-    <div className="sticky top-14 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md">
+    <div className="sticky top-14 z-40 border-b border-black/10 bg-white/40 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-5 py-2 sm:px-8">
         <form
           onSubmit={submit}
-          className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3 py-1.5 transition focus-within:border-white/30"
+          className="flex items-center gap-2 rounded-lg border border-black/15 bg-white/30 px-3 py-1.5 transition focus-within:border-black/30"
         >
-          <Search className="h-4 w-4 shrink-0 text-white/40" />
+          <Search className="h-4 w-4 shrink-0 text-slate-500" />
           <input
             type="text"
             placeholder={t.filterBar.searchPlaceholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder-white/35 focus:outline-none"
+            className="min-w-0 flex-1 bg-transparent text-sm text-slate-900 placeholder-slate-500 focus:outline-none"
           />
           <button
             type="submit"

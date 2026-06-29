@@ -128,25 +128,27 @@ export default function Home() {
 
   return (
     <>
-      {/* ── HERO (only — events sit below the fold) ── */}
-      <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden px-6 pb-10 pt-4 text-center sm:min-h-[88vh] sm:pb-16 sm:pt-8">
+      {/* ── HERO (only — events sit below the fold) ──
+          Pulled up under the sticky translucent navbar + search strip (~106px)
+          so the wallpaper fills behind them — no dark page-bg band shows. */}
+      <section className="relative -mt-[106px] flex min-h-[70vh] flex-col items-center justify-center overflow-hidden px-6 pb-10 pt-[122px] text-center sm:min-h-[88vh] sm:pb-16 sm:pt-[130px]">
         {/* Stage wallpaper — scoped to the hero only */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
         />
-        {/* Logo-blue colour-grade overlay */}
-        <div
+        {/* Logo-blue colour-grade overlay — temporarily disabled */}
+        {/* <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-0"
           style={{ background: 'linear-gradient(140deg, rgba(9,21,47,0.85) 0%, rgba(26,85,227,0.42) 45%, rgba(9,21,47,0.88) 100%)' }}
-        />
+        /> */}
 
         <motion.h1
           initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.65, delay: 0.22 }}
-          className="relative z-10 max-w-4xl text-[2.75rem] font-black text-white sm:text-6xl lg:text-[5.5rem]"
+          className="relative z-10 max-w-4xl text-[2.75rem] font-black text-[#1a55e3] sm:text-6xl lg:text-[5.5rem]"
           style={{ fontFamily: 'var(--font-display)', lineHeight: 1.05, letterSpacing: '-0.03em' }}
         >
           {t.home.heroLine1}
@@ -155,7 +157,7 @@ export default function Home() {
         <motion.p
           initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.38 }}
-          className="relative z-10 mt-4 max-w-2xl text-lg leading-relaxed text-white/60 sm:mt-6 sm:text-2xl"
+          className="relative z-10 mt-4 max-w-2xl text-lg leading-relaxed text-[#1a55e3] sm:mt-6 sm:text-2xl"
         >
           {t.home.whySafeSubtitle}
         </motion.p>
@@ -163,7 +165,7 @@ export default function Home() {
 
       {/* ── FEATURED EVENTS (only rendered when there are image-backed featured events) ── */}
       {featured.length > 0 && (
-        <section className="pb-8 pt-4 sm:pb-12 md:px-14">
+        <section className="pb-8 sm:pb-12 md:px-14">
           {/* Mobile: full-bleed banner cards, edge-to-edge, stacked */}
           <div className="flex flex-col md:hidden">
             {featured.map((ev, i) => (
