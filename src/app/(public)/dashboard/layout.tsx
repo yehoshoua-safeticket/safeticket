@@ -2,31 +2,6 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase-server';
 import AccountSidebar from '@/components/layout/AccountSidebar';
 import type { UserRole, VerificationStatus } from '@/types/database';
-import type { CSSProperties } from 'react';
-
-const darkVars: CSSProperties = {
-  '--background':        '#09152f',
-  '--surface':           '#0d1d45',
-  '--surface-2':         '#121f3d',
-  '--card':              '#0d1d45',
-  '--card-border':       'rgba(255,255,255,0.08)',
-  '--card-border-soft':  'rgba(255,255,255,0.05)',
-  '--foreground':        '#ffffff',
-  '--ink':               '#ffffff',
-  '--muted':             'rgba(255,255,255,0.50)',
-  '--accent':            '#1a55e3',
-  '--accent-hover':      '#1548cc',
-  '--accent-text':       '#5599ff',
-  '--accent-soft':       'rgba(26,85,227,0.20)',
-  '--accent-2':          '#0d1d45',
-  '--accent-2-text':     '#5599ff',
-  '--input-bg':          '#121f3d',
-  '--input-border':      'rgba(255,255,255,0.15)',
-  '--ring':              '#1a55e3',
-  '--danger':            '#f87171',
-  '--success':           '#4ade80',
-  '--warning':           '#fbbf24',
-} as CSSProperties;
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -52,8 +27,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const verificationStatus = (profile?.verification_status ?? 'unverified') as VerificationStatus;
 
   return (
-    <div style={{ position: 'relative', background: '#09152f', minHeight: '100vh' }}>
-      <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', ...darkVars }}>
+    <div style={{ position: 'relative', background: '#ffffff', minHeight: '100vh' }}>
+      <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh' }}>
         <div className="no-anim flex min-h-screen flex-col lg:flex-row-reverse">
           <AccountSidebar
             role={role}

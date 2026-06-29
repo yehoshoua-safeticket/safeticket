@@ -19,7 +19,7 @@ const CATEGORY_ORDER: EventCategory[] = ['concert', 'sports', 'theater', 'festiv
 const FLOW_ICONS = [Tag, CreditCard, Lock, DoorOpen, Wallet];
 
 const FLOW_SCHEME = {
-  activeIcon: '#ffffff',
+  activeIcon: '#1a55e3',
   doneIcon: '#5599ff',
 };
 
@@ -131,13 +131,7 @@ export default function Home() {
       {/* ── HERO (only — events sit below the fold) ──
           Pulled up under the sticky translucent navbar + search strip (~106px)
           so the wallpaper fills behind them — no dark page-bg band shows. */}
-      <section className="relative -mt-[106px] flex min-h-[70vh] flex-col items-center justify-center overflow-hidden px-6 pb-10 pt-[122px] text-center sm:min-h-[88vh] sm:pb-16 sm:pt-[130px]">
-        {/* Stage wallpaper — scoped to the hero only */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
-        />
+      <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden px-6 pb-10 pt-4 text-center sm:min-h-[88vh] sm:pb-16 sm:pt-8">
         {/* Logo-blue colour-grade overlay — temporarily disabled */}
         {/* <div
           aria-hidden
@@ -167,7 +161,7 @@ export default function Home() {
       {featured.length > 0 && (
         <section className="pb-8 sm:pb-12 md:px-14">
           {/* Mobile: full-bleed banner cards, edge-to-edge, stacked */}
-          <div className="flex flex-col md:hidden">
+          <div className="flex flex-col gap-1.5 px-2 md:hidden">
             {featured.map((ev, i) => (
               <motion.div
                 key={ev.id}
@@ -176,7 +170,7 @@ export default function Home() {
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.4, delay: i * 0.06 }}
               >
-                <Link href={`/tickets/${ev.id}`} className="relative block h-56 w-full overflow-hidden">
+                <Link href={`/tickets/${ev.id}`} className="relative block h-56 w-full overflow-hidden rounded-lg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
@@ -211,7 +205,7 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: i * 0.07 }}
-                    className="flex-none overflow-hidden rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md"
+                    className="flex-none overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] backdrop-blur-md"
                     style={{ width: 'calc((100% - 3rem) / 4)', flexShrink: 0, flexGrow: 0 }}
                   >
                     <Link href={`/tickets/${ev.id}`}>
@@ -224,8 +218,8 @@ export default function Home() {
                         </span>
                       </div>
                       <div className="p-2.5">
-                        <p className="truncate text-xs font-semibold text-white">{ev.title}</p>
-                        <p className="mt-0.5 text-[0.65rem] text-white/50">
+                        <p className="truncate text-xs font-semibold text-[var(--foreground)]">{ev.title}</p>
+                        <p className="mt-0.5 text-[0.65rem] text-[var(--muted)]">
                           {new Date(ev.event_date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
                           {ev.city && ` · ${ev.city}`}
                         </p>
@@ -243,7 +237,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => scrollCarousel('prev')}
-                    className="absolute -start-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-white/20"
+                    className="absolute -start-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] backdrop-blur-md transition hover:bg-[var(--accent-soft)]"
                     aria-label="Previous"
                   >
                     <PrevIcon className="h-5 w-5" />
@@ -251,7 +245,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => scrollCarousel('next')}
-                    className="absolute -end-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-white/20"
+                    className="absolute -end-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] backdrop-blur-md transition hover:bg-[var(--accent-soft)]"
                     aria-label="Next"
                   >
                     <NextIcon className="h-5 w-5" />
@@ -267,7 +261,7 @@ export default function Home() {
       {categories.length > 0 && (
         <section className="px-5 py-8 sm:py-10 md:px-6">
           <div className="mx-auto max-w-5xl">
-            <h2 className="mb-6 text-center text-2xl font-bold text-white sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
+            <h2 className="mb-6 text-center text-2xl font-bold text-[var(--foreground)] sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
               {t.home.categoriesTitle}
             </h2>
 
@@ -287,7 +281,7 @@ export default function Home() {
                     transition={{ duration: 0.4, delay: i * 0.05 }}
                     className="w-full shrink-0 snap-center"
                   >
-                    <Link href={`/tickets?category=${tile.category}`} className="group relative block h-56 w-full overflow-hidden rounded-2xl border border-white/15">
+                    <Link href={`/tickets?category=${tile.category}`} className="group relative block h-56 w-full overflow-hidden rounded-2xl border border-[var(--card-border)]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
@@ -305,7 +299,7 @@ export default function Home() {
                     type="button"
                     onClick={() => scrollCategories('prev')}
                     aria-label="Previous"
-                    className="absolute start-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition active:bg-white/20"
+                    className="absolute start-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] backdrop-blur-md transition active:bg-[var(--accent-soft)]"
                   >
                     <PrevIcon className="h-5 w-5" />
                   </button>
@@ -313,7 +307,7 @@ export default function Home() {
                     type="button"
                     onClick={() => scrollCategories('next')}
                     aria-label="Next"
-                    className="absolute end-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition active:bg-white/20"
+                    className="absolute end-2 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] backdrop-blur-md transition active:bg-[var(--accent-soft)]"
                   >
                     <NextIcon className="h-5 w-5" />
                   </button>
@@ -334,7 +328,7 @@ export default function Home() {
                 >
                   <Link
                     href={`/tickets?category=${tile.category}`}
-                    className="group relative block h-52 w-72 shrink-0 overflow-hidden rounded-2xl border border-white/15"
+                    className="group relative block h-52 w-72 shrink-0 overflow-hidden rounded-2xl border border-[var(--card-border)]"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -353,7 +347,7 @@ export default function Home() {
       {/* ── HOW IT WORKS — simple 5-step flow ── */}
       <div ref={flowRef} className="py-12 sm:py-20">
         <div className="mx-auto max-w-5xl px-6 sm:px-10">
-          <h2 className="mb-8 text-center text-2xl font-bold text-white sm:mb-12 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
+          <h2 className="mb-8 text-center text-2xl font-bold text-[var(--foreground)] sm:mb-12 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
             {t.home.flowTitle}
           </h2>
 
@@ -378,7 +372,7 @@ export default function Home() {
                           transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                           className="pointer-events-none absolute -inset-5 rounded-full"
                           style={{
-                            background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(180,210,255,0.45) 40%, transparent 70%)',
+                            background: 'radial-gradient(circle, rgba(26,85,227,0.35) 0%, rgba(85,153,255,0.25) 40%, transparent 70%)',
                             filter: 'blur(14px)',
                           }}
                         />
@@ -387,9 +381,9 @@ export default function Home() {
                         className="relative h-12 w-12 transition-colors duration-300 sm:h-16 sm:w-16"
                         strokeWidth={1}
                         style={{
-                          color: active ? s.activeIcon : done ? s.doneIcon : 'rgba(255,255,255,0.95)',
+                          color: active ? s.activeIcon : done ? s.doneIcon : 'var(--muted)',
                           filter: active
-                            ? 'drop-shadow(0 0 12px rgba(255,255,255,0.7)) drop-shadow(0 0 26px rgba(180,210,255,0.5))'
+                            ? 'drop-shadow(0 0 12px rgba(26,85,227,0.45)) drop-shadow(0 0 26px rgba(85,153,255,0.4))'
                             : 'none',
                         }}
                       />
@@ -414,7 +408,7 @@ export default function Home() {
                         </svg>
                       )}
                     </div>
-                    <p className="mt-3 max-w-[6.5rem] px-1 text-[0.7rem] font-bold leading-snug text-white sm:max-w-[8rem] sm:text-xs">
+                    <p className="mt-3 max-w-[6.5rem] px-1 text-[0.7rem] font-bold leading-snug text-[var(--foreground)] sm:max-w-[8rem] sm:text-xs">
                       {t.home.flowSteps[i]}
                     </p>
                   </motion.div>
