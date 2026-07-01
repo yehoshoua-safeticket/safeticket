@@ -436,6 +436,7 @@ export const en: Translations = {
 
   home: {
     heroLine1: 'SELL TICKET',
+    findTickets: 'Find Tickets',
     categoriesTitle: 'Category',
     fromPrice: 'From ₪{price}',
     flowTitle: 'How it works',

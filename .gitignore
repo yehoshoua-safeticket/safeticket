@@ -40,3 +40,47 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# secrets / keys / certs (never upload to GitHub or the server)
+*.key
+*.p12
+*.pfx
+*.pkcs12
+id_rsa
+id_rsa.*
+*.crt
+!.env.example
+
+# editors / IDEs
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# OS cruft
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+.Spotlight-V100
+.Trashes
+
+# logs
+*.log
+logs/
+
+# local tooling & agent artifacts (not part of the app)
+.claude/settings.local.json
+.playwright-mcp/
+.superpowers/
+
+# supabase local CLI state (keep tracked *.sql migrations)
+supabase/.branches/
+supabase/.temp/
+supabase/.env
+
+# raw brand originals — heavy source assets, not served by the app
+# (the app uses public/logos/, which stays tracked)
+/logo/

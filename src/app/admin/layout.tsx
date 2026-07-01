@@ -3,25 +3,26 @@ import { redirect } from 'next/navigation';
 import AdminSidebar from '@/components/layout/AdminSidebar';
 import type { CSSProperties } from 'react';
 
+// Admin runs a dark scope (Ticketmaster "Backstage" tooling) — Black Pearl + Azure.
 const darkVars: CSSProperties = {
-  '--background':        '#09152f',
-  '--surface':           '#0d1d45',
-  '--surface-2':         '#121f3d',
-  '--card':              '#0d1d45',
-  '--card-border':       'rgba(255,255,255,0.08)',
-  '--card-border-soft':  'rgba(255,255,255,0.05)',
+  '--background':        '#1F262D',
+  '--surface':           '#2a333c',
+  '--surface-2':         '#333d47',
+  '--card':              '#2a333c',
+  '--card-border':       'rgba(255,255,255,0.10)',
+  '--card-border-soft':  'rgba(255,255,255,0.06)',
   '--foreground':        '#ffffff',
   '--ink':               '#ffffff',
-  '--muted':             'rgba(255,255,255,0.50)',
-  '--accent':            '#1a55e3',
-  '--accent-hover':      '#1548cc',
-  '--accent-text':       '#5599ff',
-  '--accent-soft':       'rgba(26,85,227,0.20)',
-  '--accent-2':          '#0d1d45',
-  '--accent-2-text':     '#5599ff',
-  '--input-bg':          '#121f3d',
+  '--muted':             'rgba(255,255,255,0.55)',
+  '--accent':            '#026CDF',
+  '--accent-hover':      '#0257B4',
+  '--accent-text':       '#4191E7',
+  '--accent-soft':       'rgba(2,108,223,0.20)',
+  '--accent-2':          '#00E0C7',
+  '--accent-2-text':     '#4191E7',
+  '--input-bg':          '#333d47',
   '--input-border':      'rgba(255,255,255,0.15)',
-  '--ring':              '#1a55e3',
+  '--ring':              '#026CDF',
   '--danger':            '#f87171',
   '--success':           '#4ade80',
   '--warning':           '#fbbf24',
@@ -36,7 +37,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div style={{ position: 'relative', background: '#09152f', minHeight: '100vh' }}>
+    <div style={{ position: 'relative', background: '#1F262D', minHeight: '100vh' }}>
       <div style={{ position: 'relative', zIndex: 2, minHeight: '100vh', ...darkVars }}>
         <div className="flex min-h-screen flex-col lg:flex-row">
           <AdminSidebar />

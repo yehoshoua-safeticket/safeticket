@@ -1,0 +1,8 @@
+Concurence
+
+Si deux personnes sont sur le meme billet: disparition?timer? A partir de quelle étape l'acheteur peut finalement acheter/ A partir de quelle étape le vendeur ne peut plus retirer etc
+
+Si une ou plusieurs personnes sont sur le meme billet, qui prevaut?
+
+Si billet acheté 100 et revendu 100, a cause de notre commission le billet va etre vendu au conso plus cher que prévu donc safarout?
+

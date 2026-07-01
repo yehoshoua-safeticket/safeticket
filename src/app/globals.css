@@ -1,44 +1,56 @@
 @import "tailwindcss";
 
 /* ============================================================
-   SafeTicket — Ticketmaster-benchmarked dark design system
-   See docs/DESIGN.md for the spec. Reference tokens only.
+   Ticketmaster "Aurora" design system — Azure on white, Black Pearl chrome.
+   See docs/DESIGN.md for the spec. Reference tokens only — no ad-hoc hex.
    ============================================================ */
 
 :root {
-  /* SafeTicket logo-derived palette
-     Midnight #09152f · Navy #0d1d45 · Blue #1a55e3 · Bright #2a72ff */
+  /* Ticketmaster Aurora palette
+     Azure #026CDF · Black Pearl #1F262D · Aquamarine #00E0C7 · White */
   --background: #ffffff;
   --surface: #ffffff;
-  --surface-2: #edf2ff;
+  --surface-2: #eef3fc;
   --card: #ffffff;
-  --card-border: #cdd6f0;
-  --card-border-soft: #dfe6f5;
-  --ink: #0d1d45;
-  --foreground: #0d1d45;        /* logo navy */
-  --muted: #4a5d82;
+  --card-border: #d5dde8;
+  --card-border-soft: #e6ebf2;
+  --ink: #1F262D;
+  --foreground: #1F262D;         /* Black Pearl */
+  --muted: #5a6672;
 
-  --accent: #1a55e3;            /* logo blue */
-  --accent-hover: #1548cc;
-  --accent-text: #1548cc;       /* text-safe on white */
-  --accent-soft: rgba(26, 85, 227, 0.08);
+  --accent: #026CDF;             /* Ticketmaster Azure */
+  --accent-hover: #0257B4;
+  --accent-text: #0257B4;        /* AA-safe azure text on white */
+  --accent-soft: rgba(2, 108, 223, 0.08);
+  --accent-on-dark: #4191E7;     /* azure text/links on Black Pearl */
 
-  --accent-2: #0d1d45;          /* logo navy */
-  --accent-2-text: #0d1d45;
-  --accent-2-soft: rgba(13, 29, 69, 0.08);
+  /* Chrome (dark nav/footer/hero bands) */
+  --chrome: #1F262D;             /* Black Pearl */
+  --chrome-2: #2a333c;           /* raised surfaces on chrome */
+  --chrome-border: rgba(255, 255, 255, 0.12);
 
-  --danger: #d33b33;
+  --accent-2: #00E0C7;           /* Aquamarine — sparing "live/on-sale" accent */
+  --accent-2-text: #0a8f81;      /* aqua text, AA-safe on white */
+  --accent-2-soft: rgba(0, 224, 199, 0.12);
+  --aurora-violet: #7B2FF7;      /* middle stop of the hero gradient only */
+
+  --danger: #e0102b;
   --urgency: #e0531f;
   --success: #1e9e63;
   --warning: #b8860b;
 
-  --input-bg: #f4f7ff;
-  --input-border: #c4d0ea;
-  --ring: #1a55e3;
+  --input-bg: #f5f8fd;
+  --input-border: #cbd6e6;
+  --ring: #026CDF;
 
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;
+}
+
+/* Aurora hero gradient — heroes / feature bands only */
+.aurora-gradient {
+  background: linear-gradient(120deg, #026CDF 0%, #7B2FF7 55%, #00E0C7 100%);
 }
 
 @theme inline {

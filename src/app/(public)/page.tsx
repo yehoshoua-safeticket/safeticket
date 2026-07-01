@@ -19,8 +19,8 @@ const CATEGORY_ORDER: EventCategory[] = ['concert', 'sports', 'theater', 'festiv
 const FLOW_ICONS = [Tag, CreditCard, Lock, DoorOpen, Wallet];
 
 const FLOW_SCHEME = {
-  activeIcon: '#1a55e3',
-  doneIcon: '#5599ff',
+  activeIcon: '#026CDF',
+  doneIcon: '#4191E7',
 };
 
 export default function Home() {
@@ -38,7 +38,7 @@ export default function Home() {
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const catRef = useRef<HTMLDivElement>(null);
-  const VISIBLE = 4;
+  const VISIBLE = 1; // full-bleed hero shows one featured event at a time (Ticketmaster "Highlights")
 
   // Category carousel: scroll one full card at a time (RTL-aware).
   function scrollCategories(dir: 'prev' | 'next') {
@@ -78,10 +78,11 @@ export default function Home() {
     el.scrollTo({ left: isRTL ? -target : target, behavior: 'smooth' });
   }, [index, featured]);
 
-  // Auto-scroll every 3.5 s (desktop carousel)
+  // Auto-advance the hero every 6 s (paused when the viewer prefers reduced motion)
   useEffect(() => {
     if (featured.length <= VISIBLE) return;
-    const id = setInterval(() => scrollCarousel('next'), 3500);
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const id = setInterval(() => scrollCarousel('next'), 6000);
     return () => clearInterval(id);
   }, [featured]);
 
@@ -128,130 +129,124 @@ export default function Home() {
 
   return (
     <>
-      {/* ── HERO (only — events sit below the fold) ── */}
-      <section className="relative flex min-h-[34vh] flex-col items-center justify-center overflow-hidden px-6 pb-6 pt-2 text-center sm:min-h-[46vh] sm:pb-10 sm:pt-6">
-        {/* Logo-blue colour-grade overlay — temporarily disabled */}
-        {/* <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-0"
-          style={{ background: 'linear-gradient(140deg, rgba(9,21,47,0.85) 0%, rgba(26,85,227,0.42) 45%, rgba(9,21,47,0.88) 100%)' }}
-        /> */}
-
-        <motion.h1
-          initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.22 }}
-          className="relative z-10 max-w-4xl text-[2.75rem] font-black text-[#1a55e3] sm:text-6xl lg:text-[5.5rem]"
-          style={{ fontFamily: 'var(--font-display)', lineHeight: 1.05, letterSpacing: '-0.03em' }}
+      {/* ── HERO — full-bleed featured "Highlights" carousel (Ticketmaster-style) ── */}
+      {featured.length > 0 ? (
+        <section
+          className="relative w-full overflow-hidden"
+          aria-roledescription="carousel"
+          aria-label={t.home.categoriesTitle}
         >
-          {t.home.heroLine1}
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, delay: 0.38 }}
-          className="relative z-10 mt-4 max-w-2xl text-lg leading-relaxed text-[#1a55e3] sm:mt-6 sm:text-2xl"
-        >
-          {t.home.whySafeSubtitle}
-        </motion.p>
-      </section>
-
-      {/* ── FEATURED EVENTS (only rendered when there are image-backed featured events) ── */}
-      {featured.length > 0 && (
-        <section className="pb-8 sm:pb-12 md:px-14">
-          {/* Mobile: full-bleed banner cards, edge-to-edge, stacked */}
-          <div className="flex flex-col gap-1.5 px-2 md:hidden">
-            {featured.map((ev, i) => (
-              <motion.div
+          <div ref={carouselRef} className="flex overflow-x-hidden">
+            {featured.map((ev) => (
+              <div
                 key={ev.id}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.4, delay: i * 0.06 }}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={ev.title}
+                className="relative h-[56vh] min-h-[380px] w-full flex-none sm:h-[64vh]"
+                style={{ width: '100%', flexShrink: 0, flexGrow: 0 }}
               >
-                <Link href={`/tickets/${ev.id}`} className="relative block h-56 w-full overflow-hidden rounded-lg">
+                <Link href={`/tickets/${ev.id}`} className="group block h-full w-full">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
-                  <div className="absolute inset-x-0 bottom-0 flex flex-col items-start gap-1.5 p-5">
-                    <span className="inline-block rounded-full bg-[#1a55e3] px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-white">
-                      {t.eventCategory[ev.category] ?? ev.category}
-                    </span>
-                    <p className="text-2xl font-extrabold leading-tight text-white" style={{ fontFamily: 'var(--font-display)' }}>{ev.title}</p>
-                    <p className="text-sm text-white/70">
-                      {new Date(ev.event_date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long' })}
-                      {ev.city && ` · ${ev.city}`}
-                    </p>
-                    {ev.lowestPrice > 0 && (
-                      <p className="mt-0.5 text-base font-bold text-white">
-                        {t.home.fromPrice.replace('{price}', String(ev.lowestPrice))}
+                  <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
+                  <div className="absolute inset-x-0 bottom-0">
+                    <div className="mx-auto max-w-6xl px-6 pb-14 pt-8 sm:px-8 sm:pb-16">
+                      <span className="inline-block rounded-full bg-[var(--accent)] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                        {t.eventCategory[ev.category] ?? ev.category}
+                      </span>
+                      <h1
+                        className="mt-3 max-w-3xl text-4xl font-black leading-tight text-white sm:text-6xl"
+                        style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+                      >
+                        {ev.title}
+                      </h1>
+                      <p className="mt-3 text-base text-white/80 sm:text-lg">
+                        {new Date(ev.event_date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
+                        {ev.city && ` · ${ev.city}`}
                       </p>
-                    )}
+                      <div className="mt-5 flex flex-wrap items-center gap-4">
+                        <span className="inline-flex items-center rounded-md bg-[var(--accent)] px-6 py-3 text-sm font-bold uppercase tracking-wider text-white transition-colors group-hover:bg-[var(--accent-hover)]">
+                          {t.home.findTickets}
+                        </span>
+                        {ev.lowestPrice > 0 && (
+                          <span className="font-mono-nums text-sm font-semibold text-white/90">
+                            {t.home.fromPrice.replace('{price}', String(ev.lowestPrice))}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
 
-          <div className="mx-auto max-w-5xl">
-            {/* Desktop: 4-up carousel with chevrons */}
-            <div className="relative mx-auto hidden max-w-5xl md:block">
-              <div ref={carouselRef} className="flex overflow-x-hidden" style={{ gap: '1rem' }}>
+          {featured.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() => scrollCarousel('prev')}
+                className="absolute start-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60 sm:flex"
+                aria-label="Previous"
+              >
+                <PrevIcon className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollCarousel('next')}
+                className="absolute end-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60 sm:flex"
+                aria-label="Next"
+              >
+                <NextIcon className="h-5 w-5" />
+              </button>
+
+              <div className="absolute inset-x-0 bottom-3 z-20 flex justify-center">
                 {featured.map((ev, i) => (
-                  <motion.div
+                  <button
                     key={ev.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: i * 0.07 }}
-                    className="flex-none overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card)] backdrop-blur-md"
-                    style={{ width: 'calc((100% - 3rem) / 4)', flexShrink: 0, flexGrow: 0 }}
+                    type="button"
+                    onClick={() => setIndex(i)}
+                    aria-label={`${i + 1}`}
+                    aria-current={i === index}
+                    className="flex h-8 items-center px-1.5"
                   >
-                    <Link href={`/tickets/${ev.id}`}>
-                      <div className="relative h-28 overflow-hidden">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                        <div className="cover-scrim" />
-                        <span className="absolute bottom-2 start-2 rounded-full bg-[#1a55e3] px-1.5 py-0.5 text-[0.58rem] font-bold uppercase tracking-wide text-white">
-                          {t.eventCategory[ev.category] ?? ev.category}
-                        </span>
-                      </div>
-                      <div className="p-2.5">
-                        <p className="truncate text-xs font-semibold text-[var(--foreground)]">{ev.title}</p>
-                        <p className="mt-0.5 text-[0.65rem] text-[var(--muted)]">
-                          {new Date(ev.event_date).toLocaleDateString(dateLocale, { month: 'short', day: 'numeric' })}
-                          {ev.city && ` · ${ev.city}`}
-                        </p>
-                        {ev.lowestPrice > 0 && (
-                          <p className="mt-1 text-xs font-bold text-[#5599ff]">₪{ev.lowestPrice}</p>
-                        )}
-                      </div>
-                    </Link>
-                  </motion.div>
+                    <span className={`block h-2 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'}`} />
+                  </button>
                 ))}
               </div>
-
-              {featured.length > VISIBLE && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => scrollCarousel('prev')}
-                    className="absolute -start-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] backdrop-blur-md transition hover:bg-[var(--accent-soft)]"
-                    aria-label="Previous"
-                  >
-                    <PrevIcon className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollCarousel('next')}
-                    className="absolute -end-12 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--card-border)] bg-[var(--card)] text-[var(--foreground)] backdrop-blur-md transition hover:bg-[var(--accent-soft)]"
-                    aria-label="Next"
-                  >
-                    <NextIcon className="h-5 w-5" />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+            </>
+          )}
+        </section>
+      ) : (
+        /* Fallback hero when no featured events — Aurora gradient + headline + search CTA */
+        <section className="aurora-gradient relative flex min-h-[42vh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center sm:min-h-[52vh]">
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="relative z-10 max-w-4xl text-4xl font-black text-white sm:text-6xl lg:text-7xl"
+            style={{ fontFamily: 'var(--font-display)', lineHeight: 1.05, letterSpacing: '-0.02em' }}
+          >
+            {t.home.heroLine1}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.3 }}
+            className="relative z-10 mt-4 max-w-2xl text-lg leading-relaxed text-white/85 sm:mt-6 sm:text-xl"
+          >
+            {t.home.whySafeSubtitle}
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.42 }}
+          >
+            <Link
+              href="/tickets"
+              className="relative z-10 mt-8 inline-flex items-center rounded-md bg-white px-7 py-3 text-sm font-bold uppercase tracking-wider text-[var(--accent-text)] shadow-lg transition hover:bg-white/90"
+            >
+              {t.home.findTickets}
+            </Link>
+          </motion.div>
         </section>
       )}
 
@@ -370,7 +365,7 @@ export default function Home() {
                           transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                           className="pointer-events-none absolute -inset-5 rounded-full"
                           style={{
-                            background: 'radial-gradient(circle, rgba(26,85,227,0.35) 0%, rgba(85,153,255,0.25) 40%, transparent 70%)',
+                            background: 'radial-gradient(circle, rgba(2,108,223,0.35) 0%, rgba(65,145,231,0.25) 40%, transparent 70%)',
                             filter: 'blur(14px)',
                           }}
                         />
@@ -381,7 +376,7 @@ export default function Home() {
                         style={{
                           color: active ? s.activeIcon : done ? s.doneIcon : 'var(--muted)',
                           filter: active
-                            ? 'drop-shadow(0 0 12px rgba(26,85,227,0.45)) drop-shadow(0 0 26px rgba(85,153,255,0.4))'
+                            ? 'drop-shadow(0 0 12px rgba(2,108,223,0.45)) drop-shadow(0 0 26px rgba(65,145,231,0.4))'
                             : 'none',
                         }}
                       />

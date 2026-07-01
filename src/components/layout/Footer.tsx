@@ -13,7 +13,7 @@ export default function Footer() {
   if (HIDDEN_ON.some((prefix) => pathname.startsWith(prefix))) return null;
 
   return (
-    <footer className="border-t border-white/10 bg-black">
+    <footer className="border-t border-[var(--chrome-border)] bg-[var(--chrome)] text-white/70">
       <div className="mx-auto max-w-6xl px-5 pb-6 pt-12 sm:px-8">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
@@ -21,20 +21,20 @@ export default function Footer() {
               <img src="/logos/st-logo.png" alt="" className="h-8 w-auto" />
               <span className="text-base font-bold text-white">SafeTicket</span>
             </Link>
-            <p className="mt-3 text-sm leading-relaxed text-white">
+            <p className="mt-3 text-sm leading-relaxed text-white/70">
               {t.footer.tagline}
             </p>
             <div className="mt-4 flex items-center gap-4">
-              <a href="#" aria-label="X" className="text-white transition hover:text-white/70">
+              <a href="#" aria-label="X" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
                 <FaXTwitter className="h-5 w-5" aria-hidden />
               </a>
-              <a href="#" aria-label="Instagram" className="text-white transition hover:text-white/70">
+              <a href="#" aria-label="Instagram" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
                 <FaInstagram className="h-5 w-5" aria-hidden />
               </a>
-              <a href="#" aria-label="Facebook" className="text-white transition hover:text-white/70">
+              <a href="#" aria-label="Facebook" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
                 <FaFacebookF className="h-5 w-5" aria-hidden />
               </a>
-              <a href="#" aria-label="YouTube" className="text-white transition hover:text-white/70">
+              <a href="#" aria-label="YouTube" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
                 <FaYoutube className="h-5 w-5" aria-hidden />
               </a>
             </div>
@@ -43,38 +43,38 @@ export default function Footer() {
           <div>
             <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-white">{t.footer.platform}</h4>
             <ul className="space-y-2.5">
-              <li><Link href="/tickets" className="text-sm text-white transition hover:text-white/70">{t.footer.tickets}</Link></li>
-              <li><Link href="/dashboard/sell" className="text-sm text-white transition hover:text-white/70">{t.footer.sellTicket}</Link></li>
-              <li><Link href="/how-it-works" className="text-sm text-white transition hover:text-white/70">{t.footer.howItWorks}</Link></li>
+              <li><Link href="/tickets" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.tickets}</Link></li>
+              <li><Link href="/dashboard/sell" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.sellTicket}</Link></li>
+              <li><Link href="/how-it-works" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.howItWorks}</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-white">{t.footer.support}</h4>
             <ul className="space-y-2.5">
-              <li><Link href="/faq" className="text-sm text-white transition hover:text-white/70">{t.footer.faq}</Link></li>
-              <li><Link href="/contact" className="text-sm text-white transition hover:text-white/70">{t.footer.contact}</Link></li>
-              <li><Link href="/support" className="text-sm text-white transition hover:text-white/70">{t.footer.disputes}</Link></li>
+              <li><Link href="/faq" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.faq}</Link></li>
+              <li><Link href="/contact" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.contact}</Link></li>
+              <li><Link href="/support" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.disputes}</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-white">{t.footer.legal}</h4>
             <ul className="space-y-2.5">
-              <li><Link href="/terms" className="text-sm text-white transition hover:text-white/70">{t.footer.terms}</Link></li>
-              <li><Link href="/privacy" className="text-sm text-white transition hover:text-white/70">{t.footer.privacy}</Link></li>
+              <li><Link href="/terms" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.terms}</Link></li>
+              <li><Link href="/privacy" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.privacy}</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center gap-3 border-t border-white/10 pt-6 text-center">
-          <p className="text-xs text-white">{t.footer.copyright}</p>
+        <div className="mt-10 flex flex-col items-center gap-3 border-t border-[var(--chrome-border)] pt-6 text-center">
+          <p className="text-xs text-white/60">{t.footer.copyright}</p>
           <div className="flex flex-col items-center gap-2">
-            <Link href="/cookies" className="text-sm text-white transition hover:text-white/70">{t.footer.cookies}</Link>
-            <div className="flex items-center justify-center gap-2 text-sm text-white">
-              <Link href="/terms" className="transition hover:text-white/70">{t.footer.terms}</Link>
+            <Link href="/cookies" className="text-sm text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.cookies}</Link>
+            <div className="flex items-center justify-center gap-2 text-sm text-white/70">
+              <Link href="/terms" className="transition hover:text-[var(--accent-on-dark)]">{t.footer.terms}</Link>
               <span aria-hidden className="text-white/40">·</span>
-              <Link href="/privacy" className="transition hover:text-white/70">{t.footer.privacy}</Link>
+              <Link href="/privacy" className="transition hover:text-[var(--accent-on-dark)]">{t.footer.privacy}</Link>
             </div>
           </div>
         </div>

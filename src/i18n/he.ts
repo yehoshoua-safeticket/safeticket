@@ -434,6 +434,7 @@ export const he = {
 
   home: {
     heroLine1: 'כרטיסים בראש שקט',
+    findTickets: 'חפשו כרטיסים',
     categoriesTitle: 'קטגוריה',
     fromPrice: 'החל מ-₪{price}',
     flowTitle: 'איך זה עובד',

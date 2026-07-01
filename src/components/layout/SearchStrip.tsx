@@ -34,7 +34,7 @@ export default function SearchStrip() {
           />
           <button
             type="submit"
-            className="shrink-0 rounded-md bg-[#1a55e3] px-3.5 py-1 text-xs font-bold text-white transition hover:bg-[#1548cc]"
+            className="shrink-0 rounded-md bg-[var(--accent)] px-3.5 py-1 text-xs font-bold text-white transition hover:bg-[var(--accent-hover)]"
           >
             {t.fieldSearch.search}
           </button>

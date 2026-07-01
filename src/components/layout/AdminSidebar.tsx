@@ -57,7 +57,7 @@ export default function AdminSidebar() {
   const header = (
     <div className="flex flex-col gap-1 border-b border-[var(--card-border)] bg-[var(--surface-2)] px-5 py-4">
       <Link href="/admin" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
-        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[#1a55e3] text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--accent)] text-white">
           <Ticket className="h-[18px] w-[18px]" strokeWidth={2.2} />
         </span>
         <span className="font-[family-name:var(--font-display)] text-lg font-extrabold leading-none">SafeTicket</span>
@@ -83,7 +83,7 @@ export default function AdminSidebar() {
       {/* Mobile header */}
       <div className="flex h-14 items-center justify-between border-b border-[var(--card-border)] bg-[var(--surface-2)] px-4 lg:hidden">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#1a55e3] text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--accent)] text-white">
             <Ticket className="h-4 w-4" strokeWidth={2.2} />
           </span>
           <span className="font-[family-name:var(--font-display)] text-base font-extrabold">SafeTicket</span>
