@@ -34,11 +34,9 @@ export default function Home() {
 
   const [featured, setFeatured] = useState<EventWithListings[]>([]);
   const [categories, setCategories] = useState<CategoryTile[]>([]);
-  const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const carouselRef = useRef<HTMLDivElement>(null);
   const catRef = useRef<HTMLDivElement>(null);
-  const VISIBLE = 1; // full-bleed hero shows one featured event at a time (Ticketmaster "Highlights")
 
   // Category carousel: scroll one full card at a time (RTL-aware).
   function scrollCategories(dir: 'prev' | 'next') {
@@ -59,32 +57,6 @@ export default function Home() {
     const id = setInterval(() => setFlowStep((s) => (s + 1) % 6), 1500);
     return () => clearInterval(id);
   }, []);
-
-  function scrollCarousel(dir: 'prev' | 'next') {
-    const maxIndex = Math.max(0, featured.length - VISIBLE);
-    setIndex((prev) => {
-      if (dir === 'next') return prev >= maxIndex ? 0 : prev + 1;
-      return prev <= 0 ? maxIndex : prev - 1;
-    });
-  }
-
-  // Apply the index to the track — RTL-safe (scrollLeft is negative in RTL)
-  useEffect(() => {
-    const el = carouselRef.current;
-    if (!el || !featured.length) return;
-    const stride = el.scrollWidth / featured.length; // one card + gap
-    const isRTL = getComputedStyle(el).direction === 'rtl';
-    const target = index * stride;
-    el.scrollTo({ left: isRTL ? -target : target, behavior: 'smooth' });
-  }, [index, featured]);
-
-  // Auto-advance the hero every 6 s (paused when the viewer prefers reduced motion)
-  useEffect(() => {
-    if (featured.length <= VISIBLE) return;
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const id = setInterval(() => scrollCarousel('next'), 6000);
-    return () => clearInterval(id);
-  }, [featured]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -124,125 +96,95 @@ export default function Home() {
         .filter((c) => coverByCat.has(c))
         .map((c) => ({ category: c, image_url: coverByCat.get(c)! }));
       setCategories(tiles);
+      setLoading(false);
     });
   }, []);
 
   return (
     <>
-      {/* ── HERO — full-bleed featured "Highlights" carousel (Ticketmaster-style) ── */}
-      {featured.length > 0 ? (
-        <section
-          className="relative w-full overflow-hidden"
-          aria-roledescription="carousel"
-          aria-label={t.home.categoriesTitle}
+      {/* ── Landing headline — sits above the featured carousel ── */}
+      <section className="mx-auto max-w-6xl px-6 pb-7 pt-10 text-center sm:pb-9 sm:pt-14">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.1 }}
+          className="text-3xl font-black text-[var(--foreground)] sm:text-5xl"
+          style={{ fontFamily: 'var(--font-display)', lineHeight: 1.08, letterSpacing: '-0.02em' }}
         >
-          <div ref={carouselRef} className="flex overflow-x-hidden">
-            {featured.map((ev) => (
-              <div
+          {t.home.heroLine1}
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.22 }}
+          className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-[var(--muted)] sm:text-lg"
+        >
+          {t.home.whySafeSubtitle}
+        </motion.p>
+      </section>
+
+      {/* ── FEATURED EVENTS — listed banner cards (a bit narrower than full width, ~1/3 shorter) ── */}
+      {loading ? (
+        <section className="mx-auto max-w-5xl px-5 pb-10 sm:px-8">
+          <div className="flex flex-col gap-4">
+            {[0, 1].map((i) => (
+              <div key={i} className="h-[37vh] min-h-[250px] w-full animate-pulse rounded-xl bg-slate-200 sm:h-[43vh]" />
+            ))}
+          </div>
+        </section>
+      ) : featured.length > 0 ? (
+        <section className="mx-auto max-w-5xl px-5 pb-10 sm:px-8">
+          <div className="flex flex-col gap-4">
+            {featured.map((ev, i) => (
+              <motion.div
                 key={ev.id}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={ev.title}
-                className="relative h-[56vh] min-h-[380px] w-full flex-none sm:h-[64vh]"
-                style={{ width: '100%', flexShrink: 0, flexGrow: 0 }}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
               >
-                <Link href={`/tickets/${ev.id}`} className="group block h-full w-full">
+                <Link href={`/tickets/${ev.id}`} className="group relative block h-[37vh] min-h-[250px] w-full overflow-hidden rounded-xl border border-[var(--card-border)] sm:h-[43vh]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={ev.image_url!} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+                  <img src={ev.image_url!} alt="" draggable={false} className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
-                  <div className="absolute inset-x-0 bottom-0">
-                    <div className="mx-auto max-w-6xl px-6 pb-14 pt-8 sm:px-8 sm:pb-16">
-                      <span className="inline-block rounded-full bg-[var(--accent)] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
-                        {t.eventCategory[ev.category] ?? ev.category}
+                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                    <span className="inline-block rounded-full bg-[var(--accent)] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                      {t.eventCategory[ev.category] ?? ev.category}
+                    </span>
+                    <h2
+                      className="mt-3 max-w-2xl text-2xl font-black leading-tight text-white sm:text-4xl"
+                      style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
+                    >
+                      {ev.title}
+                    </h2>
+                    <p className="mt-2 text-sm text-white/80 sm:text-base">
+                      {new Date(ev.event_date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
+                      {ev.city && ` · ${ev.city}`}
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-4">
+                      <span className="inline-flex items-center rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors group-hover:bg-[var(--accent-hover)]">
+                        {t.home.findTickets}
                       </span>
-                      <h1
-                        className="mt-3 max-w-3xl text-4xl font-black leading-tight text-white sm:text-6xl"
-                        style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
-                      >
-                        {ev.title}
-                      </h1>
-                      <p className="mt-3 text-base text-white/80 sm:text-lg">
-                        {new Date(ev.event_date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
-                        {ev.city && ` · ${ev.city}`}
-                      </p>
-                      <div className="mt-5 flex flex-wrap items-center gap-4">
-                        <span className="inline-flex items-center rounded-md bg-[var(--accent)] px-6 py-3 text-sm font-bold uppercase tracking-wider text-white transition-colors group-hover:bg-[var(--accent-hover)]">
-                          {t.home.findTickets}
+                      {ev.lowestPrice > 0 && (
+                        <span className="font-mono-nums text-sm font-semibold text-white/90">
+                          {t.home.fromPrice.replace('{price}', String(ev.lowestPrice))}
                         </span>
-                        {ev.lowestPrice > 0 && (
-                          <span className="font-mono-nums text-sm font-semibold text-white/90">
-                            {t.home.fromPrice.replace('{price}', String(ev.lowestPrice))}
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
                 </Link>
-              </div>
+              </motion.div>
             ))}
           </div>
-
-          {featured.length > 1 && (
-            <>
-              <button
-                type="button"
-                onClick={() => scrollCarousel('prev')}
-                className="absolute start-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60 sm:flex"
-                aria-label="Previous"
-              >
-                <PrevIcon className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollCarousel('next')}
-                className="absolute end-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60 sm:flex"
-                aria-label="Next"
-              >
-                <NextIcon className="h-5 w-5" />
-              </button>
-
-              <div className="absolute inset-x-0 bottom-3 z-20 flex justify-center">
-                {featured.map((ev, i) => (
-                  <button
-                    key={ev.id}
-                    type="button"
-                    onClick={() => setIndex(i)}
-                    aria-label={`${i + 1}`}
-                    aria-current={i === index}
-                    className="flex h-8 items-center px-1.5"
-                  >
-                    <span className={`block h-2 rounded-full transition-all ${i === index ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80'}`} />
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
         </section>
       ) : (
-        /* Fallback hero when no featured events — Aurora gradient + headline + search CTA */
-        <section className="aurora-gradient relative flex min-h-[42vh] flex-col items-center justify-center overflow-hidden px-6 py-16 text-center sm:min-h-[52vh]">
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="relative z-10 max-w-4xl text-4xl font-black text-white sm:text-6xl lg:text-7xl"
-            style={{ fontFamily: 'var(--font-display)', lineHeight: 1.05, letterSpacing: '-0.02em' }}
-          >
-            {t.home.heroLine1}
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.3 }}
-            className="relative z-10 mt-4 max-w-2xl text-lg leading-relaxed text-white/85 sm:mt-6 sm:text-xl"
-          >
-            {t.home.whySafeSubtitle}
-          </motion.p>
+        /* Fallback band when no featured events — Aurora gradient + CTA (headline already sits above) */
+        <section className="aurora-gradient relative mx-auto flex min-h-[30vh] max-w-6xl flex-col items-center justify-center overflow-hidden rounded-2xl px-6 py-14 text-center">
           <motion.div
             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.42 }}
+            transition={{ duration: 0.55, delay: 0.15 }}
           >
             <Link
               href="/tickets"
-              className="relative z-10 mt-8 inline-flex items-center rounded-md bg-white px-7 py-3 text-sm font-bold uppercase tracking-wider text-[var(--accent-text)] shadow-lg transition hover:bg-white/90"
+              className="relative z-10 inline-flex items-center rounded-md bg-white px-7 py-3 text-sm font-bold uppercase tracking-wider text-[var(--accent-text)] shadow-lg transition hover:bg-white/90"
             >
               {t.home.findTickets}
             </Link>
@@ -262,7 +204,7 @@ export default function Home() {
             <div className="relative md:hidden">
               <div
                 ref={catRef}
-                className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className="flex snap-x snap-mandatory touch-pan-x gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
                 {categories.map((tile, i) => (
                   <motion.div
@@ -274,9 +216,9 @@ export default function Home() {
                     transition={{ duration: 0.4, delay: i * 0.05 }}
                     className="w-full shrink-0 snap-center"
                   >
-                    <Link href={`/tickets?category=${tile.category}`} className="group relative block h-56 w-full overflow-hidden rounded-2xl border border-[var(--card-border)]">
+                    <Link href={`/tickets?category=${tile.category}`} draggable={false} className="group relative block h-64 w-full overflow-hidden rounded-2xl border border-[var(--card-border)]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <img src={tile.image_url} alt="" draggable={false} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
                       <span className="absolute bottom-4 start-4 text-2xl font-extrabold text-white" style={{ fontFamily: 'var(--font-display)' }}>
                         {t.eventCategory[tile.category] ?? tile.category}
@@ -309,7 +251,7 @@ export default function Home() {
             </div>
 
             {/* Desktop: horizontal scroll row of (larger) tiles */}
-            <div className="hidden snap-x snap-mandatory justify-center gap-4 overflow-x-auto pb-2 md:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="hidden snap-x snap-mandatory touch-pan-x justify-center gap-4 overflow-x-auto overflow-y-hidden overscroll-x-contain pb-2 md:flex [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {categories.map((tile, i) => (
                 <motion.div
                   key={tile.category}
@@ -321,10 +263,11 @@ export default function Home() {
                 >
                   <Link
                     href={`/tickets?category=${tile.category}`}
-                    className="group relative block h-52 w-72 shrink-0 overflow-hidden rounded-2xl border border-[var(--card-border)]"
+                    draggable={false}
+                    className="group relative block h-64 w-80 shrink-0 overflow-hidden rounded-2xl border border-[var(--card-border)]"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={tile.image_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img src={tile.image_url} alt="" draggable={false} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <span className="absolute bottom-3 start-3 text-xl font-bold text-white" style={{ fontFamily: 'var(--font-display)' }}>
                       {t.eventCategory[tile.category] ?? tile.category}

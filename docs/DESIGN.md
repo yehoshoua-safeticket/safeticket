@@ -204,9 +204,13 @@ active / disabled / loading.**
 
 ## 5. Layout Principles
 
-- **Geometry:** radii `--r-sm 8px` · `--r-md 12px` · `--r-lg 16px`, plus pill
-  `9999px` for badges/chips/avatars. CTAs use `--r-md` (Ticketmaster buttons are
-  softly rounded rectangles, not full pills). Nothing is sharp-edged.
+- **Geometry (restrained rounding):** radii `--r-sm 8px` · `--r-md 12px` ·
+  `--r-lg 16px`. **Interactive controls — buttons, the search bar, filter chips,
+  selects, inputs — use `--r-sm` (rounded-lg, 8px), NOT full pills.** Cards use
+  `--r-md`→`--r-lg`. The pill `9999px` is reserved for genuinely small elements
+  only: status badges, category tags, avatars, the count badge, and carousel dots.
+  The look is *softly rounded rectangles* (Ticketmaster), never lozenges. Nothing
+  is sharp-edged.
 - **Elevation is whisper-soft.** `.elev-1` (`0 1px 2px` + `0 4px 12px` at 4–6%
   black) for resting cards; `.elev-2` (`0 12px 32px` at 12%) for modals/menus.
 - **Dark chrome / light content sandwich:** Black Pearl nav on top → white

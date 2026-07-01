@@ -82,6 +82,16 @@ h1, h2, h3 {
   color: #fff;
 }
 
+/* ─── Cards/images must not be draggable (no native drag-ghost) ─── */
+img,
+a {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+img {
+  user-select: none;
+}
+
 /* ─── Accessibility: visible focus on every interactive element ─── */
 a:focus-visible,
 button:focus-visible,

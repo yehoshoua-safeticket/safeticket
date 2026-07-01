@@ -10,6 +10,17 @@ import EventCover from '@/components/ui/EventCover';
 import type { Event, Listing, EventCategory } from '@/types/database';
 import { useLocale } from '@/i18n/LocaleProvider';
 
+// Fisher–Yates shuffle — tickets on the event page are shown in random order
+// so no single seller is consistently favoured by position.
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function EventDetailPage() {
   const params = useParams();
   const { t, locale } = useLocale();
@@ -23,10 +34,10 @@ export default function EventDetailPage() {
     const supabase = createClient();
     Promise.all([
       supabase.from('events').select('*').eq('id', id).single(),
-      supabase.from('listings').select('*, seller:profiles(*)').eq('event_id', id).eq('status', 'active').order('asking_price', { ascending: true }),
+      supabase.from('listings').select('*, seller:profiles(*)').eq('event_id', id).eq('status', 'active'),
     ]).then(([eventRes, listingsRes]) => {
       setEvent(eventRes.data as Event | null);
-      setListings((listingsRes.data || []) as Listing[]);
+      setListings(shuffle((listingsRes.data || []) as Listing[]));
       setLoading(false);
     });
   }, [params.id]);

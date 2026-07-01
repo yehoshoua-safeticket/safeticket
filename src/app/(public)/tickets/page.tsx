@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import FilterBar, { FilterState } from '@/components/tickets/FilterBar';
+import { useSearchParams } from 'next/navigation';
+import FilterBar from '@/components/tickets/FilterBar';
 import EmptyState from '@/components/ui/EmptyState';
 import FadeIn from '@/components/ui/FadeIn';
 import EventCover from '@/components/ui/EventCover';
@@ -10,29 +11,26 @@ import { createClient } from '@/lib/supabase';
 import { Ticket, MapPin, Calendar } from 'lucide-react';
 import type { Event, EventCategory } from '@/types/database';
 import { useLocale } from '@/i18n/LocaleProvider';
+import { inDateRange } from '@/lib/filters';
 
 type EventWithListings = Event & { listingCount: number; lowestPrice: number };
 
-export default function TicketsPage() {
+function TicketsInner() {
   const { t, locale } = useLocale();
   const dateLocale = locale === 'he' ? 'he-IL' : 'en-US';
+  const params = useSearchParams();
   const [allEvents, setAllEvents] = useState<EventWithListings[]>([]);
-  const [filters, setFilters] = useState<FilterState>({ search: '', city: '', category: '', minPrice: '', maxPrice: '' });
-  const [initialSearch, setInitialSearch] = useState('');
-  const [initialCategory, setInitialCategory] = useState('');
 
-  // Seed filters from the URL (?q= from search, ?category= from the homepage tiles).
-  // Read directly to avoid needing a Suspense boundary.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const q = params.get('q') ?? '';
-    const category = params.get('category') ?? '';
-    if (q) setInitialSearch(q);
-    if (category) setInitialCategory(category);
-    if (q || category) {
-      setFilters((prev) => ({ ...prev, ...(q ? { search: q } : {}), ...(category ? { category } : {}) }));
-    }
-  }, []);
+  // All filters live in the URL — set by the global search strip (q / city /
+  // date) and the FilterBar "סינון" panel (category / price / sort).
+  const search = params.get('q') ?? '';
+  const city = params.get('city') ?? '';
+  const category = params.get('category') ?? '';
+  const minPrice = params.get('minPrice') ?? '';
+  const maxPrice = params.get('maxPrice') ?? '';
+  const dateFrom = params.get('dateFrom') ?? '';
+  const dateTo = params.get('dateTo') ?? '';
+  const sort = params.get('sort') ?? '';
 
   useEffect(() => {
     const supabase = createClient();
@@ -55,18 +53,22 @@ export default function TicketsPage() {
   }, []);
 
   const filteredEvents = useMemo(() => {
-    return allEvents.filter((event) => {
-      if (filters.search) {
-        const q = filters.search.toLowerCase();
+    const list = allEvents.filter((event) => {
+      if (search) {
+        const q = search.toLowerCase();
         if (!event.title.toLowerCase().includes(q) && !event.venue.toLowerCase().includes(q) && !event.city.toLowerCase().includes(q)) return false;
       }
-      if (filters.city && event.city !== filters.city) return false;
-      if (filters.category && event.category !== filters.category) return false;
-      if (filters.minPrice && event.lowestPrice < parseFloat(filters.minPrice)) return false;
-      if (filters.maxPrice && event.lowestPrice > parseFloat(filters.maxPrice)) return false;
+      if (city && event.city !== city) return false;
+      if (category && event.category !== category) return false;
+      if (minPrice && event.lowestPrice < parseFloat(minPrice)) return false;
+      if (maxPrice && event.lowestPrice > parseFloat(maxPrice)) return false;
+      if ((dateFrom || dateTo) && !inDateRange(event.event_date, dateFrom, dateTo)) return false;
       return true;
     });
-  }, [allEvents, filters]);
+    if (sort === 'priceLow') return [...list].sort((a, b) => a.lowestPrice - b.lowestPrice);
+    if (sort === 'priceHigh') return [...list].sort((a, b) => b.lowestPrice - a.lowestPrice);
+    return list; // default: by event date (already ordered from the query)
+  }, [allEvents, search, city, category, minPrice, maxPrice, dateFrom, dateTo, sort]);
 
   const categoryLabel = (cat: string) => {
     switch (cat) {
@@ -88,7 +90,7 @@ export default function TicketsPage() {
         </div>
       </FadeIn>
       <FadeIn delay={0.1}>
-        <FilterBar onFilter={setFilters} initialSearch={initialSearch} initialCategory={initialCategory} />
+        <FilterBar />
         <div className="mt-5 text-sm text-[var(--muted)]">{t.tickets.count.replace('{n}', String(filteredEvents.length))}</div>
       </FadeIn>
       {filteredEvents.length > 0 ? (
@@ -96,7 +98,7 @@ export default function TicketsPage() {
           {filteredEvents.map((event, i) => (
             <FadeIn key={event.id} delay={i * 0.06}>
               <Link href={`/tickets/${event.id}`} className="group block overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/8">
-                <EventCover category={event.category as EventCategory} title={event.title} size="sm" className="transition-transform duration-500 group-hover:scale-[1.03]" />
+                <EventCover category={event.category as EventCategory} title={event.title} size="md" className="transition-transform duration-500 group-hover:scale-[1.03]" />
                 <div className="p-5">
                   <div className="mb-2 inline-block rounded-full bg-[var(--accent-soft)] px-3 py-0.5 text-xs font-medium text-[var(--accent-text)]">
                     {categoryLabel(event.category)}
@@ -127,5 +129,13 @@ export default function TicketsPage() {
         </FadeIn>
       )}
     </div>
+  );
+}
+
+export default function TicketsPage() {
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-6xl px-5 py-8 sm:px-8" />}>
+      <TicketsInner />
+    </Suspense>
   );
 }

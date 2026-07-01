@@ -10,11 +10,12 @@ interface EventCoverProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
+// Vivid, colour-forward photo per category (e.g. sports = green stadium pitch).
 const categoryConfig: Record<string, { icon: typeof Music; word: string; photo: string }> = {
-  concert:    { icon: Music,    word: 'CONCERT',    photo: 'photo-1470229722913-7c0e2dbbafd3' },
-  sports:     { icon: Trophy,   word: 'SPORTS',     photo: 'photo-1459865264687-595d652de67e' },
-  theater:    { icon: Theater,  word: 'THEATER',    photo: 'photo-1516450360452-9312f5e86fc7' },
-  festival:   { icon: Sparkles, word: 'FESTIVAL',   photo: 'photo-1533174072545-7a4b6ad7a6c3' },
+  concert:    { icon: Music,    word: 'CONCERT',    photo: 'photo-1493225457124-a3eb161ffa5f' },
+  sports:     { icon: Trophy,   word: 'SPORTS',     photo: 'photo-1522778119026-d647f0596c20' },
+  theater:    { icon: Theater,  word: 'THEATER',    photo: 'photo-1503095396549-807759245b35' },
+  festival:   { icon: Sparkles, word: 'FESTIVAL',   photo: 'photo-1470225620780-dba8ba36b745' },
   conference: { icon: Mic2,     word: 'CONFERENCE', photo: 'photo-1540575467063-178a50c2df87' },
   other:      { icon: Ticket,   word: 'LIVE',       photo: 'photo-1524368535928-5b5e00ddc76b' },
 };

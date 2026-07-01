@@ -36,7 +36,7 @@ export default function FAQPage() {
               <div
                 className="overflow-hidden transition-all duration-300"
                 style={{
-                  maxHeight: openIndex === i ? '200px' : '0px',
+                  maxHeight: openIndex === i ? '500px' : '0px',
                   opacity: openIndex === i ? 1 : 0,
                 }}
               >
@@ -48,6 +48,10 @@ export default function FAQPage() {
           </FadeIn>
         ))}
       </div>
+
+      <FadeIn delay={0.3}>
+        <p className="mt-8 text-xs leading-relaxed text-[var(--muted)]">{t.faq.footnote}</p>
+      </FadeIn>
 
       <FadeIn delay={0.4}>
         <div className="relative mt-16 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-8 text-center">
