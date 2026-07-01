@@ -95,8 +95,8 @@ export default function AdminSidebar() {
         <Link href="/admin" className="flex items-center" onClick={() => setMobileOpen(false)}>
           {wordmark}
         </Link>
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="rounded-md p-2 text-white" aria-label="Menu">
-          <MenuToggle open={mobileOpen} className="h-6 w-6" />
+        <button onClick={() => setMobileOpen(!mobileOpen)} className="inline-flex items-center justify-center rounded-md p-2 text-white" aria-label="Menu">
+          <MenuToggle open={mobileOpen} className="h-9 w-9" />
         </button>
       </div>
       {/* Full-screen mobile menu (below the top bar; the burger morphs to X) */}

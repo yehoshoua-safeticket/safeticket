@@ -52,7 +52,7 @@ export default function Navbar() {
             <Logo white className="h-5 w-auto" />
           </Link>
 
-          <div className="hidden items-center gap-1 md:flex">
+          <div className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link, i) => (
               <Link
                 key={`${link.href}-${i}`}
@@ -64,7 +64,7 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             <LocaleSwitcher compact />
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin text-white/50" />
@@ -91,8 +91,8 @@ export default function Navbar() {
             )}
           </div>
 
-          <button onClick={() => setIsOpen(!isOpen)} className="rounded p-2 text-white md:hidden" aria-label="Menu">
-            <MenuToggle open={isOpen} className="h-6 w-6" />
+          <button onClick={() => setIsOpen(!isOpen)} className="inline-flex items-center justify-center rounded p-2 text-white lg:hidden" aria-label="Menu">
+            <MenuToggle open={isOpen} className="h-9 w-9" />
           </button>
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.2, 0.8, 0.3, 1] }}
-            className="fixed inset-x-0 bottom-0 top-14 z-[45] flex flex-col overflow-y-auto bg-[var(--chrome)] text-white md:hidden"
+            className="fixed inset-x-0 bottom-0 top-14 z-[45] flex flex-col overflow-y-auto bg-[var(--chrome)] text-white lg:hidden"
           >
             <nav className="flex flex-col px-6 pt-4">
               {navLinks.map((link, i) => (
