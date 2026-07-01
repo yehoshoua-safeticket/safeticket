@@ -74,7 +74,7 @@ export default function EventDetailPage() {
 
       <FadeIn delay={0.05}>
         <div className="mb-8 overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)]">
-          <EventCover category={event.category as EventCategory} title={event.title} size="lg" />
+          <EventCover category={event.category as EventCategory} title={event.title} imageUrl={event.image_url} size="lg" />
           <div className="p-6">
             <div className="mb-3 inline-block rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-medium text-[var(--accent-text)]">
               {categoryLabel}

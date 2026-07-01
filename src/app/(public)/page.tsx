@@ -104,6 +104,14 @@ export default function Home() {
     <>
       {/* ── Landing headline — sits above the featured carousel ── */}
       <section className="mx-auto max-w-6xl px-6 pb-7 pt-10 text-center sm:pb-9 sm:pt-14">
+        {/* Brand wordmark — same font/size/weight as the navbar (colours adapted for the white hero) */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-2 font-[family-name:var(--font-display)] text-[1.15rem] font-extrabold tracking-tight"
+        >
+          <span style={{ color: 'var(--ink)' }}>Safe</span><span style={{ color: 'var(--accent)' }}>Ticket</span>
+        </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.1 }}
@@ -219,7 +227,7 @@ export default function Home() {
                     <Link href={`/tickets?category=${tile.category}`} draggable={false} className="group relative block h-64 w-full overflow-hidden rounded-2xl border border-[var(--card-border)]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={tile.image_url} alt="" draggable={false} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
                       <span className="absolute bottom-4 start-4 text-2xl font-extrabold text-white" style={{ fontFamily: 'var(--font-display)' }}>
                         {t.eventCategory[tile.category] ?? tile.category}
                       </span>

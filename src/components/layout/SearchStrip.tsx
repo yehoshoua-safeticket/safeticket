@@ -163,14 +163,14 @@ export default function SearchStrip() {
 
             <div className="mt-3 border-t border-[var(--card-border)] pt-3">
               <p className="mb-2 text-xs font-semibold text-[var(--muted)]">{t.filterBar.customRange}</p>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-2">
                 <label className="flex-1">
                   <span className="mb-1 block text-[0.65rem] text-[var(--muted)]">{t.filterBar.from}</span>
-                  <input type="date" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-2 py-1.5 text-xs focus:border-[var(--accent)] focus:outline-none" />
+                  <input type="date" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
                 </label>
                 <label className="flex-1">
                   <span className="mb-1 block text-[0.65rem] text-[var(--muted)]">{t.filterBar.to}</span>
-                  <input type="date" value={customTo} onChange={(e) => setCustomTo(e.target.value)} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-2 py-1.5 text-xs focus:border-[var(--accent)] focus:outline-none" />
+                  <input type="date" value={customTo} onChange={(e) => setCustomTo(e.target.value)} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
                 </label>
               </div>
               <div className="mt-3 flex items-center justify-between">

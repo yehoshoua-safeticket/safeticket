@@ -110,6 +110,17 @@ input[type="number"]::-webkit-outer-spin-button {
   margin: 0;
 }
 
+/* ─── Prevent iOS auto-zoom on focus: force ≥16px controls on touch devices ───
+   Unlayered, so it overrides Tailwind's text-sm/xs utilities on phones only.
+   Desktop (pointer: fine) keeps the smaller design sizes. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 /* ─── Overline label (uppercase bold sans) ─── */
 .overline {
   font-family: var(--font-sans), sans-serif;
@@ -138,7 +149,8 @@ input[type="number"]::-webkit-outer-spin-button {
 .cover-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,.82) 100%);
+  /* Light touch — keep the photo bright and sunny; just enough edge for the pill. */
+  background: linear-gradient(180deg, rgba(0,0,0,.14) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,.28) 100%);
 }
 .tile-hover { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
 .tile-hover:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 14px 30px rgba(0,0,0,.14); }

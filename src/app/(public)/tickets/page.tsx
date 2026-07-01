@@ -98,7 +98,7 @@ function TicketsInner() {
           {filteredEvents.map((event, i) => (
             <FadeIn key={event.id} delay={i * 0.06}>
               <Link href={`/tickets/${event.id}`} className="group block overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/8">
-                <EventCover category={event.category as EventCategory} title={event.title} size="md" className="transition-transform duration-500 group-hover:scale-[1.03]" />
+                <EventCover category={event.category as EventCategory} title={event.title} imageUrl={event.image_url} size="md" className="transition-transform duration-500 group-hover:scale-[1.03]" />
                 <div className="p-5">
                   <div className="mb-2 inline-block rounded-full bg-[var(--accent-soft)] px-3 py-0.5 text-xs font-medium text-[var(--accent-text)]">
                     {categoryLabel(event.category)}
