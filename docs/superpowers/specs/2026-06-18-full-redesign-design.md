@@ -259,7 +259,6 @@ dashboard/layout.tsx
 - CSS: delivered as a single pre-built static file in production
 - Background: JPEG at 1920px, `object-position: center` — crops on portrait
 - Video autoplay fix: `position: absolute` → switch to `position: fixed` via JS `playing` event (iOS Safari requirement)
-- ngrok header: `ngrok-skip-browser-warning: true` on all responses (in `next.config.ts`)
 - Target asset weight: images < 600KB, no video as background
 
 ---
