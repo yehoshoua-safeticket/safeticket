@@ -101,11 +101,11 @@ img {
   background: currentColor;
   transform-origin: center;
   transition:
-    transform .3s cubic-bezier(.2,.8,.3,1),
-    top .3s cubic-bezier(.2,.8,.3,1),
-    left .3s cubic-bezier(.2,.8,.3,1),
-    width .3s cubic-bezier(.2,.8,.3,1),
-    opacity .2s ease;
+    transform .65s cubic-bezier(.2,.8,.3,1),
+    top .65s cubic-bezier(.2,.8,.3,1),
+    left .65s cubic-bezier(.2,.8,.3,1),
+    width .65s cubic-bezier(.2,.8,.3,1),
+    opacity .45s ease;
 }
 /* closed = descending staircase */
 .menu-toggle > span:nth-child(1) { top: 28%; left: 6%;  width: 52%; }
