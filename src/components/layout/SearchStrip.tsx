@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, Calendar, MapPin, X, ChevronDown } from 'lucide-react';
+import { Search, Calendar, MapPin, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { CANONICAL_CITIES, presetRange, matchPreset, type DatePreset } from '@/lib/filters';
 
@@ -21,9 +21,13 @@ export default function SearchStrip() {
   const cityParam = params.get('city') ?? '';
   const fromParam = params.get('dateFrom') ?? '';
   const toParam = params.get('dateTo') ?? '';
+  const categoryParam = params.get('category') ?? '';
+  const minPriceParam = params.get('minPrice') ?? '';
+  const maxPriceParam = params.get('maxPrice') ?? '';
+  const sortParam = params.get('sort') ?? '';
 
   const [query, setQuery] = useState(qParam);
-  const [open, setOpen] = useState<'date' | 'city' | null>(null);
+  const [open, setOpen] = useState<'date' | 'city' | 'filter' | null>(null);
   const [customFrom, setCustomFrom] = useState(fromParam);
   const [customTo, setCustomTo] = useState(toParam);
   const [citySearch, setCitySearch] = useState('');
@@ -78,18 +82,31 @@ export default function SearchStrip() {
         ? `${fmt(fromParam)} – ${fmt(toParam)}`
         : fmt(fromParam || toParam);
 
-  const cityIndex = CANONICAL_CITIES.indexOf(cityParam);
-  const cityActive = !!cityParam && cityIndex > 0;
-  const cityLabel = cityActive ? t.filterBar.cities[cityIndex] : t.filterBar.city;
+  // City accepts ANY city — a known city (translated label) or free text typed in.
+  const cityActive = !!cityParam;
+  const cityIdx = CANONICAL_CITIES.indexOf(cityParam);
+  const cityLabel = !cityActive ? t.filterBar.city : cityIdx > 0 ? t.filterBar.cities[cityIdx] : cityParam;
 
+  const citySearchTrim = citySearch.trim();
   const cityRows = CANONICAL_CITIES
     .map((value, i) => ({ value, label: t.filterBar.cities[i] }))
-    .filter((c) => !citySearch || c.label.includes(citySearch) || c.value.includes(citySearch));
+    .filter((c) => !citySearchTrim || c.label.includes(citySearchTrim) || c.value.includes(citySearchTrim));
+  const showFreeCity = citySearchTrim.length > 0 && !CANONICAL_CITIES.includes(citySearchTrim);
+
+  const categories = [
+    { value: '', label: t.filterBar.categoryAll },
+    { value: 'concert', label: t.filterBar.categoryConcert },
+    { value: 'sports', label: t.filterBar.categorySports },
+    { value: 'theater', label: t.filterBar.categoryTheater },
+    { value: 'festival', label: t.filterBar.categoryFestival },
+    { value: 'conference', label: t.filterBar.categoryConference },
+  ];
+  const filterCount = [categoryParam, minPriceParam, maxPriceParam, sortParam].filter(Boolean).length;
 
   const chip = 'flex items-center justify-center gap-1.5 rounded-lg border px-3.5 py-2.5 text-sm font-medium transition sm:justify-start';
   const chipOn = 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-text)]';
   const chipOff = 'border-[var(--card-border)] bg-white text-[var(--muted)] hover:border-[var(--muted)]';
-  const popover = 'absolute top-full z-50 mt-2 inset-x-5 rounded-lg border border-[var(--card-border)] bg-white p-3 shadow-xl sm:inset-x-auto sm:end-8 sm:w-72';
+  const popover = 'absolute top-full z-50 mt-2 inset-x-5 rounded-lg border border-[var(--card-border)] bg-white p-3 shadow-xl sm:inset-x-auto sm:end-8 sm:w-80';
 
   return (
     <div className="sticky top-14 z-40 border-b border-[var(--card-border)] bg-white/85 backdrop-blur-md">
@@ -139,6 +156,21 @@ export default function SearchStrip() {
           <span className="max-w-[8rem] truncate">{cityLabel}</span>
           {cityActive
             ? <X className="h-3.5 w-3.5 shrink-0 opacity-70 hover:opacity-100" onClick={(e) => { e.stopPropagation(); apply({ city: null }); }} />
+            : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
+        </button>
+
+        {/* Filter quick button (category / price / sort) */}
+        <button
+          type="button"
+          onClick={() => setOpen(open === 'filter' ? null : 'filter')}
+          className={`${chip} flex-1 sm:flex-none ${filterCount > 0 ? chipOn : chipOff}`}
+          aria-haspopup="dialog"
+          aria-expanded={open === 'filter'}
+        >
+          <SlidersHorizontal className="h-4 w-4 shrink-0" />
+          <span>{t.filterBar.filter}</span>
+          {filterCount > 0
+            ? <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[0.6rem] font-bold text-white">{filterCount}</span>
             : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
         </button>
 
@@ -200,11 +232,23 @@ export default function SearchStrip() {
                 type="text"
                 value={citySearch}
                 onChange={(e) => setCitySearch(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && citySearchTrim) { e.preventDefault(); setOpen(null); apply({ city: citySearchTrim }); } }}
                 placeholder={t.filterBar.city}
                 className="min-w-0 flex-1 bg-transparent text-sm placeholder-[var(--muted)] focus:outline-none"
               />
             </div>
             <div className="max-h-56 overflow-y-auto">
+              {/* Free-text: apply any city the user types (not limited to the list) */}
+              {showFreeCity && (
+                <button
+                  type="button"
+                  onClick={() => { setOpen(null); apply({ city: citySearchTrim }); }}
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-start text-sm text-[var(--foreground)] transition hover:bg-[var(--surface-2)]"
+                >
+                  <MapPin className="h-3.5 w-3.5 shrink-0 text-[var(--muted)]" />
+                  <span className="truncate">{citySearchTrim}</span>
+                </button>
+              )}
               {cityRows.map(({ value, label }) => {
                 const on = (value === '' && !cityActive) || value === cityParam;
                 return (
@@ -218,10 +262,49 @@ export default function SearchStrip() {
                   </button>
                 );
               })}
-              {cityRows.length === 0 && (
+              {cityRows.length === 0 && !showFreeCity && (
                 <p className="px-3 py-2 text-sm text-[var(--muted)]">—</p>
               )}
             </div>
+          </div>
+        )}
+
+        {/* ── Filter popover (category / sort / price) ── */}
+        {open === 'filter' && (
+          <div className={popover}>
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1.5 block text-xs text-[var(--muted)]">{t.filterBar.category}</label>
+                <select value={categoryParam} onChange={(e) => apply({ category: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none">
+                  {categories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs text-[var(--muted)]">{t.filterBar.sortBy}</label>
+                <select value={sortParam} onChange={(e) => apply({ sort: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none">
+                  <option value="">{t.filterBar.sortDate}</option>
+                  <option value="priceLow">{t.filterBar.sortPriceLow}</option>
+                  <option value="priceHigh">{t.filterBar.sortPriceHigh}</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="mb-1.5 block text-xs text-[var(--muted)]">{t.filterBar.minPrice}</label>
+                  <input type="number" placeholder={t.filterBar.minPricePlaceholder} value={minPriceParam} onChange={(e) => apply({ minPrice: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs text-[var(--muted)]">{t.filterBar.maxPrice}</label>
+                  <input type="number" placeholder={t.filterBar.maxPricePlaceholder} value={maxPriceParam} onChange={(e) => apply({ maxPrice: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
+                </div>
+              </div>
+            </div>
+            {filterCount > 0 && (
+              <div className="mt-3 flex justify-end border-t border-[var(--card-border)] pt-3">
+                <button type="button" onClick={() => apply({ category: null, minPrice: null, maxPrice: null, sort: null })} className="text-xs font-medium text-[var(--muted)] hover:text-[var(--foreground)]">
+                  {t.filterBar.clear}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

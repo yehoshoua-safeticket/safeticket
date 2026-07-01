@@ -3,7 +3,6 @@
 import { Suspense, useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import FilterBar from '@/components/tickets/FilterBar';
 import EmptyState from '@/components/ui/EmptyState';
 import FadeIn from '@/components/ui/FadeIn';
 import EventCover from '@/components/ui/EventCover';
@@ -58,7 +57,7 @@ function TicketsInner() {
         const q = search.toLowerCase();
         if (!event.title.toLowerCase().includes(q) && !event.venue.toLowerCase().includes(q) && !event.city.toLowerCase().includes(q)) return false;
       }
-      if (city && event.city !== city) return false;
+      if (city && !event.city.toLowerCase().includes(city.toLowerCase())) return false;
       if (category && event.category !== category) return false;
       if (minPrice && event.lowestPrice < parseFloat(minPrice)) return false;
       if (maxPrice && event.lowestPrice > parseFloat(maxPrice)) return false;
@@ -90,8 +89,7 @@ function TicketsInner() {
         </div>
       </FadeIn>
       <FadeIn delay={0.1}>
-        <FilterBar />
-        <div className="mt-5 text-sm text-[var(--muted)]">{t.tickets.count.replace('{n}', String(filteredEvents.length))}</div>
+        <div className="text-sm text-[var(--muted)]">{t.tickets.count.replace('{n}', String(filteredEvents.length))}</div>
       </FadeIn>
       {filteredEvents.length > 0 ? (
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
