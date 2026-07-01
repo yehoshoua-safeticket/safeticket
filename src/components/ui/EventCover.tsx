@@ -2,6 +2,7 @@
 
 import { Music, Trophy, Theater, Sparkles, Ticket, Mic2 } from 'lucide-react';
 import type { EventCategory } from '@/types/database';
+import { categoryImage } from '@/lib/categoryImages';
 
 interface EventCoverProps {
   category: EventCategory;
@@ -25,8 +26,8 @@ export default function EventCover({ category, title, imageUrl, className = '', 
   const config = categoryConfig[category] || categoryConfig.other;
   const Icon = config.icon;
   const sizeClasses = { sm: 'h-40', md: 'h-48', lg: 'h-72' };
-  // Prefer the event's own picture; fall back to the category photo.
-  const photoUrl = imageUrl || `https://images.unsplash.com/${config.photo}?w=900&q=72&auto=format`;
+  // Prefer the event's own picture; fall back to the bright category photo.
+  const photoUrl = imageUrl || categoryImage(category);
 
   return (
     <div className={`relative overflow-hidden bg-[var(--surface-2)] ${sizeClasses[size]} ${className}`} role="img" aria-label={`${config.word} — ${title}`}>

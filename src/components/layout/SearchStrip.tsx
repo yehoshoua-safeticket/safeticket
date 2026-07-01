@@ -166,11 +166,11 @@ export default function SearchStrip() {
               <div className="flex flex-col gap-2">
                 <label className="flex-1">
                   <span className="mb-1 block text-[0.65rem] text-[var(--muted)]">{t.filterBar.from}</span>
-                  <input type="date" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
+                  <input type="date" dir="ltr" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} className="w-full min-w-0 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
                 </label>
                 <label className="flex-1">
                   <span className="mb-1 block text-[0.65rem] text-[var(--muted)]">{t.filterBar.to}</span>
-                  <input type="date" value={customTo} onChange={(e) => setCustomTo(e.target.value)} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
+                  <input type="date" dir="ltr" value={customTo} onChange={(e) => setCustomTo(e.target.value)} className="w-full min-w-0 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
                 </label>
               </div>
               <div className="mt-3 flex items-center justify-between">

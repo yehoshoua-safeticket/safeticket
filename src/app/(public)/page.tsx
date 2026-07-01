@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useLocale } from '@/i18n/LocaleProvider';
+import { categoryImage } from '@/lib/categoryImages';
 import type { Event, EventCategory } from '@/types/database';
 
 type EventWithListings = Event & { lowestPrice: number };
@@ -64,9 +65,8 @@ export default function Home() {
       // Curated homepage data. A missing table just yields an empty result
       // (PostgREST 404 → error, data null), so each section hides cleanly.
       supabase.from('featured_events').select('event_id, position, event:events(*)').order('position', { ascending: true }),
-      supabase.from('category_covers').select('category, event:events(*)'),
       supabase.from('listings').select('event_id, asking_price').eq('status', 'active'),
-    ]).then(([featR, covR, liR]) => {
+    ]).then(([featR, liR]) => {
       // Lowest active price per event.
       const prices = new Map<string, number[]>();
       for (const l of liR.data || []) {
@@ -86,15 +86,8 @@ export default function Home() {
         });
       setFeatured(feat);
 
-      // Category tiles: one per category that has a cover event WITH an image.
-      type CovRow = { category: EventCategory; event: Event | null };
-      const coverByCat = new Map<EventCategory, string>();
-      for (const row of (covR.data as CovRow[] | null) || []) {
-        if (row.event?.image_url) coverByCat.set(row.category, row.event.image_url);
-      }
-      const tiles = CATEGORY_ORDER
-        .filter((c) => coverByCat.has(c))
-        .map((c) => ({ category: c, image_url: coverByCat.get(c)! }));
+      // Category tiles: fixed, bright category artwork (not dark DB event covers).
+      const tiles = CATEGORY_ORDER.slice(0, 4).map((c) => ({ category: c, image_url: categoryImage(c) }));
       setCategories(tiles);
       setLoading(false);
     });
@@ -108,9 +101,10 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-2 font-[family-name:var(--font-display)] text-[1.15rem] font-extrabold tracking-tight"
+          className="mb-3 font-[family-name:var(--font-display)] text-[2.875rem] font-extrabold leading-none tracking-tight"
+          style={{ color: 'var(--ink)' }}
         >
-          <span style={{ color: 'var(--ink)' }}>Safe</span><span style={{ color: 'var(--accent)' }}>Ticket</span>
+          SafeTicket
         </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
