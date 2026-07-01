@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, Calendar, MapPin, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useLocale } from '@/i18n/LocaleProvider';
-import { CANONICAL_CITIES, presetRange, matchPreset, type DatePreset } from '@/lib/filters';
+import { ISRAEL_CITIES, presetRange, matchPreset, type DatePreset } from '@/lib/filters';
 
 // Global search bar (sticky under the header on every public page) with two
 // always-visible quick filters — Date and City. Selecting either navigates to
@@ -82,16 +82,13 @@ export default function SearchStrip() {
         ? `${fmt(fromParam)} – ${fmt(toParam)}`
         : fmt(fromParam || toParam);
 
-  // City accepts ANY city — a known city (translated label) or free text typed in.
+  // City accepts ANY city — pick from the full list of Israeli cities, or type free text.
   const cityActive = !!cityParam;
-  const cityIdx = CANONICAL_CITIES.indexOf(cityParam);
-  const cityLabel = !cityActive ? t.filterBar.city : cityIdx > 0 ? t.filterBar.cities[cityIdx] : cityParam;
+  const cityLabel = cityActive ? cityParam : t.filterBar.city;
 
   const citySearchTrim = citySearch.trim();
-  const cityRows = CANONICAL_CITIES
-    .map((value, i) => ({ value, label: t.filterBar.cities[i] }))
-    .filter((c) => !citySearchTrim || c.label.includes(citySearchTrim) || c.value.includes(citySearchTrim));
-  const showFreeCity = citySearchTrim.length > 0 && !CANONICAL_CITIES.includes(citySearchTrim);
+  const cityMatches = ISRAEL_CITIES.filter((c) => !citySearchTrim || c.includes(citySearchTrim));
+  const showFreeCity = citySearchTrim.length > 0 && !ISRAEL_CITIES.includes(citySearchTrim);
 
   const categories = [
     { value: '', label: t.filterBar.categoryAll },
@@ -109,7 +106,7 @@ export default function SearchStrip() {
   const popover = 'absolute top-full z-50 mt-2 inset-x-5 rounded-lg border border-[var(--card-border)] bg-white p-3 shadow-xl sm:inset-x-auto sm:end-8 sm:w-80';
 
   return (
-    <div className="sticky top-14 z-40 border-b border-[var(--card-border)] bg-white/85 backdrop-blur-md">
+    <div className="sticky top-14 z-40 border-b border-[var(--card-border)] bg-white/85 font-[family-name:var(--font-trial)] backdrop-blur-md">
       <div ref={wrapRef} className="relative mx-auto flex max-w-4xl flex-wrap items-center gap-2 px-5 py-3 sm:px-8">
         {/* Search pill */}
         <form
@@ -237,7 +234,17 @@ export default function SearchStrip() {
                 className="min-w-0 flex-1 bg-transparent text-sm placeholder-[var(--muted)] focus:outline-none"
               />
             </div>
-            <div className="max-h-56 overflow-y-auto">
+            <div className="max-h-64 overflow-y-auto">
+              {/* All cities (clears the filter) */}
+              {!citySearchTrim && (
+                <button
+                  type="button"
+                  onClick={() => { setOpen(null); apply({ city: null }); }}
+                  className={`block w-full rounded-md px-3 py-2 text-start text-sm transition ${!cityActive ? 'bg-[var(--accent-soft)] font-semibold text-[var(--accent-text)]' : 'text-[var(--foreground)] hover:bg-[var(--surface-2)]'}`}
+                >
+                  {t.filterBar.allCities}
+                </button>
+              )}
               {/* Free-text: apply any city the user types (not limited to the list) */}
               {showFreeCity && (
                 <button
@@ -249,20 +256,17 @@ export default function SearchStrip() {
                   <span className="truncate">{citySearchTrim}</span>
                 </button>
               )}
-              {cityRows.map(({ value, label }) => {
-                const on = (value === '' && !cityActive) || value === cityParam;
-                return (
-                  <button
-                    key={value || 'all'}
-                    type="button"
-                    onClick={() => { setOpen(null); apply({ city: value || null }); }}
-                    className={`block w-full rounded-md px-3 py-2 text-start text-sm transition ${on ? 'bg-[var(--accent-soft)] font-semibold text-[var(--accent-text)]' : 'text-[var(--foreground)] hover:bg-[var(--surface-2)]'}`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-              {cityRows.length === 0 && !showFreeCity && (
+              {cityMatches.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => { setOpen(null); apply({ city: c }); }}
+                  className={`block w-full rounded-md px-3 py-2 text-start text-sm transition ${c === cityParam ? 'bg-[var(--accent-soft)] font-semibold text-[var(--accent-text)]' : 'text-[var(--foreground)] hover:bg-[var(--surface-2)]'}`}
+                >
+                  {c}
+                </button>
+              ))}
+              {cityMatches.length === 0 && !showFreeCity && (
                 <p className="px-3 py-2 text-sm text-[var(--muted)]">—</p>
               )}
             </div>

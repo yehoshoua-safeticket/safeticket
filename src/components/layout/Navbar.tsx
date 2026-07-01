@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
-import { User, LogOut, Loader2, Search, Globe, ChevronUp } from 'lucide-react';
+import { User, LogOut, Loader2, Globe, ChevronUp } from 'lucide-react';
 import MenuToggle from '@/components/ui/MenuToggle';
+import Logo from '@/components/ui/Logo';
 import { createClient } from '@/lib/supabase';
 import { logout } from '@/app/(public)/auth/actions';
 import { useLocale } from '@/i18n/LocaleProvider';
@@ -44,14 +45,11 @@ export default function Navbar() {
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || '';
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--chrome-border)] bg-[var(--chrome)] text-white">
+    <header className="sticky top-0 z-50 border-b border-[var(--chrome-border)] bg-[var(--chrome)] font-[family-name:var(--font-trial)] text-white">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="flex h-14 items-center justify-between gap-4">
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <img src="/logos/st-logo.png" alt="SafeTicket" className="h-8 w-auto" />
-            <span className="font-[family-name:var(--font-display)] text-[1.15rem] font-extrabold tracking-tight">
-              <span className="text-white">Safe</span><span style={{ color: 'var(--accent-on-dark)' }}>Ticket</span>
-            </span>
+          <Link href="/" className="flex shrink-0 items-center">
+            <Logo white className="h-5 w-auto" />
           </Link>
 
           <div className="hidden items-center gap-1 md:flex">
@@ -59,7 +57,7 @@ export default function Navbar() {
               <Link
                 key={`${link.href}-${i}`}
                 href={link.href}
-                className="rounded-md px-3.5 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white"
+                className="rounded px-3.5 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white"
               >
                 {link.label}
               </Link>
@@ -67,36 +65,33 @@ export default function Navbar() {
           </div>
 
           <div className="hidden items-center gap-3 md:flex">
-            <Link href="/tickets" aria-label={t.nav.tickets} className="rounded-md p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white">
-              <Search className="h-[18px] w-[18px]" />
-            </Link>
             <LocaleSwitcher compact />
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin text-white/50" />
             ) : user ? (
               <>
-                <Link href="/dashboard" className="flex items-center gap-2 rounded-md border border-white/20 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-white/10">
+                <Link href="/dashboard" className="flex items-center gap-2 rounded border border-white/20 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-white/10">
                   <User className="h-4 w-4" /><span className="max-w-[120px] truncate">{displayName}</span>
                 </Link>
                 <form action={logout}>
-                  <button type="submit" className="rounded-md p-2 text-white/70 transition-colors hover:text-red-400" title={t.nav.logoutTitle}>
+                  <button type="submit" className="rounded p-2 text-white/70 transition-colors hover:text-red-400" title={t.nav.logoutTitle}>
                     <LogOut className="h-[18px] w-[18px]" />
                   </button>
                 </form>
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="rounded-md px-3 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white">
+                <Link href="/auth/login" className="rounded px-3 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white">
                   {t.nav.login}
                 </Link>
-                <Link href="/auth/signup" className="rounded-md bg-[var(--accent)] px-4 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-white transition-colors hover:bg-[var(--accent-hover)]">
+                <Link href="/auth/signup" className="rounded bg-white px-4 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-[var(--chrome)] transition-colors hover:bg-white/90">
                   {t.nav.signup}
                 </Link>
               </>
             )}
           </div>
 
-          <button onClick={() => setIsOpen(!isOpen)} className="rounded-md p-2 text-white md:hidden" aria-label="Menu">
+          <button onClick={() => setIsOpen(!isOpen)} className="rounded p-2 text-white md:hidden" aria-label="Menu">
             <MenuToggle open={isOpen} className="h-6 w-6" />
           </button>
         </div>
@@ -140,21 +135,21 @@ export default function Navbar() {
             >
               {user ? (
                 <>
-                  <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/20 py-3 text-sm font-medium text-white transition hover:bg-white/10">
+                  <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex w-full items-center justify-center gap-2 rounded border border-white/20 py-3 text-sm font-medium text-white transition hover:bg-white/10">
                     <User className="h-4 w-4" />{displayName}
                   </Link>
                   <form action={logout}>
-                    <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/20 py-3 text-sm text-white/70 transition hover:text-white">
+                    <button type="submit" className="flex w-full items-center justify-center gap-2 rounded border border-white/20 py-3 text-sm text-white/70 transition hover:text-white">
                       <LogOut className="h-4 w-4" />{t.nav.logoutTitle}
                     </button>
                   </form>
                 </>
               ) : (
                 <>
-                  <Link href="/auth/signup" onClick={() => setIsOpen(false)} className="block w-full rounded-lg bg-[var(--accent)] py-3 text-center text-sm font-bold uppercase tracking-wider text-white transition hover:bg-[var(--accent-hover)]">
+                  <Link href="/auth/signup" onClick={() => setIsOpen(false)} className="block w-full rounded bg-white py-3 text-center text-sm font-bold uppercase tracking-wider text-[var(--chrome)] transition hover:bg-white/90">
                     {t.nav.signup}
                   </Link>
-                  <Link href="/auth/login" onClick={() => setIsOpen(false)} className="block w-full rounded-lg border border-white/20 py-3 text-center text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10">
+                  <Link href="/auth/login" onClick={() => setIsOpen(false)} className="block w-full rounded border border-white/20 py-3 text-center text-sm font-bold uppercase tracking-wider text-white transition hover:bg-white/10">
                     {t.nav.login}
                   </Link>
                 </>
@@ -165,7 +160,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setLangOpen((v) => !v)}
-                  className="flex w-full items-center justify-between rounded-lg border border-white/20 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                  className="flex w-full items-center justify-between rounded border border-white/20 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
                 >
                   <span className="flex items-center gap-2"><Globe className="h-4 w-4" />{t.language.label}</span>
                   <ChevronUp className={`h-4 w-4 transition-transform ${langOpen ? '' : 'rotate-180'}`} />
@@ -177,7 +172,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 8 }}
                       transition={{ duration: 0.2, ease: [0.2, 0.8, 0.3, 1] }}
-                      className="absolute inset-x-0 bottom-full mb-2 overflow-hidden rounded-lg border border-white/15 bg-[var(--chrome-2)] shadow-xl"
+                      className="absolute inset-x-0 bottom-full mb-2 overflow-hidden rounded border border-white/15 bg-[var(--chrome-2)] shadow-xl"
                     >
                       {(['he', 'en'] as const).map((l) => (
                         <button

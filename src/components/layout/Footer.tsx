@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLocale } from '@/i18n/LocaleProvider';
+import Logo from '@/components/ui/Logo';
 import { FaXTwitter, FaInstagram, FaFacebookF, FaYoutube } from 'react-icons/fa6';
 
 const HIDDEN_ON = ['/dashboard', '/admin'];
@@ -17,9 +18,8 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-5 pb-6 pt-12 sm:px-8">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
-            <Link href="/" className="flex items-center gap-2">
-              <img src="/logos/st-logo.png" alt="" className="h-8 w-auto" />
-              <span className="text-base font-bold text-white">SafeTicket</span>
+            <Link href="/" className="flex items-center">
+              <Logo white className="h-5 w-auto" />
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-white/70">
               {t.footer.tagline}

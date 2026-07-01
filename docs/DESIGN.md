@@ -137,16 +137,23 @@ Paste into `src/app/globals.css` (replaces the current `:root` token block):
 
 ## 3. Typography Rules
 
-Ticketmaster's brand typeface is **Averta** (weights 300–800; Calibri/Helvetica
-Neue/Arial as fallbacks). If an Averta licence isn't available, substitute a close
-geometric-humanist sans — **Mona Sans**, **Hanken Grotesk**, or **Figtree** — for
-the display face; keep the current Hebrew-capable body face for RTL support.
+The site runs on Google Fonts loaded via `next/font`: **Rubik** (display/headings)
+and **Assistant** (body/UI) — both Hebrew-capable, so RTL stays native. A separate
+SVG logo carries the brand mark, and **Saira** is an in-progress trial font scoped to
+the hero/header/search bar (see below).
 
-- **Display / headings — Averta (or geometric-humanist fallback)** (`--font-display`,
-  weights 600/700/800). Confident and geometric. `h1–h3` are weight **700–800** with
-  tight **`-0.02em`** tracking. Marketing headlines can run large and punchy.
-- **Body / UI — Averta / Assistant** (`--font-sans`). Averta for Latin; retain
-  **Assistant** for Hebrew so RTL text stays native. All running text and controls.
+- **Logo — SVG image** (`public/logos/safeticket.svg`), a slanted `safeticket`
+  wordmark, via the `Logo` component. It is **black** by default and flipped to
+  **white** on dark chrome with `filter: brightness(0) invert(1)` (`<Logo white />`).
+  Used in the navbar + footer + admin sidebar (white) and the homepage hero (black).
+  It is an image, so no logo font is loaded.
+- **Display / headings — Rubik** (`--font-display`) · **Body / UI + Hebrew —
+  Assistant** (`--font-sans`). Both cover Latin **and Hebrew** (RTL stays native).
+  `h1–h3` weight **700** with tight **`-0.02em`** tracking.
+- **Trial font — Saira** (`--font-saira`), currently scoped to the **hero, header and
+  search bar only** via `--font-trial` (`Saira → Assistant → system-ui`; Latin-only so
+  Hebrew falls back to Assistant). The rest of the site stays on Rubik/Assistant. This
+  is an in-progress pairing test with the logo — not yet the global type.
 - **CTAs & labels — UPPERCASE**, weight 700, letter-spaced — the Ticketmaster
   button voice ("FIND TICKETS", "SELL").
 - **Numerals — tabular.** `.font-mono-nums` (`font-feature-settings:"tnum"`) so
@@ -192,9 +199,11 @@ active / disabled / loading.**
 - **Search / filter bar (`FieldSearch`, `SearchStrip`):** Ticketmaster's search is
   central to discovery — prominent, sticky, field-aware with active-filter chips and
   full keyboard nav (↑↓ / Enter / Backspace / Escape).
-- **Top nav (Black Pearl):** Dark `--ink` bar, white logo + links, Azure primary
-  CTA, white search affordance. Sticky.
-- **Footer (Black Pearl):** Dark band, muted-white link columns, Azure links.
+- **Top nav (pure black — `--chrome #000`):** black bar, **white SVG logo** + links,
+  a **single-flag** language button (opens a chooser list, no chevron), and a **white**
+  SIGN UP button — **no blue in the header** (Azure is not used here). Softer, reduced
+  corner rounding on controls; no search icon (search lives in the strip below). Sticky.
+- **Footer (pure black):** black band, muted-white link columns, white SVG logo.
 - **Mobile menu toggle (`MenuToggle`):** the burger is a **descending staircase**
   (three stepped bars, *not* equal lines) that **animates into an X** on open — top &
   bottom bars slide to centre and rotate ±45°, the middle bar collapses. Styling +
@@ -364,9 +373,9 @@ admin is dark.
 
 | Surface | Who | Theme | Shell | Nav component |
 |---|---|---|---|---|
-| **Storefront** (§1–9) | everyone | Light canvas + Black Pearl chrome bands | Top nav + sticky search strip + footer | `Navbar` / `SearchStrip` / `Footer` |
+| **Storefront** (§1–9) | everyone | Light canvas + **pure-black** chrome bands | Top nav + sticky search strip + footer | `Navbar` / `SearchStrip` / `Footer` |
 | **Account dashboard** (`/dashboard`) | external users (buyers/sellers) | **Light** (white end-to-end) | Right-hand side-nav (RTL-first) | `AccountSidebar` |
-| **Admin "Backoffice"** (`/admin`) | internal users (staff) | **Black Pearl sidebar + light content** (mirrors the storefront's dark-chrome / white-content sandwich) | Side-nav | `AdminSidebar` |
+| **Admin "Backoffice"** (`/admin`) | internal users (staff) | **Black sidebar + light content** (mirrors the storefront's dark-chrome / white-content sandwich) | Side-nav | `AdminSidebar` |
 
 ### 10.1 External-users app — Account dashboard (LIGHT)
 
@@ -401,11 +410,10 @@ token is inherited (white surfaces, Azure `#026CDF`, Black Pearl `#1F262D` ink t
 light borders). This mirrors the storefront: **dark chrome (the sidebar) over light
 content**.
 
-**Sidebar (`AdminSidebar`, 240px / `w-60`) — Black Pearl chrome, like the public
-navbar/footer:** `bg-[--chrome]` (`#1F262D`), `border-[--chrome-border]`. **Brand
-header:** 32px `rounded-md bg-[--accent]` tile + white `Ticket` icon, the **SafeTicket
-wordmark** (white "Safe" + `--accent-on-dark` "Ticket", display `text-lg font-extrabold`),
-`.overline` "BACKOFFICE · ניהול" in `white/45`. **Nav:** `text-white/65` →
+**Sidebar (`AdminSidebar`, 240px / `w-60`) — pure-black chrome, like the public
+navbar/footer:** `bg-[--chrome]` (`#000`), `border-[--chrome-border]`. **Brand
+header:** the **white SVG logo** (`<Logo white />`) + `.overline` "BACKOFFICE · ניהול"
+in `white/45`. **Nav:** `text-white/65` →
 `hover:bg-white/10 hover:text-white`; **active** = `border-s-[3px] border-[--accent] +
 bg-white/10 + text-white`, `rounded-e-lg`. Footer: LocaleSwitcher + "back to site"
 (`white/55` → `--accent-on-dark`). **Mobile:** `h-14` Black Pearl top bar with the

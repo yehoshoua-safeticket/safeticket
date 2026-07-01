@@ -24,10 +24,10 @@
   --accent-soft: rgba(2, 108, 223, 0.08);
   --accent-on-dark: #4191E7;     /* azure text/links on Black Pearl */
 
-  /* Chrome (dark nav/footer/hero bands) */
-  --chrome: #1F262D;             /* Black Pearl */
-  --chrome-2: #2a333c;           /* raised surfaces on chrome */
-  --chrome-border: rgba(255, 255, 255, 0.12);
+  /* Chrome (nav / footer / mobile menu) — pure black */
+  --chrome: #000000;             /* black */
+  --chrome-2: #111111;           /* raised surfaces on chrome (dropdowns) */
+  --chrome-border: rgba(255, 255, 255, 0.14);
 
   --accent-2: #00E0C7;           /* Aquamarine — sparing "live/on-sale" accent */
   --accent-2-text: #0a8f81;      /* aqua text, AA-safe on white */
@@ -46,6 +46,10 @@
   --r-sm: 8px;
   --r-md: 12px;
   --r-lg: 16px;
+
+  /* Trial font stack for the hero / header / search bar only (Latin → Hebrew fallback).
+     The rest of the site keeps --font-display (Rubik) / --font-sans (Assistant). */
+  --font-trial: var(--font-saira), var(--font-sans), system-ui, sans-serif;
 }
 
 /* Aurora hero gradient — heroes / feature bands only */

@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { LayoutDashboard, Users, CalendarDays, Tag, AlertTriangle, MessageCircle, ClipboardList, UserCog, ShieldCheck, Ticket, Star, Image as ImageIcon } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarDays, Tag, AlertTriangle, MessageCircle, ClipboardList, UserCog, ShieldCheck, Star, Image as ImageIcon } from 'lucide-react';
+import Logo from '@/components/ui/Logo';
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/i18n/LocaleProvider';
 import LocaleSwitcher from '@/components/ui/LocaleSwitcher';
@@ -41,11 +42,7 @@ export default function AdminSidebar() {
     return pathname.startsWith(href);
   }
 
-  const wordmark = (
-    <span className="font-[family-name:var(--font-display)] text-lg font-extrabold leading-none tracking-tight">
-      <span className="text-white">Safe</span><span style={{ color: 'var(--accent-on-dark)' }}>Ticket</span>
-    </span>
-  );
+  const wordmark = <Logo white className="h-5 w-auto" />;
 
   const nav = (
     <nav className="flex flex-col gap-1 px-3 py-4">
@@ -72,10 +69,7 @@ export default function AdminSidebar() {
 
   const header = (
     <div className="flex flex-col gap-1.5 border-b border-[var(--chrome-border)] px-5 py-4">
-      <Link href="/admin" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
-        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-[var(--accent)] text-white">
-          <Ticket className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        </span>
+      <Link href="/admin" className="flex items-center" onClick={() => setMobileOpen(false)}>
         {wordmark}
       </Link>
       <span className="overline ps-0.5 text-white/45">BACKOFFICE · ניהול</span>
@@ -98,10 +92,7 @@ export default function AdminSidebar() {
 
       {/* Mobile header — Black Pearl */}
       <div className="flex h-14 items-center justify-between bg-[var(--chrome)] px-4 text-white lg:hidden">
-        <Link href="/admin" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[var(--accent)] text-white">
-            <Ticket className="h-4 w-4" strokeWidth={2.2} />
-          </span>
+        <Link href="/admin" className="flex items-center" onClick={() => setMobileOpen(false)}>
           {wordmark}
         </Link>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="rounded-md p-2 text-white" aria-label="Menu">
