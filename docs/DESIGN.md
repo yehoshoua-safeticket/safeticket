@@ -195,6 +195,11 @@ active / disabled / loading.**
 - **Top nav (Black Pearl):** Dark `--ink` bar, white logo + links, Azure primary
   CTA, white search affordance. Sticky.
 - **Footer (Black Pearl):** Dark band, muted-white link columns, Azure links.
+- **Mobile menu toggle (`MenuToggle`):** the burger is a **descending staircase**
+  (three stepped bars, *not* equal lines) that **animates into an X** on open — top &
+  bottom bars slide to centre and rotate ±45°, the middle bar collapses. Styling +
+  transition live in `.menu-toggle` (`globals.css`, `.3s`). Shared by the public navbar
+  and the admin mobile header; `currentColor` so it inherits white-on-Black-Pearl.
 - **Skeleton (`.skeleton`):** Azure-wash shimmer for async lists/detail — never a
   bare spinner page where a skeleton fits.
 - **Empty state (`EmptyState`):** Icon, headline, supporting line, primary CTA.
@@ -237,6 +242,8 @@ override). Primitives in `globals.css`:
   retint to Azure/violet/aqua), `.pulse-ring` (Aquamarine "live" pulse).
 - **Buttons:** `.site-anim` press (`translateY(1px) scale(.99)`) + hover brightness on
   the public site; `.no-anim` opts out (dashboard/admin).
+- **Menu toggle:** `.menu-toggle` morphs the **staircase burger → X** on open
+  (`.3s` slide + rotate of the three bars); `prefers-reduced-motion`-aware.
 - **Texture:** `.dot-grid`, `.noise-overlay` (4% SVG fractal noise) on dark bands.
 
 ---
@@ -342,6 +349,118 @@ To read as Ticketmaster:
 > **Note:** the current hero text and buttons hardcode `#1a55e3` (old logo blue).
 > After applying the §2.6 tokens, swap these to `var(--accent)` / `#026CDF` so the
 > hero turns true Ticketmaster Azure.
+
+---
+
+## 10. Logged-in apps — Dashboard (external) & Admin (internal)
+
+SafeTicket ships **three visually distinct surfaces**, all built on the same `:root`
+token system but skinned differently. §1–9 above cover the public storefront; the two
+logged-in apps are documented here. They are **side-nav apps** — no public
+top-nav / search-strip / footer — and share a component vocabulary (sidebar
+active-tab, `DashboardCard`, `StatusBadge`, `FieldSearch`, `.overline` labels, lucide
+icons at `strokeWidth 1.8`) but **invert the palette**: the dashboard is light, the
+admin is dark.
+
+| Surface | Who | Theme | Shell | Nav component |
+|---|---|---|---|---|
+| **Storefront** (§1–9) | everyone | Light canvas + Black Pearl chrome bands | Top nav + sticky search strip + footer | `Navbar` / `SearchStrip` / `Footer` |
+| **Account dashboard** (`/dashboard`) | external users (buyers/sellers) | **Light** (white end-to-end) | Right-hand side-nav (RTL-first) | `AccountSidebar` |
+| **Admin "Backoffice"** (`/admin`) | internal users (staff) | **Black Pearl sidebar + light content** (mirrors the storefront's dark-chrome / white-content sandwich) | Side-nav | `AdminSidebar` |
+
+### 10.1 External-users app — Account dashboard (LIGHT)
+
+**Shell** (`dashboard/layout.tsx`): white page, `flex lg:flex-row-reverse` → the
+sidebar sits on the **inline-end** (right in Hebrew), `<main>` fills the rest. Uses
+the public **light token set unchanged** (no override). Wrapped in `.no-anim` (the
+dashboard opts out of the storefront's button motion).
+
+**Sidebar (`AccountSidebar`, 256px / `w-64`):** white `--surface`, `border-s
+--card-border`. Top **membership card** on `--surface-2` (pale azure): `.overline`
+"My Account", a 40px `rounded-md bg-[--accent]` avatar with initials, name in the
+display font, email in `--muted`, small role pill. **Active nav item:**
+`border-s-[3px]` Azure tab + `bg-[--accent-soft]` + `text-[--accent-text]`,
+`rounded-e-md`; inactive `--muted` → hover `--surface-2`; items `px-3 py-2.5 text-sm
+font-semibold`. Footer: LocaleSwitcher + sign-out (`hover:bg-red-500/15`). **Mobile:**
+top bar + right-anchored `w-72` drawer over `bg-black/30`.
+
+**Content:** `mx-auto max-w-5xl px-4 py-8` (dashboards) · `max-w-2xl py-12` (forms).
+Page head = `h1 text-2xl/3xl` + `--muted` subtitle, `mb-8`-spaced sections.
+**Patterns:** `DashboardCard` stat grids; list rows `rounded-xl border bg-[--card]
+p-4/5` (title + muted sub-line + right `StatusBadge`); seller **payout timeline**
+(4 × `rounded-full` step circles joined by `h-px` rules); sectioned forms
+(`rounded-xl` cards, inputs `rounded-xl bg-[--input-bg]` + focus `ring-[--accent]`,
+dashed upload dropzones). Buttons: primary `rounded-xl bg-[--accent]`; secondary
+`rounded-lg border`.
+
+### 10.2 Internal-users app — Admin "Backoffice" (Black Pearl chrome + light content)
+
+**Shell** (`admin/layout.tsx`): the **light** `:root` palette on a soft-grey canvas —
+only `--background` is overridden to `#f4f6fb` so white cards/tables pop; every other
+token is inherited (white surfaces, Azure `#026CDF`, Black Pearl `#1F262D` ink text,
+light borders). This mirrors the storefront: **dark chrome (the sidebar) over light
+content**.
+
+**Sidebar (`AdminSidebar`, 240px / `w-60`) — Black Pearl chrome, like the public
+navbar/footer:** `bg-[--chrome]` (`#1F262D`), `border-[--chrome-border]`. **Brand
+header:** 32px `rounded-md bg-[--accent]` tile + white `Ticket` icon, the **SafeTicket
+wordmark** (white "Safe" + `--accent-on-dark` "Ticket", display `text-lg font-extrabold`),
+`.overline` "BACKOFFICE · ניהול" in `white/45`. **Nav:** `text-white/65` →
+`hover:bg-white/10 hover:text-white`; **active** = `border-s-[3px] border-[--accent] +
+bg-white/10 + text-white`, `rounded-e-lg`. Footer: LocaleSwitcher + "back to site"
+(`white/55` → `--accent-on-dark`). **Mobile:** `h-14` Black Pearl top bar with the
+animated `MenuToggle` (staircase → X) + full-width dropdown.
+
+**Content:** `mx-auto max-w-7xl px-4 py-8` (lists/dashboard) · `max-w-2xl/3xl/4xl`
+(forms/details). **Signature patterns:**
+- **Data table** (every list): `rounded-xl border bg-[--card]`, leading checkbox
+  column, `divide-y` rows, **whole-row click → detail** (`hover:bg-[--input-bg]`,
+  `cursor-pointer`), cells `px-5 py-3.5`. Desktop `<table>` **+ a parallel mobile
+  stacked-card `<ul>`** on every list. Headers `text-xs uppercase tracking-wider
+  --muted`. **No pagination** — all rows render, client-side filtered via `FieldSearch`
+  + a status `<select>`.
+- **Bulk-action bar** (on selection): `rounded-xl border-[--accent]/30 bg-[--accent-soft]`
+  with inline confirm-delete.
+- **Detail pages:** key/value card (`divide-y` rows, `w-32` label + value/input) or a
+  two-column `Field` grid; back button (`ArrowRight rtl:rotate-180`); **two-step inline
+  delete confirm**; azure Save.
+- **Forms:** `rounded-xl card p-6`, `grid gap-5 sm:grid-cols-2`, `--muted` labels,
+  inputs `rounded-lg py-2.5 bg-[--input-bg]`, dashed upload dropzone, azure submit.
+- **Buttons:** primary `rounded-lg bg-[--accent]`; secondary `rounded-lg border`; danger
+  `bg-red-600` (or `bg-red-50` chip for bulk). `rounded-full` reserved for count
+  pills / avatars.
+
+### 10.3 Shared components (both apps)
+- **`DashboardCard`** — `rounded-[--r-md] border bg-[--surface] p-5 elev-1`, `.overline`
+  title, `text-3xl` display value, 36px `rounded-md` icon chip. `colorMap`: `blue` →
+  tokens (`--accent-soft`/`--accent-text`); `emerald/yellow/red/purple` → hardcoded
+  Tailwind `-50/-700` chips.
+- **`StatusBadge`** — near-rectangular `rounded-[5px]` chip, `border-current/25`,
+  `font-semibold`; sizes `sm 11px / md 13px`. Groups: success emerald · warning amber ·
+  danger red · info blue · neutral stone (hardcoded "blanc-cassé" light chips, shown on
+  both light and dark surfaces).
+
+### 10.4 Known inconsistencies (cleanup backlog)
+Observed in the live code — these **diverge from the token system**; fix when touching
+the files:
+1. **Status colors bypass the tokens.** `--danger/--success/--warning` are unused;
+   `StatusBadge`, `DashboardCard` (4/5 chips), `VerificationBanner` and inline callouts
+   hardcode Tailwind `emerald/amber/red/violet/stone/blue`. Now that both apps are light
+   these light chips read correctly; still ideally centralised on the semantic tokens.
+2. **`bg-white` inputs** — `external_users` (450,460,470,481,550,561), `internal_users`
+   (142,152,163), `tasks` (443,447,466). No longer clash now the admin is light
+   (previously white boxes on a dark panel); cosmetic only — prefer `bg-[--input-bg]`
+   to match the pale-blue field fill used elsewhere.
+3. **Two blues.** Some slots use raw `blue-600/700` (dashboard buyer card `page.tsx:94`,
+   `sell` new-event banner/button) instead of Azure `--accent`.
+4. **Radius not standardised.** Only `DashboardCard` uses `--r-md`; the dashboard's
+   **buttons/inputs are `rounded-xl`** while admin uses `rounded-lg`. Per §5, controls
+   should settle on **`rounded-lg`** — the dashboard is the main offender.
+5. **Emerald-bg + azure-text** mixes (payout timeline; admin approve/toggle buttons).
+6. **`DisputeCard` hardcodes Hebrew** copy instead of `t.*` i18n.
+7. Admin **users pages** roll their own role/verification chips instead of `StatusBadge`;
+   the **events list `<th>`** styling diverges (no uppercase/tracking) from every other
+   table. Dashboard **mobile avatar** is `rounded-full` vs desktop `rounded-md`.
 
 ---
 
