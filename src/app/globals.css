@@ -107,24 +107,26 @@ img {
 .menu-toggle > span {
   position: absolute;
   height: 2px;
+  width: 58%;                 /* fixed — bars never change length */
   border-radius: 2px;
   background: currentColor;
   transform-origin: center;
+  /* Only position + rotation animate — width/thickness/opacity never change, so all
+     three bars keep their shape and can be followed the whole way. */
   transition:
-    transform .65s cubic-bezier(.2,.8,.3,1),
     top .65s cubic-bezier(.2,.8,.3,1),
     left .65s cubic-bezier(.2,.8,.3,1),
-    width .65s cubic-bezier(.2,.8,.3,1),
-    opacity .45s ease;
+    transform .65s cubic-bezier(.2,.8,.3,1);
 }
-/* closed = descending staircase */
-.menu-toggle > span:nth-child(1) { top: 28%; left: 6%;  width: 52%; }
-.menu-toggle > span:nth-child(2) { top: 50%; left: 24%; width: 52%; }
-.menu-toggle > span:nth-child(3) { top: 72%; left: 42%; width: 52%; }
-/* open = X (top & bottom cross at centre, middle collapses) */
-.menu-toggle.is-open > span:nth-child(1) { top: 50%; left: 12%; width: 76%; transform: rotate(45deg); }
-.menu-toggle.is-open > span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-.menu-toggle.is-open > span:nth-child(3) { top: 50%; left: 12%; width: 76%; transform: rotate(-45deg); }
+/* closed = descending staircase (all 3 bars identical length + thickness) */
+.menu-toggle > span:nth-child(1) { top: 22%; left: 6%; }
+.menu-toggle > span:nth-child(2) { top: 50%; left: 21%; }
+.menu-toggle > span:nth-child(3) { top: 78%; left: 36%; }
+/* open = top two bars cross into an X; the third slides under it as an underline.
+   All three stay visible with unchanged length/thickness. */
+.menu-toggle.is-open > span:nth-child(1) { top: 40%; left: 21%; transform: rotate(45deg); }
+.menu-toggle.is-open > span:nth-child(2) { top: 40%; left: 21%; transform: rotate(-45deg); }
+.menu-toggle.is-open > span:nth-child(3) { top: 84%; left: 21%; }
 @media (prefers-reduced-motion: reduce) {
   .menu-toggle > span { transition: none; }
 }
