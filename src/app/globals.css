@@ -70,6 +70,12 @@ body {
   color: var(--foreground);
 }
 
+/* Hebrew (Assistant) reads a touch small at the same px — scale the RTL UI up one
+   level. Rem-based, so all Hebrew type grows a step; English (lang="en") is untouched. */
+html[lang="he"] {
+  font-size: 112.5%;
+}
+
 h1, h2, h3 {
   font-family: var(--font-display), system-ui, sans-serif;
   font-weight: 700;

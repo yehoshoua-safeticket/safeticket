@@ -146,7 +146,9 @@ the hero/header/search bar (see below).
   wordmark, via the `Logo` component. It is **black** by default and flipped to
   **white** on dark chrome with `filter: brightness(0) invert(1)` (`<Logo white />`).
   Used in the navbar + footer + admin sidebar (white) and the homepage hero (black).
-  It is an image, so no logo font is loaded.
+  It is an image, so no logo font is loaded. **Sizes:** `h-5` (20px tall) in the
+  **navbar & footer** (kept equal for brand consistency; the SVG is ~7:1 so `h-5`
+  ≈ 140px wide) and `h-11`→`sm:h-14` in the **hero**.
 - **Display / headings — Rubik** (`--font-display`) · **Body / UI + Hebrew —
   Assistant** (`--font-sans`). Both cover Latin **and Hebrew** (RTL stays native).
   `h1–h3` weight **700** with tight **`-0.02em`** tracking.
@@ -154,6 +156,10 @@ the hero/header/search bar (see below).
   search bar only** via `--font-trial` (`Saira → Assistant → system-ui`; Latin-only so
   Hebrew falls back to Assistant). The rest of the site stays on Rubik/Assistant. This
   is an in-progress pairing test with the logo — not yet the global type.
+- **Hebrew scale-up:** `html[lang="he"]` sets `font-size: 112.5%` (18px root) so
+  Hebrew — which reads small at the same px — is **one level larger** than English.
+  Rem-based, so all Hebrew type (and spacing) scales up together; English (`lang="en"`)
+  stays at the 16px baseline.
 - **CTAs & labels — UPPERCASE**, weight 700, letter-spaced — the Ticketmaster
   button voice ("FIND TICKETS", "SELL").
 - **Numerals — tabular.** `.font-mono-nums` (`font-feature-settings:"tnum"`) so
@@ -203,7 +209,11 @@ active / disabled / loading.**
   a **single-flag** language button (opens a chooser list, no chevron), and a **white**
   SIGN UP button — **no blue in the header** (Azure is not used here). Softer, reduced
   corner rounding on controls; no search icon (search lives in the strip below). Sticky.
-- **Footer (pure black):** black band, muted-white link columns, white SVG logo.
+  Nav links + buttons are **`text-sm font-bold uppercase`**.
+- **Footer (pure black):** black band, white SVG logo. **Header ↔ footer share one type
+  scale:** footer column headings + links are **`text-sm font-bold`** (headings also
+  uppercase), the *same size and weight* as the header nav — so the two chrome bands
+  read consistently. Only fine print (copyright) stays `text-xs`.
 - **Mobile menu toggle (`MenuToggle`):** the burger is a **descending staircase**
   (three stepped bars, *not* equal lines) that **animates into an X** on open — top &
   bottom bars slide to centre and rotate ±45°, the middle bar collapses. Styling +

@@ -57,7 +57,7 @@ export default function Navbar() {
               <Link
                 key={`${link.href}-${i}`}
                 href={link.href}
-                className="rounded px-3.5 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white"
+                className="rounded px-3.5 py-2 text-sm font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white"
               >
                 {link.label}
               </Link>
@@ -81,10 +81,10 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="rounded px-3 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white">
+                <Link href="/auth/login" className="rounded px-3 py-2 text-sm font-bold uppercase tracking-wider text-white/70 transition-colors hover:text-white">
                   {t.nav.login}
                 </Link>
-                <Link href="/auth/signup" className="rounded bg-white px-4 py-2 text-[0.78rem] font-bold uppercase tracking-wider text-[var(--chrome)] transition-colors hover:bg-white/90">
+                <Link href="/auth/signup" className="rounded bg-white px-4 py-2 text-sm font-bold uppercase tracking-wider text-[var(--chrome)] transition-colors hover:bg-white/90">
                   {t.nav.signup}
                 </Link>
               </>
