@@ -21,7 +21,6 @@ export default function Navbar() {
   const { t, locale, setLocale } = useLocale();
 
   const navLinks = [
-    { href: '/tickets', label: t.nav.tickets },
     { href: '/tickets', label: t.nav.buyer },
     { href: '/sell', label: t.nav.seller },
     { href: '/how-it-works', label: t.nav.howItWorks },
