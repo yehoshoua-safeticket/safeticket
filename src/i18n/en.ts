@@ -102,8 +102,8 @@ export const en: Translations = {
 
   nav: {
     tickets: 'Tickets',
-    buyer: 'Buy',
-    seller: 'Sell',
+    buyer: 'Buy Tickets',
+    seller: 'Sell Tickets',
     howItWorks: 'How It Works',
     faq: 'FAQ',
     login: 'Login',

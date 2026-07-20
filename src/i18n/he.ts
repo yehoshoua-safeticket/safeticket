@@ -100,8 +100,8 @@ export const he = {
 
   nav: {
     tickets: 'כרטיסים',
-    buyer: 'קונה',
-    seller: 'מוכר',
+    buyer: 'רכישת כרטיסים',
+    seller: 'מכירת כרטיסים',
     howItWorks: 'איך זה עובד',
     faq: 'שאלות נפוצות',
     login: 'התחברות',
