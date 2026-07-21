@@ -390,7 +390,7 @@ export default function AdminUsersPage() {
       <select
         value={value}
         onChange={e => onChange(e.target.value as GroupKey)}
-        className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+        className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm focus:outline-none"
       >
         {GROUP_OPTIONS
           .filter(o => !exclude || o.value === 'none' || o.value !== exclude)
@@ -447,7 +447,7 @@ export default function AdminUsersPage() {
                 value={createForm.full_name}
                 onChange={(e) => setCreateForm({ ...createForm, full_name: e.target.value })}
                 placeholder={t.admin.users.namePlaceholder}
-                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none"
               />
             </div>
             <div>
@@ -457,7 +457,7 @@ export default function AdminUsersPage() {
                 value={createForm.email}
                 onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
                 placeholder="user@example.com"
-                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none"
               />
             </div>
             <div>
@@ -467,7 +467,7 @@ export default function AdminUsersPage() {
                 value={createForm.phone}
                 onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
                 placeholder={t.admin.users.phonePlaceholder}
-                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none"
               />
             </div>
             <div>
@@ -478,7 +478,7 @@ export default function AdminUsersPage() {
                   value={createForm.password}
                   onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
                   placeholder={t.admin.users.passwordPlaceholder}
-                  className="w-full rounded-lg border border-[var(--input-border)] bg-white py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                  className="w-full rounded-lg border border-[var(--input-border)] bg-white py-2 pl-9 pr-3 text-sm focus:outline-none"
                 />
                 <button
                   type="button"

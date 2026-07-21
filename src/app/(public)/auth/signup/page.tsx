@@ -85,20 +85,20 @@ export default function SignupPage() {
           <div className="space-y-4">
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.signup.fullName}</label>
-              <input name="fullName" type="text" required placeholder={t.auth.signup.namePlaceholder} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+              <input name="fullName" type="text" required placeholder={t.auth.signup.namePlaceholder} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:outline-none" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.signup.email}</label>
-              <input name="email" type="email" required placeholder="your@email.com" dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+              <input name="email" type="email" required placeholder="your@email.com" dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:outline-none" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.signup.phone}</label>
-              <input name="phone" type="tel" placeholder={t.auth.signup.phonePlaceholder} dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+              <input name="phone" type="tel" placeholder={t.auth.signup.phonePlaceholder} dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:outline-none" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.signup.password}</label>
               <div className="relative">
-                <input name="password" type={showPassword ? 'text' : 'password'} required placeholder={t.auth.signup.passwordPlaceholder} dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 pr-10 text-sm placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <input name="password" type={showPassword ? 'text' : 'password'} required placeholder={t.auth.signup.passwordPlaceholder} dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 pr-10 text-sm placeholder-[var(--muted)] focus:outline-none" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -107,7 +107,7 @@ export default function SignupPage() {
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.signup.passwordConfirm}</label>
               <div className="relative">
-                <input name="confirmPassword" type="password" required placeholder={t.auth.signup.passwordConfirmPlaceholder} dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 pr-10 text-sm placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <input name="confirmPassword" type="password" required placeholder={t.auth.signup.passwordConfirmPlaceholder} dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 pr-10 text-sm placeholder-[var(--muted)] focus:outline-none" />
               </div>
             </div>
           </div>

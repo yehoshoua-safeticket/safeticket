@@ -88,11 +88,11 @@ export default function VerifyPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.verify.fullName}</label>
-                <input type="text" required className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <input type="text" required className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
               </div>
               <div>
                 <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.verify.idNumber}</label>
-                <input type="text" required className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <input type="text" required className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function VerifyPage() {
             <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">{t.verify.uploadDoc}</h2>
             <div>
               <label className="mb-2 block text-sm text-[var(--muted)]">{t.verify.docType}</label>
-              <select value={docType} onChange={(e) => setDocType(e.target.value)} className="mb-4 w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+              <select value={docType} onChange={(e) => setDocType(e.target.value)} className="mb-4 w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] focus:outline-none">
                 <option value="id">{t.verify.docId}</option>
                 <option value="passport">{t.verify.docPassport}</option>
                 <option value="license">{t.verify.docLicense}</option>

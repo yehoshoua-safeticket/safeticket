@@ -120,7 +120,7 @@ export default function AdminListingsPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+          className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none"
         >
           <option value="all">{t.admin.listings.allStatuses}</option>
           <option value="pending_review">{t.admin.listings.statusPendingReview}</option>

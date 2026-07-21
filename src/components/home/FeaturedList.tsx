@@ -61,7 +61,7 @@ export default function FeaturedList({ featured }: { featured: EventWithListings
                   >
                     {ev.title}
                   </h2>
-                  <p className="mt-1 text-sm text-white/80 sm:text-base">
+                  <p className="mt-1 text-sm font-bold text-white/80 sm:text-base">
                     {new Date(ev.event_date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
                     {ev.city && ` · ${ev.city}`}
                   </p>

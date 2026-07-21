@@ -26,11 +26,12 @@ export default async function CategorySection() {
 
   if (rows.length === 0) return null;
 
+  // Trailing space so the last row does not butt up against the footer.
   return (
-    <>
+    <div className="pb-12">
       {rows.map((row) => (
         <CategoryCarousel key={row.category} category={row.category} events={row.events} />
       ))}
-    </>
+    </div>
   );
 }

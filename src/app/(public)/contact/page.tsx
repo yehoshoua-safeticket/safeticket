@@ -39,16 +39,16 @@ export default function ContactPage() {
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.contact.fullName}</label>
-                  <input type="text" required placeholder={t.contact.namePlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                  <input type="text" required placeholder={t.contact.namePlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.contact.email}</label>
-                  <input type="email" required placeholder="your@email.com" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                  <input type="email" required placeholder="your@email.com" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
                 </div>
               </div>
               <div>
                 <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.contact.subject}</label>
-                <select className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+                <select className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] focus:outline-none">
                   <option value="">{t.contact.subjectPlaceholder}</option>
                   <option value="general">{t.contact.subjectGeneral}</option>
                   <option value="buying">{t.contact.subjectBuying}</option>
@@ -60,7 +60,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.contact.message}</label>
-                <textarea required rows={5} placeholder={t.contact.messagePlaceholder} className="w-full resize-none rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <textarea required rows={5} placeholder={t.contact.messagePlaceholder} className="w-full resize-none rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
               </div>
             </div>
             <button type="submit" className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] py-3.5 font-semibold text-white transition hover:opacity-90">

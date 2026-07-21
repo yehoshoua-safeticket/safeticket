@@ -131,7 +131,7 @@ export default function SupportPage() {
           <div className="space-y-5">
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.supportPage.selectOrder}</label>
-              <select required value={orderId} onChange={(e) => setOrderId(e.target.value)} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+              <select required value={orderId} onChange={(e) => setOrderId(e.target.value)} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] focus:outline-none">
                 <option value="">{t.supportPage.selectOrderPlaceholder}</option>
                 {orders.map((o) => (
                   <option key={o.id} value={o.id}>{o.label}</option>
@@ -140,7 +140,7 @@ export default function SupportPage() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.supportPage.reason}</label>
-              <select required value={reasonCode} onChange={(e) => setReasonCode(e.target.value)} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+              <select required value={reasonCode} onChange={(e) => setReasonCode(e.target.value)} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] focus:outline-none">
                 <option value="">{t.supportPage.reasonPlaceholder}</option>
                 <option value="fake">{t.supportPage.reasonFake}</option>
                 <option value="wrong">{t.supportPage.reasonWrong}</option>
@@ -151,7 +151,7 @@ export default function SupportPage() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.supportPage.description}</label>
-              <textarea required rows={4} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.supportPage.descriptionPlaceholder} className="w-full resize-none rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+              <textarea required rows={4} value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.supportPage.descriptionPlaceholder} className="w-full resize-none rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
             </div>
           </div>
 

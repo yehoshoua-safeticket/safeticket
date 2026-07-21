@@ -166,7 +166,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 <input
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="flex-1 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                  className="flex-1 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none"
                 />
                 {profile.id === currentUserId && (
                   <span className="rounded-full bg-[var(--accent-soft)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--accent-text)]">{t.common.you}</span>
@@ -180,7 +180,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
-                className="flex-1 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="flex-1 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none"
               />
             </div>
 
@@ -190,7 +190,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 type="tel"
-                className="flex-1 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="flex-1 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none"
               />
             </div>
 
@@ -206,7 +206,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as UserRole)}
-                className="rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none"
               >
                 {ROLE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
@@ -217,7 +217,7 @@ export default function UserDetailPage({ params }: { params: Promise<{ id: strin
               <select
                 value={verificationStatus}
                 onChange={(e) => setVerificationStatus(e.target.value as VerificationStatus)}
-                className="rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none"
               >
                 {VERIFICATION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>

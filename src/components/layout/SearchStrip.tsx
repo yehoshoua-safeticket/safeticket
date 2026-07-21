@@ -111,7 +111,7 @@ export default function SearchStrip() {
         {/* Search pill */}
         <form
           onSubmit={submitSearch}
-          className="order-first flex w-full items-center gap-2 rounded-lg border border-[var(--card-border)] bg-white ps-4 pe-1.5 py-1.5 shadow-sm transition focus-within:border-[var(--accent)] focus-within:shadow-md focus-within:ring-2 focus-within:ring-[var(--accent)]/15 sm:order-none sm:w-auto sm:min-w-[12rem] sm:flex-1"
+          className="order-first flex w-full items-center gap-2 rounded-lg border border-[var(--card-border)] bg-white ps-4 pe-1.5 py-1.5 shadow-sm transition sm:order-none sm:w-auto sm:min-w-[12rem] sm:flex-1"
         >
           <Search className="h-5 w-5 shrink-0 text-[var(--muted)]" />
           <input
@@ -121,7 +121,7 @@ export default function SearchStrip() {
             onChange={(e) => setQuery(e.target.value)}
             className="min-w-0 flex-1 bg-transparent py-1.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none sm:text-base"
           />
-          <button type="submit" className="shrink-0 rounded-md bg-black px-5 py-2 text-sm font-bold text-white transition hover:bg-black/85">
+          <button type="submit" className="shrink-0 rounded-md bg-[var(--accent)] px-5 py-2 text-sm font-bold text-white transition hover:bg-[var(--accent-hover)]">
             {t.fieldSearch.search}
           </button>
         </form>
@@ -195,11 +195,11 @@ export default function SearchStrip() {
               <div className="flex flex-col gap-2">
                 <label className="flex-1">
                   <span className="mb-1 block text-[0.65rem] text-[var(--muted)]">{t.filterBar.from}</span>
-                  <input type="date" dir="ltr" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} className="w-full min-w-0 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
+                  <input type="date" dir="ltr" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} className="w-full min-w-0 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none" />
                 </label>
                 <label className="flex-1">
                   <span className="mb-1 block text-[0.65rem] text-[var(--muted)]">{t.filterBar.to}</span>
-                  <input type="date" dir="ltr" value={customTo} onChange={(e) => setCustomTo(e.target.value)} className="w-full min-w-0 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
+                  <input type="date" dir="ltr" value={customTo} onChange={(e) => setCustomTo(e.target.value)} className="w-full min-w-0 rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none" />
                 </label>
               </div>
               <div className="mt-3 flex items-center justify-between">
@@ -279,13 +279,13 @@ export default function SearchStrip() {
             <div className="space-y-3">
               <div>
                 <label className="mb-1.5 block text-xs text-[var(--muted)]">{t.filterBar.category}</label>
-                <select value={categoryParam} onChange={(e) => apply({ category: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none">
+                <select value={categoryParam} onChange={(e) => apply({ category: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none">
                   {categories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
               </div>
               <div>
                 <label className="mb-1.5 block text-xs text-[var(--muted)]">{t.filterBar.sortBy}</label>
-                <select value={sortParam} onChange={(e) => apply({ sort: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none">
+                <select value={sortParam} onChange={(e) => apply({ sort: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none">
                   <option value="">{t.filterBar.sortDate}</option>
                   <option value="priceLow">{t.filterBar.sortPriceLow}</option>
                   <option value="priceHigh">{t.filterBar.sortPriceHigh}</option>
@@ -294,11 +294,11 @@ export default function SearchStrip() {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="mb-1.5 block text-xs text-[var(--muted)]">{t.filterBar.minPrice}</label>
-                  <input type="number" placeholder={t.filterBar.minPricePlaceholder} value={minPriceParam} onChange={(e) => apply({ minPrice: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
+                  <input type="number" placeholder={t.filterBar.minPricePlaceholder} value={minPriceParam} onChange={(e) => apply({ minPrice: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs text-[var(--muted)]">{t.filterBar.maxPrice}</label>
-                  <input type="number" placeholder={t.filterBar.maxPricePlaceholder} value={maxPriceParam} onChange={(e) => apply({ maxPrice: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:border-[var(--accent)] focus:outline-none" />
+                  <input type="number" placeholder={t.filterBar.maxPricePlaceholder} value={maxPriceParam} onChange={(e) => apply({ maxPrice: e.target.value || null })} className="w-full rounded-md border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none" />
                 </div>
               </div>
             </div>

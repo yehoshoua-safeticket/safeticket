@@ -139,7 +139,7 @@ export default function TeamPage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 placeholder={t.admin.team.namePlaceholder}
-                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none"
               />
             </div>
             <div>
@@ -149,7 +149,7 @@ export default function TeamPage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 placeholder={t.admin.team.emailPlaceholder}
-                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none"
               />
             </div>
             <div>
@@ -160,7 +160,7 @@ export default function TeamPage() {
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   placeholder={t.admin.team.passwordPlaceholder}
-                  className="w-full rounded-lg border border-[var(--input-border)] bg-white py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                  className="w-full rounded-lg border border-[var(--input-border)] bg-white py-2 pl-9 pr-3 text-sm focus:outline-none"
                 />
                 <button
                   type="button"

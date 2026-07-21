@@ -8,8 +8,8 @@ import { useLocale } from '@/i18n/LocaleProvider';
 const FLOW_ICONS = [Tag, CreditCard, Lock, DoorOpen, Wallet];
 
 const FLOW_SCHEME = {
-  activeIcon: '#026CDF',
-  doneIcon: '#4191E7',
+  activeIcon: '#000000',
+  doneIcon: '#4a4a4a',
 };
 
 /** The escrow flow — simple 5-step sequence that auto-advances. */
@@ -46,7 +46,7 @@ export default function StepFlow() {
                         transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
                         className="pointer-events-none absolute -inset-5 rounded-full"
                         style={{
-                          background: 'radial-gradient(circle, rgba(2,108,223,0.35) 0%, rgba(65,145,231,0.25) 40%, transparent 70%)',
+                          background: 'radial-gradient(circle, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.14) 40%, transparent 70%)',
                           filter: 'blur(14px)',
                         }}
                       />
@@ -57,7 +57,7 @@ export default function StepFlow() {
                       style={{
                         color: active ? s.activeIcon : done ? s.doneIcon : 'var(--muted)',
                         filter: active
-                          ? 'drop-shadow(0 0 12px rgba(2,108,223,0.45)) drop-shadow(0 0 26px rgba(65,145,231,0.4))'
+                          ? 'drop-shadow(0 0 12px rgba(0,0,0,0.32)) drop-shadow(0 0 26px rgba(0,0,0,0.22))'
                           : 'none',
                       }}
                     />
@@ -82,7 +82,7 @@ export default function StepFlow() {
                       </svg>
                     )}
                   </div>
-                  <p className="mt-3 max-w-[6.5rem] px-1 text-[0.7rem] font-bold leading-snug text-[var(--foreground)] sm:max-w-[8rem] sm:text-xs">
+                  <p className="mt-3 max-w-[7.5rem] px-1 text-sm font-bold leading-snug text-[var(--foreground)] sm:max-w-[9rem] sm:text-base">
                     {t.home.flowSteps[i]}
                   </p>
                 </motion.div>

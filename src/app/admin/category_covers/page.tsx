@@ -120,7 +120,7 @@ export default function AdminCategoryCoversPage() {
                   <select
                     value={covers[cat] || ''}
                     onChange={(e) => setCover(cat, e.target.value)}
-                    className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                    className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm text-[var(--foreground)] focus:outline-none"
                   >
                     <option value="">{t.admin.categoryCovers.none}</option>
                     {events.map((e) => (

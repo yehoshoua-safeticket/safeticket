@@ -66,7 +66,7 @@ export default function NewListingPage() {
     router.push('/admin/listings');
   }
 
-  const inputClass = 'w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]';
+  const inputClass = 'w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] focus:outline-none';
   const ld = t.admin.listingDetail;
 
   return (

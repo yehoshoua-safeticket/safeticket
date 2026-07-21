@@ -393,7 +393,7 @@ export default function TasksPage() {
 
         <select
           value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}
-          className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+          className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm text-[var(--foreground)] focus:outline-none"
         >
           <option value="all">{t.admin.tasks.allStatuses}</option>
           {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -401,7 +401,7 @@ export default function TasksPage() {
 
         <select
           value={filterSection} onChange={(e) => setFilterSection(e.target.value)}
-          className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+          className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm text-[var(--foreground)] focus:outline-none"
         >
           <option value="all">{t.admin.tasks.allSections}</option>
           {SECTION_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -410,7 +410,7 @@ export default function TasksPage() {
         <select
           value={groupBy}
           onChange={(e) => { setGroupBy(e.target.value as 'none' | 'user' | 'section'); setCollapsedGroups(new Set()); }}
-          className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+          className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm text-[var(--foreground)] focus:outline-none"
         >
           <option value="none">{t.admin.tasks.noGrouping}</option>
           <option value="user">{t.admin.tasks.groupByUser}</option>

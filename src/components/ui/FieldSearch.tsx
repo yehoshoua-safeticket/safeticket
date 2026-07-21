@@ -73,7 +73,7 @@ export default function FieldSearch({ fields, filters, onChange, placeholder, cl
 
   return (
     <div className={`relative ${className}`}>
-      <div className="flex min-h-[44px] flex-wrap items-center gap-1.5 rounded-[10px] border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 focus-within:border-[var(--accent)]">
+      <div className="flex min-h-[44px] flex-wrap items-center gap-1.5 rounded-[10px] border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2">
         <Search className="h-4 w-4 shrink-0 text-[var(--muted)]" />
         {filters.map((f) => (
           <span key={f.field} className="flex items-center gap-1 rounded-[5px] border border-[var(--accent)]/30 bg-[var(--accent-soft)] px-2 py-0.5 text-xs font-semibold text-[var(--accent-text)] whitespace-nowrap">

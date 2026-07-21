@@ -67,12 +67,12 @@ export default function LoginPage() {
           <div className="space-y-4">
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.login.email}</label>
-              <input name="email" type="email" required placeholder="your@email.com" dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+              <input name="email" type="email" required placeholder="your@email.com" dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:outline-none" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.login.password}</label>
               <div className="relative">
-                <input name="password" type={showPassword ? 'text' : 'password'} required placeholder="••••••••" dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 pr-10 text-sm placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <input name="password" type={showPassword ? 'text' : 'password'} required placeholder="••••••••" dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 pr-10 text-sm placeholder-[var(--muted)] focus:outline-none" />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--foreground)]">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>

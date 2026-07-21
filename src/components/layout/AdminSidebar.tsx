@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { LayoutDashboard, Users, CalendarDays, Tag, AlertTriangle, MessageCircle, ClipboardList, UserCog, ShieldCheck, Star, Image as ImageIcon } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarDays, Tag, AlertTriangle, MessageCircle, ClipboardList, UserCog, ShieldCheck, Star, HelpCircle, Image as ImageIcon } from 'lucide-react';
 import Logo from '@/components/ui/Logo';
 import { useState, useEffect } from 'react';
 import { useLocale } from '@/i18n/LocaleProvider';
@@ -28,6 +28,7 @@ export default function AdminSidebar() {
     { href: '/admin/events', label: t.sidebar.events, icon: CalendarDays },
     { href: '/admin/featured', label: t.sidebar.featured, icon: Star },
     { href: '/admin/category_covers', label: t.sidebar.categoryCovers, icon: ImageIcon },
+    { href: '/admin/faqs', label: t.sidebar.faqs, icon: HelpCircle },
     { href: '/admin/external_users', label: t.sidebar.externalUsers, icon: Users },
     { href: '/admin/verifications', label: t.sidebar.verifications, icon: ShieldCheck },
     { href: '/admin/listings', label: t.sidebar.listings, icon: Tag },

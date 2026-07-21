@@ -88,7 +88,7 @@ export default function SettingsPage() {
     }
   }
 
-  const inputClass = 'w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]';
+  const inputClass = 'w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none';
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">

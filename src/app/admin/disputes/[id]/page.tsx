@@ -81,7 +81,7 @@ export default function DisputeDetailPage({ params }: { params: Promise<{ id: st
     }
   }
 
-  const inputClass = 'rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]';
+  const inputClass = 'rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none';
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">

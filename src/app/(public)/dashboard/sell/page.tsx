@@ -550,7 +550,7 @@ export default function SellPage() {
                       value={eventSearch}
                       onChange={(e) => setEventSearch(e.target.value)}
                       placeholder={t.sell.searchEvent}
-                      className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] py-2 pe-3 ps-10 text-sm placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none"
+                      className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] py-2 pe-3 ps-10 text-sm placeholder-[var(--muted)] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -602,15 +602,15 @@ export default function SellPage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.sell.section}</label>
-              <input type="text" value={section} onChange={(e) => setSection(e.target.value)} placeholder={t.sell.sectionPlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+              <input type="text" value={section} onChange={(e) => setSection(e.target.value)} placeholder={t.sell.sectionPlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.sell.row}</label>
-              <input type="text" value={row} onChange={(e) => setRow(e.target.value)} placeholder={t.sell.rowPlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+              <input type="text" value={row} onChange={(e) => setRow(e.target.value)} placeholder={t.sell.rowPlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
             </div>
             <div className="col-span-2">
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.sell.seatInfo}</label>
-              <input type="text" value={seatInfo} onChange={(e) => setSeatInfo(e.target.value)} placeholder={t.sell.seatInfoPlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+              <input type="text" value={seatInfo} onChange={(e) => setSeatInfo(e.target.value)} placeholder={t.sell.seatInfoPlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.sell.quantity}</label>
@@ -620,7 +620,7 @@ export default function SellPage() {
                 max="20"
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm text-[var(--foreground)] focus:outline-none"
               />
             </div>
           </div>
@@ -642,7 +642,7 @@ export default function SellPage() {
                     if (errors.faceValue) setErrors((prev) => { const next = { ...prev }; delete next.faceValue; return next; });
                   }}
                   placeholder={t.sell.faceValuePlaceholder}
-                  className={`w-full rounded-xl border bg-[var(--input-bg)] py-3 pe-4 ps-10 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 ${errors.faceValue ? 'border-red-500 focus:ring-red-500' : 'border-[var(--input-border)] focus:ring-[var(--accent)]'}`}
+                  className={`w-full rounded-xl border bg-[var(--input-bg)] py-3 pe-4 ps-10 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none ${errors.faceValue ? 'border-red-500' : 'border-[var(--input-border)]'}`}
                 />
                 <span className="absolute start-4 top-1/2 -translate-y-1/2 text-[var(--muted)]">₪</span>
               </div>
@@ -660,7 +660,7 @@ export default function SellPage() {
                     if (errors.price) setErrors((prev) => { const next = { ...prev }; delete next.price; return next; });
                   }}
                   placeholder={t.sell.askingPricePlaceholder}
-                  className={`w-full rounded-xl border bg-[var(--input-bg)] py-3 pe-4 ps-10 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 ${errors.price ? 'border-red-500 focus:ring-red-500' : 'border-[var(--input-border)] focus:ring-[var(--accent)]'}`}
+                  className={`w-full rounded-xl border bg-[var(--input-bg)] py-3 pe-4 ps-10 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none ${errors.price ? 'border-red-500' : 'border-[var(--input-border)]'}`}
                 />
                 <span className="absolute start-4 top-1/2 -translate-y-1/2 text-[var(--muted)]">₪</span>
               </div>

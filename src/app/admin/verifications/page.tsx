@@ -81,7 +81,7 @@ export default function AdminVerificationsPage() {
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <FieldSearch fields={SEARCH_FIELDS} filters={searchFilters} onChange={setSearchFilters} placeholder={t.admin.verifications.searchPlaceholder} className="min-w-[280px] flex-1" />
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2 text-sm focus:outline-none">
           <option value="all">{t.admin.verifications.allStatuses}</option>
           <option value="pending">{t.status.pending}</option>
           <option value="verified">{t.status.verified}</option>

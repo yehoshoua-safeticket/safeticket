@@ -69,7 +69,7 @@ export default function NewEventPage() {
     router.push('/admin/events');
   }
 
-  const inputClass = 'w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]';
+  const inputClass = 'w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] focus:outline-none';
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">

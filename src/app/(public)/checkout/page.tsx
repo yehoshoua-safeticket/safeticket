@@ -208,19 +208,19 @@ function CheckoutInner() {
                 <label className="mb-1.5 flex items-center gap-2 text-sm text-[var(--muted)]">
                   <User className="h-4 w-4" />{t.checkout.fullName}
                 </label>
-                <input type="text" required value={buyerName} onChange={(e) => setBuyerName(e.target.value)} placeholder={t.checkout.fullNamePlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <input type="text" required value={buyerName} onChange={(e) => setBuyerName(e.target.value)} placeholder={t.checkout.fullNamePlaceholder} className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
               </div>
               <div>
                 <label className="mb-1.5 flex items-center gap-2 text-sm text-[var(--muted)]">
                   <Mail className="h-4 w-4" />{t.checkout.email}
                 </label>
-                <input type="email" required value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <input type="email" required value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
               </div>
               <div>
                 <label className="mb-1.5 flex items-center gap-2 text-sm text-[var(--muted)]">
                   <Phone className="h-4 w-4" />{t.checkout.phone}
                 </label>
-                <input type="tel" required value={buyerPhone} onChange={(e) => setBuyerPhone(e.target.value)} placeholder="050-1234567" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                <input type="tel" required value={buyerPhone} onChange={(e) => setBuyerPhone(e.target.value)} placeholder="050-1234567" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
               </div>
             </div>
             <p className="mt-3 text-xs text-[var(--muted)]">{t.checkout.deliveryNote}</p>
@@ -233,16 +233,16 @@ function CheckoutInner() {
               <div className="space-y-4">
                 <div>
                   <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.checkout.cardNumber}</label>
-                  <input type="text" placeholder="4242 4242 4242 4242" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                  <input type="text" placeholder="4242 4242 4242 4242" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.checkout.expiry}</label>
-                    <input type="text" placeholder="MM/YY" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                    <input type="text" placeholder="MM/YY" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
                   </div>
                   <div>
                     <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.checkout.cvv}</label>
-                    <input type="text" placeholder="123" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                    <input type="text" placeholder="123" className="w-full rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
                   </div>
                 </div>
               </div>

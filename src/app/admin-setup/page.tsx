@@ -63,7 +63,7 @@ export default function AdminSetupPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="user@example.com"
               dir="ltr"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none"
             />
             <p className="mt-1 text-xs text-gray-500">Must match the email you signed up with</p>
           </div>

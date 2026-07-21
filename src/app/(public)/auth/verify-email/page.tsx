@@ -134,7 +134,7 @@ export default function VerifyEmailPage() {
                 value={digit}
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
-                className="h-12 w-10 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] text-center text-lg font-bold text-[var(--foreground)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="h-12 w-10 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] text-center text-lg font-bold text-[var(--foreground)] focus:outline-none"
               />
             ))}
           </div>

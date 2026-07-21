@@ -6,23 +6,27 @@
    ============================================================ */
 
 :root {
-  /* Ticketmaster Aurora palette
-     Azure #026CDF · Black Pearl #1F262D · Aquamarine #00E0C7 · White */
+  /* Monochrome palette: black · white · neutral greys.
+     Colour is reserved for high-emphasis signals (danger / urgency / success
+     and the aquamarine "live/on-sale" accent). */
   --background: #ffffff;
   --surface: #ffffff;
-  --surface-2: #eef3fc;
+  --surface-2: #f2f2f2;
   --card: #ffffff;
-  --card-border: #d5dde8;
-  --card-border-soft: #e6ebf2;
-  --ink: #1F262D;
-  --foreground: #1F262D;         /* Black Pearl */
-  --muted: #5a6672;
+  --card-border: #dcdcdc;
+  --card-border-soft: #ebebeb;
+  --ink: #111111;
+  --foreground: #111111;
+  --muted: #636363;
 
-  --accent: #026CDF;             /* Ticketmaster Azure */
-  --accent-hover: #0257B4;
-  --accent-text: #0257B4;        /* AA-safe azure text on white */
-  --accent-soft: rgba(2, 108, 223, 0.08);
-  --accent-on-dark: #4191E7;     /* azure text/links on Black Pearl */
+  /* Monochrome by default: the UI is black on white, and colour is reserved
+     for genuinely high-emphasis signals (danger / urgency / success / the
+     aquamarine "live" accent below). */
+  --accent: #000000;
+  --accent-hover: #262626;
+  --accent-text: #000000;        /* body/link text on white */
+  --accent-soft: rgba(0, 0, 0, 0.06);
+  --accent-on-dark: #ffffff;     /* text/links on the black chrome */
 
   /* Chrome (nav / footer / mobile menu) — pure black */
   --chrome: #000000;             /* black */
@@ -39,9 +43,9 @@
   --success: #1e9e63;
   --warning: #b8860b;
 
-  --input-bg: #f5f8fd;
-  --input-border: #cbd6e6;
-  --ring: #026CDF;
+  --input-bg: #f5f5f5;
+  --input-border: #d4d4d4;
+  --ring: #000000;               /* focus outline — black, not azure */
 
   --r-sm: 8px;
   --r-md: 12px;
@@ -52,9 +56,10 @@
   --font-trial: var(--font-saira), var(--font-sans), system-ui, sans-serif;
 }
 
-/* Aurora hero gradient — heroes / feature bands only */
+/* Hero gradient — heroes / feature bands only. Monochrome, in line with the
+   black-and-white palette; colour is reserved for high-emphasis signals. */
 .aurora-gradient {
-  background: linear-gradient(120deg, #026CDF 0%, #7B2FF7 55%, #00E0C7 100%);
+  background: linear-gradient(120deg, #000000 0%, #2b2b2b 55%, #111111 100%);
 }
 
 @theme inline {

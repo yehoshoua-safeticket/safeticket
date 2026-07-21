@@ -48,6 +48,26 @@ export interface CategoryCover {
   event?: Event; // joined in the admin GET
 }
 
+export type FaqCategory = 'general' | 'buyers' | 'sellers' | 'security';
+
+// FAQ entries shown on the How-it-works page (add-faqs.sql). Hebrew is the
+// source of truth; the *_en fields fall back to it when left blank.
+export interface Faq {
+  id: string;
+  question_he: string;
+  answer_he: string;
+  question_en: string;
+  answer_en: string;
+  asterisk_he: string; // optional footnote under the answer
+  asterisk_en: string;
+  keywords: string;    // free text, matched by search alongside question/answer
+  category: FaqCategory | null;
+  position: number;    // display order, low to high
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Listing {
   id: string;
   seller_id: string;

@@ -160,17 +160,17 @@ export default function NewTaskPage() {
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.nameLabel}</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={t.admin.taskForm.namePlaceholder} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={t.admin.taskForm.namePlaceholder} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
           </div>
 
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.descLabel}</label>
-            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.admin.taskForm.descPlaceholder} rows={3} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.admin.taskForm.descPlaceholder} rows={3} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
           </div>
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.sectionLabel}</label>
-            <select value={section} onChange={(e) => handleSectionChange(e.target.value as TaskSection | '')} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+            <select value={section} onChange={(e) => handleSectionChange(e.target.value as TaskSection | '')} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none">
               <option value="">{t.admin.taskForm.sectionPlaceholder}</option>
               {SECTION_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
@@ -178,7 +178,7 @@ export default function NewTaskPage() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.pageLabel}</label>
-            <select value={page} onChange={(e) => setPage(e.target.value)} disabled={!section} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)] disabled:opacity-40">
+            <select value={page} onChange={(e) => setPage(e.target.value)} disabled={!section} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none disabled:opacity-40">
               <option value="">{t.admin.taskForm.pagePlaceholder}</option>
               {pageOptions.map((p) => <option key={p.path} value={p.path}>{p.label}</option>)}
             </select>
@@ -186,7 +186,7 @@ export default function NewTaskPage() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.deviceLabel}</label>
-            <select value={device} onChange={(e) => setDevice(e.target.value as typeof device)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+            <select value={device} onChange={(e) => setDevice(e.target.value as typeof device)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none">
               <option value="not_relevant">{t.admin.taskForm.deviceNotRelevant}</option>
               <option value="mobile">{t.admin.taskForm.deviceMobile}</option>
               <option value="tablet">{t.admin.taskForm.deviceTablet}</option>
@@ -196,7 +196,7 @@ export default function NewTaskPage() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.assigneeLabel}</label>
-            <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+            <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none">
               <option value="">{t.admin.taskForm.assigneePlaceholder}</option>
               {internalUsers.map((u) => <option key={u.id} value={u.id}>{u.full_name}</option>)}
             </select>
@@ -204,7 +204,7 @@ export default function NewTaskPage() {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.statusLabel}</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent)]">
+            <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none">
               {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
           </div>

@@ -177,7 +177,7 @@ export default function AdminFeaturedPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t.admin.featured.searchPlaceholder}
-                className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] py-2 pe-3 ps-9 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] py-2 pe-3 ps-9 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none"
               />
             </div>
             {selectedIds.length >= MAX && (
