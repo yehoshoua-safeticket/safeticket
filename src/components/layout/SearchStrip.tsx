@@ -121,7 +121,7 @@ export default function SearchStrip() {
             onChange={(e) => setQuery(e.target.value)}
             className="min-w-0 flex-1 bg-transparent py-1.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none sm:text-base"
           />
-          <button type="submit" className="shrink-0 rounded-md bg-[var(--accent)] px-5 py-2 text-sm font-bold text-white transition hover:bg-[var(--accent-hover)]">
+          <button type="submit" className="shrink-0 rounded-md bg-black px-5 py-2 text-sm font-bold text-white transition hover:bg-black/85">
             {t.fieldSearch.search}
           </button>
         </form>

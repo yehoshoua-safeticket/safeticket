@@ -25,7 +25,7 @@ export default function CategoryCarousel({ category, events }: CategoryRow) {
   // Paging is measured, not assumed: slide width comes from CSS breakpoints, so
   // the number of cards per view is whatever actually fits right now. Both
   // figures are percentages of the track.
-  const [thumb, setThumb] = useState({ width: 100, offset: 0 });
+  const [thumb, setThumb] = useState({ width: 100, offset: 0, coverHeight: 0 });
 
   const measure = useCallback(() => {
     const el = scroller.current;
@@ -54,7 +54,13 @@ export default function CategoryCarousel({ category, events }: CategoryRow) {
     const width = Math.min(100, (perView / events.length) * 100);
     const offset = pages > 1 ? (page / (pages - 1)) * (100 - width) : 0;
 
-    setThumb({ width, offset });
+    // The overlay has to be exactly as tall as the artwork. Deriving it from
+    // the row's own aspect ratio would only be right at one card per view — at
+    // four per view the box is four times too tall and the bar ends up floating
+    // in the gap below the carousel. Measure the cover instead.
+    const cover = card.querySelector('[data-cover]') as HTMLElement | null;
+
+    setThumb({ width, offset, coverHeight: cover?.offsetHeight ?? 0 });
   }, [events.length]);
 
   useEffect(() => {
@@ -83,7 +89,7 @@ export default function CategoryCarousel({ category, events }: CategoryRow) {
   const paged = thumb.width < 99.5;
 
   return (
-    <section className="px-5 py-6 md:px-6">
+    <section className="px-2 py-3">
       <div className="mx-auto max-w-5xl">
         <div className="mb-4 flex items-end justify-between gap-4">
           <h2 className="text-xl font-bold text-[var(--foreground)] sm:text-2xl" style={{ fontFamily: 'var(--font-display)' }}>
@@ -102,7 +108,7 @@ export default function CategoryCarousel({ category, events }: CategoryRow) {
                   type="button"
                   onClick={() => scroll('prev')}
                   aria-label={t.home.previous}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--card-border)] text-[var(--foreground)] transition hover:bg-[var(--input-bg)]"
+                  className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--card-border)] text-[var(--foreground)] transition hover:bg-[var(--input-bg)]"
                 >
                   <PrevIcon className="h-4 w-4" />
                 </button>
@@ -110,7 +116,7 @@ export default function CategoryCarousel({ category, events }: CategoryRow) {
                   type="button"
                   onClick={() => scroll('next')}
                   aria-label={t.home.next}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--card-border)] text-[var(--foreground)] transition hover:bg-[var(--input-bg)]"
+                  className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--card-border)] text-[var(--foreground)] transition hover:bg-[var(--input-bg)]"
                 >
                   <NextIcon className="h-4 w-4" />
                 </button>
@@ -128,7 +134,7 @@ export default function CategoryCarousel({ category, events }: CategoryRow) {
             {events.map((ev) => (
               <div key={ev.id} className="snap-start">
                 <Link href={`/tickets/${ev.id}`} className="group block">
-                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-[var(--card-border)]">
+                  <div data-cover className="relative aspect-[16/9] w-full overflow-hidden rounded-md border border-[var(--card-border)]">
                     <Image
                       src={ev.image_url!}
                       alt=""
@@ -156,10 +162,15 @@ export default function CategoryCarousel({ category, events }: CategoryRow) {
           </div>
 
           {/* Page indicator, sitting *on* the artwork rather than below the row,
-              so it costs no vertical space. The box mirrors the image band
-              (same inset and aspect), so it lands over the bottom of the cover. */}
+              so it costs no vertical space. Its height is the measured cover
+              height, which is what keeps it pinned to the bottom of the image
+              at every breakpoint. Touch only — on desktop the chevrons already
+              say where you are, so the bar is hidden from md up. */}
           {paged && (
-            <div className="pointer-events-none absolute inset-x-0 top-0 flex aspect-[16/9] items-end pb-3">
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 flex items-end pb-3 md:hidden"
+              style={{ height: thumb.coverHeight }}
+            >
               {/* No rail behind it — only the bar itself is visible. It sits
                   flush to the leading edge at the start and to the trailing one
                   at the end (flipped in RTL), so hitting an edge is what tells

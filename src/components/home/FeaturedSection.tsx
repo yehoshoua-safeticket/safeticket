@@ -5,10 +5,11 @@ import FeaturedFallbackCta from './FeaturedFallbackCta';
 /** Streamed fallback — matches the real cards' geometry so nothing shifts. */
 export function FeaturedSkeleton() {
   return (
-    <section className="mx-auto max-w-5xl px-5 pb-10 sm:px-8">
+    <section className="mx-auto max-w-5xl px-2 pb-10">
+      <div className="mb-4 h-7 w-40 animate-pulse rounded bg-slate-200 sm:h-8" />
       <div className="flex flex-col gap-4">
         {[0, 1].map((i) => (
-          <div key={i} className="h-[37vh] min-h-[250px] w-full animate-pulse rounded-xl bg-slate-200 sm:h-[43vh]" />
+          <div key={i} className="h-[26vh] min-h-[200px] w-full animate-pulse rounded-md bg-slate-200 sm:h-[36vh] sm:min-h-[280px]" />
         ))}
       </div>
     </section>

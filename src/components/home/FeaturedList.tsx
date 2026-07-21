@@ -12,7 +12,10 @@ export default function FeaturedList({ featured }: { featured: EventWithListings
   const dateLocale = locale === 'he' ? 'he-IL' : 'en-US';
 
   return (
-    <section className="mx-auto max-w-5xl px-5 pb-10 sm:px-8">
+    <section className="mx-auto max-w-5xl px-2 pb-10">
+      <h2 className="mb-4 text-xl font-bold text-[var(--foreground)] sm:text-2xl" style={{ fontFamily: 'var(--font-display)' }}>
+        {t.home.featuredTitle}
+      </h2>
       <div className="flex flex-col gap-4">
         {featured.map((ev, i) => {
           // The first card is the LCP element: render it immediately instead of
@@ -26,7 +29,7 @@ export default function FeaturedList({ featured }: { featured: EventWithListings
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
             >
-              <Link href={`/tickets/${ev.id}`} className="group relative block h-[37vh] min-h-[250px] w-full overflow-hidden rounded-xl border border-[var(--card-border)] sm:h-[43vh]">
+              <Link href={`/tickets/${ev.id}`} className="group relative block h-[26vh] min-h-[200px] w-full overflow-hidden rounded-md border border-[var(--card-border)] sm:h-[36vh] sm:min-h-[280px]">
                 <Image
                   src={ev.image_url!}
                   alt=""
@@ -36,32 +39,41 @@ export default function FeaturedList({ featured }: { featured: EventWithListings
                   draggable={false}
                   className="object-cover transition-transform duration-[1.2s] group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
-                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-                  <span className="inline-block rounded-full bg-[var(--accent)] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                {/* Darkened at both ends now that content is anchored to both,
+                    so the top block stays legible over bright artwork. */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/25 to-black/85" />
+
+                {/* Two independently anchored blocks rather than one stack: the
+                    CTA's position is fixed to the bottom edge and no longer
+                    drifts with how many lines the title happens to run to. Both
+                    use `inset-x-0` + padding, so they share the inline-start
+                    side and flip together in RTL. */}
+                <div className="absolute inset-x-0 top-0 p-3 sm:p-8">
+                  {/* Pills share the card's radius rather than being fully round. */}
+                  <span className="inline-block rounded-md bg-white px-3 py-1 text-xs font-bold uppercase tracking-wide text-black">
                     {t.eventCategory[ev.category] ?? ev.category}
                   </span>
+                  {/* Clamped: the blocks are anchored, so an unbounded title is
+                      the one thing that could still run into the CTA below. */}
                   <h2
-                    className="mt-3 max-w-2xl text-2xl font-black leading-tight text-white sm:text-4xl"
+                    className="mt-1.5 line-clamp-2 max-w-2xl text-2xl font-black leading-tight text-white sm:text-4xl"
                     style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}
                   >
                     {ev.title}
                   </h2>
-                  <p className="mt-2 text-sm text-white/80 sm:text-base">
+                  <p className="mt-1 text-sm text-white/80 sm:text-base">
                     {new Date(ev.event_date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
                     {ev.city && ` · ${ev.city}`}
                   </p>
-                  <div className="mt-4 flex flex-wrap items-center gap-4">
-                    <span className="inline-flex items-center rounded-md bg-[var(--accent)] px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition-colors group-hover:bg-[var(--accent-hover)]">
-                      {t.home.findTickets}
-                    </span>
-                    {ev.lowestPrice > 0 && (
-                      <span className="font-mono-nums text-sm font-semibold text-white/90">
-                        {t.home.fromPrice.replace('{price}', String(ev.lowestPrice))}
-                      </span>
-                    )}
-                  </div>
                 </div>
+
+                {ev.lowestPrice > 0 && (
+                  <div className="absolute inset-x-0 bottom-0 p-3 sm:p-8">
+                    <span className="font-mono-nums text-lg font-bold text-white sm:text-2xl">
+                      {t.home.fromPrice.replace('{price}', String(ev.lowestPrice))}
+                    </span>
+                  </div>
+                )}
               </Link>
             </motion.div>
           );
