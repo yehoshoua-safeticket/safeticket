@@ -16,7 +16,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-[var(--chrome-border)] bg-[var(--chrome)] text-white/70">
       <div className="mx-auto max-w-6xl px-5 pb-6 pt-12 sm:px-8">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
             <Link href="/" className="flex items-center">
               <Logo white className="h-5 w-auto" />
@@ -58,18 +58,10 @@ export default function Footer() {
             </ul>
           </div>
 
-        </div>
-
-        <div className="mt-10 flex flex-col items-center gap-3 border-t border-[var(--chrome-border)] pt-6 text-center">
-          <p className="text-xs text-white/60">{t.footer.copyright}</p>
-          <div className="flex flex-col items-center gap-2">
-            <Link href="/cookies" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.cookies}</Link>
-            <div className="flex items-center justify-center gap-2 text-sm font-bold text-white/70">
-              <Link href="/terms" className="transition hover:text-[var(--accent-on-dark)]">{t.footer.terms}</Link>
-              <span aria-hidden className="text-white/40">·</span>
-              <Link href="/privacy" className="transition hover:text-[var(--accent-on-dark)]">{t.footer.privacy}</Link>
-            </div>
+          <div>
+            <p className="text-xs text-white/60">{t.footer.copyright}</p>
           </div>
+
         </div>
       </div>
     </footer>

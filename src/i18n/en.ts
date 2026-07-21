@@ -120,11 +120,7 @@ export const en: Translations = {
     support: 'Support',
     faq: 'FAQ',
     contact: 'Contact',
-    disputes: 'Report a problem',
-    legal: 'Legal',
-    terms: 'Terms of Service',
-    privacy: 'Privacy Policy',
-    cookies: 'Cookie Policy',
+    disputes: 'Disputes',
     copyright: '© 2026 SafeTicket. All rights reserved.',
   },
 
@@ -1068,10 +1064,11 @@ export const en: Translations = {
   },
 
   legal: {
-    draftNotice: 'This document is a preliminary template and has not undergone legal review. It does not constitute legal advice.',
-    lastUpdated: 'Last updated: June 2026',
+    lastUpdated: 'Last updated: July 2026',
     questions: 'For questions about this document, reach out via our contact page.',
     contactLink: 'Contact us',
+    heOnlyNotice: 'This document is only available in Hebrew. The Hebrew version is the binding, governing text.',
+    viewInHebrew: 'View in Hebrew',
     terms: {
       title: 'Terms of Service',
       sections: [
