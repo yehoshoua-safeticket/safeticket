@@ -452,6 +452,9 @@ export const he = {
     heroLine1: 'כרטיסים בראש שקט',
     findTickets: 'חפשו כרטיסים',
     categoriesTitle: 'קטגוריות',
+    seeAll: 'לכל האירועים',
+    previous: 'הקודם',
+    next: 'הבא',
     fromPrice: 'החל מ-₪{price}',
     flowTitle: 'איך זה עובד',
     flowSteps: [

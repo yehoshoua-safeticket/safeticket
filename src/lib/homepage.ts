@@ -3,18 +3,15 @@ import { categoryImage } from '@/lib/categoryImages';
 import type { Event, EventCategory } from '@/types/database';
 
 export type EventWithListings = Event & { lowestPrice: number };
-export type CategoryTile = { category: EventCategory; image_url: string };
+export type CategoryRow = { category: EventCategory; events: EventWithListings[] };
 
 const CATEGORY_ORDER: EventCategory[] = ['concert', 'sports', 'theater', 'festival', 'conference', 'other'];
 
-// Category artwork is a fixed, hardcoded map — it has no data dependency, so it
-// is a module constant rather than something the homepage waits on.
-export const CATEGORY_TILES: CategoryTile[] = CATEGORY_ORDER.slice(0, 4).map((category) => ({
-  category,
-  image_url: categoryImage(category),
-}));
-
 const FEATURED_LIMIT = 5;
+
+// How many events each category carousel holds. Rows scroll, so this is about
+// keeping the payload sane rather than about what fits on screen.
+const CATEGORY_ROW_LIMIT = 12;
 
 /**
  * Curated homepage carousel, fetched on the server so the markup (and the image
@@ -40,19 +37,67 @@ export async function getFeaturedEvents(): Promise<EventWithListings[]> {
 
   if (events.length === 0) return [];
 
-  // Scoped to the handful of events we actually render. Previously this pulled
-  // every active listing in the table to price at most five cards.
+  const lowest = await lowestPrices(events.map((e) => e.id));
+
+  return events.map((e) => ({ ...e, lowestPrice: lowest.get(e.id) ?? 0 }));
+}
+
+/**
+ * "From" price per event: the cheapest active listing. Always scoped to the
+ * events actually being rendered — pricing a dozen cards must not pull every
+ * active listing in the table.
+ */
+async function lowestPrices(eventIds: string[]): Promise<Map<string, number>> {
+  const lowest = new Map<string, number>();
+  if (eventIds.length === 0) return lowest;
+
+  const supabase = await createClient();
   const { data: listings } = await supabase
     .from('listings')
     .select('event_id, asking_price')
     .eq('status', 'active')
-    .in('event_id', events.map((e) => e.id));
+    .in('event_id', eventIds);
 
-  const lowest = new Map<string, number>();
   for (const l of listings || []) {
     const current = lowest.get(l.event_id);
     if (current === undefined || l.asking_price < current) lowest.set(l.event_id, l.asking_price);
   }
+  return lowest;
+}
 
-  return events.map((e) => ({ ...e, lowestPrice: lowest.get(e.id) ?? 0 }));
+/**
+ * One carousel per category, each holding that category's own events. Empty
+ * categories drop out entirely rather than rendering an empty row.
+ *
+ * Events without their own artwork fall back to the category photo, so a
+ * missing image costs a generic cover rather than the whole card.
+ */
+export async function getEventsByCategory(): Promise<CategoryRow[]> {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from('events')
+    .select('*')
+    .order('event_date', { ascending: true });
+
+  const events = (data as Event[] | null) || [];
+  if (events.length === 0) return [];
+
+  const rows = CATEGORY_ORDER
+    .map((category) => ({
+      category,
+      events: events.filter((e) => e.category === category).slice(0, CATEGORY_ROW_LIMIT),
+    }))
+    .filter((row) => row.events.length > 0);
+
+  const lowest = await lowestPrices(rows.flatMap((r) => r.events.map((e) => e.id)));
+
+  return rows.map((row) => ({
+    category: row.category,
+    events: row.events.map((e) => ({
+      ...e,
+      image_url: e.image_url || categoryImage(e.category),
+      lowestPrice: lowest.get(e.id) ?? 0,
+    })),
+  }));
 }

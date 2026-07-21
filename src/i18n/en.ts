@@ -454,6 +454,9 @@ export const en: Translations = {
     heroLine1: 'Tickets, worry-free',
     findTickets: 'Find Tickets',
     categoriesTitle: 'Categories',
+    seeAll: 'See all',
+    previous: 'Previous',
+    next: 'Next',
     fromPrice: 'From ₪{price}',
     flowTitle: 'How it works',
     flowSteps: [

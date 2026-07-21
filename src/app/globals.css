@@ -239,6 +239,23 @@ input[type="number"]::-webkit-outer-spin-button {
 .carousel::-webkit-scrollbar { display: none; }
 .carousel > * { scroll-snap-align: start; flex: 0 0 auto; }
 
+/* ─── Category carousel (homepage) ───
+   The `*` rule above sets `scrollbar-width: thin` and, being unlayered, beats
+   any Tailwind utility — so hiding the native bar has to happen out here too,
+   otherwise the row shows a scrollbar *and* the progress indicator. */
+.hide-scrollbar { scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Whole cards only: each slide is an exact fraction of the row, so a page
+   never leaves a sliver of the next card peeking in. */
+.cat-carousel > * { flex: 0 0 100%; }
+@media (min-width: 640px) {
+  .cat-carousel > * { flex: 0 0 calc((100% - 1rem) / 2); }
+}
+@media (min-width: 1024px) {
+  .cat-carousel > * { flex: 0 0 calc((100% - 3rem) / 4); }
+}
+
 /* ─── Category gradient fallbacks (used behind photos / chips) ─── */
 .event-cover-concert { background: #3a1d5c; }
 .event-cover-sports { background: #0d3b66; }
