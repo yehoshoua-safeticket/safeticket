@@ -15,31 +15,33 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-[var(--chrome-border)] bg-[var(--chrome)] text-white/70">
-      <div className="mx-auto max-w-6xl px-5 pb-6 pt-12 sm:px-8">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-          <div className="col-span-2 sm:col-span-1">
-            <Link href="/" className="flex items-center">
-              <Logo white className="h-5 w-auto" />
-            </Link>
-            <p className="mt-3 text-sm leading-relaxed text-white/70">
-              {t.footer.tagline}
-            </p>
-            <div className="mt-4 flex items-center gap-4">
-              <a href="#" aria-label="X" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
-                <FaXTwitter className="h-5 w-5" aria-hidden />
-              </a>
-              <a href="#" aria-label="Instagram" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
-                <FaInstagram className="h-5 w-5" aria-hidden />
-              </a>
-              <a href="#" aria-label="Facebook" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
-                <FaFacebookF className="h-5 w-5" aria-hidden />
-              </a>
-              <a href="#" aria-label="YouTube" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
-                <FaYoutube className="h-5 w-5" aria-hidden />
-              </a>
-            </div>
+      <div className="mx-auto max-w-6xl px-5 pt-12 sm:px-8">
+        {/* Brand */}
+        <div>
+          <Link href="/" className="flex items-center">
+            <Logo white className="h-5 w-auto" />
+          </Link>
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
+            {t.footer.tagline}
+          </p>
+          <div className="mt-4 flex items-center gap-4">
+            <a href="#" aria-label="X" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
+              <FaXTwitter className="h-5 w-5" aria-hidden />
+            </a>
+            <a href="#" aria-label="Instagram" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
+              <FaInstagram className="h-5 w-5" aria-hidden />
+            </a>
+            <a href="#" aria-label="Facebook" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
+              <FaFacebookF className="h-5 w-5" aria-hidden />
+            </a>
+            <a href="#" aria-label="YouTube" className="text-white/70 transition hover:text-[var(--accent-on-dark)]">
+              <FaYoutube className="h-5 w-5" aria-hidden />
+            </a>
           </div>
+        </div>
 
+        {/* Columns */}
+        <div className="mt-10 grid grid-cols-3 gap-6 sm:mt-12 sm:gap-8">
           <div>
             <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-white">{t.footer.platform}</h4>
             <ul className="space-y-2.5">
@@ -59,10 +61,20 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="text-xs text-white/60">{t.footer.copyright}</p>
+            <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-white">{t.footer.legal}</h4>
+            <ul className="space-y-2.5">
+              <li><Link href="/terms" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.terms}</Link></li>
+              <li><Link href="/privacy" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.privacy}</Link></li>
+            </ul>
           </div>
-
         </div>
+      </div>
+
+      {/* Footer of the footer */}
+      <div className="mt-10 border-t border-[var(--chrome-border)] py-4">
+        <p className="mx-auto max-w-6xl px-5 text-center text-xs text-white/50 sm:px-8">
+          {t.footer.copyright}
+        </p>
       </div>
     </footer>
   );
