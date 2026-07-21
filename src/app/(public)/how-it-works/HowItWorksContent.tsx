@@ -43,7 +43,7 @@ export default function HowItWorksContent({ faqs }: { faqs: Faq[] }) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
       <FadeIn>
-        <div className="text-center">
+        <div className="mb-12 text-center">
           <h1 className="text-4xl font-extrabold text-[var(--foreground)]">{t.howItWorks.title}</h1>
         </div>
       </FadeIn>

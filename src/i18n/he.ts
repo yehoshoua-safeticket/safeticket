@@ -492,7 +492,6 @@ export const he = {
 
   faq: {
     title: 'שאלות נפוצות',
-    subtitle: 'כל מה שצריך לדעת על SafeTicket',
     searchPlaceholder: 'חיפוש בשאלות...',
     noMatches: 'לא נמצאו תוצאות עבור "{q}"',
     noAnswer: 'לא מצאתם תשובה?',

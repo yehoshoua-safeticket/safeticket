@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { ChevronDown, ChevronUp, HelpCircle, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, Search } from 'lucide-react';
 import FadeIn from '@/components/ui/FadeIn';
 import { useLocale } from '@/i18n/LocaleProvider';
 import { localizeFaq } from '@/lib/faq-locale';
@@ -36,8 +36,7 @@ export default function FaqSection({ faqs }: { faqs: Faq[] }) {
     <div id="faq" className="mt-24 scroll-mt-24">
       <FadeIn>
         <div className="mb-8 text-center">
-          <h2 className="mb-4 text-3xl font-extrabold text-[var(--foreground)]">{t.faq.title}</h2>
-          <p className="text-lg text-[var(--muted)]">{t.faq.subtitle}</p>
+          <h2 className="text-3xl font-extrabold text-[var(--foreground)]">{t.faq.title}</h2>
         </div>
       </FadeIn>
 
@@ -73,10 +72,7 @@ export default function FaqSection({ faqs }: { faqs: Faq[] }) {
                   aria-expanded={open}
                   className="flex w-full items-center justify-between gap-3 p-6 text-start"
                 >
-                  <div className="flex items-center gap-3">
-                    <HelpCircle className="h-5 w-5 shrink-0 text-[var(--accent-text)]" />
-                    <span className="font-semibold text-[var(--foreground)]">{item.question}</span>
-                  </div>
+                  <span className="font-semibold text-[var(--foreground)]">{item.question}</span>
                   {open
                     ? <ChevronUp className="h-5 w-5 shrink-0 text-[var(--muted)]" />
                     : <ChevronDown className="h-5 w-5 shrink-0 text-[var(--muted)]" />}

@@ -494,7 +494,6 @@ export const en: Translations = {
 
   faq: {
     title: 'Frequently asked questions',
-    subtitle: 'Everything you need to know about SafeTicket',
     searchPlaceholder: 'Search questions...',
     noMatches: 'No results for "{q}"',
     noAnswer: "Didn't find an answer?",
