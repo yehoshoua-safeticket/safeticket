@@ -18,7 +18,6 @@ export const SECTION_PAGES: Record<TaskSection, SectionPage[]> = {
     { path: '/tickets', label: 'כרטיסים' },
     { path: '/tickets/[id]', label: 'פרטי כרטיס' },
     { path: '/how-it-works', label: 'איך זה עובד' },
-    { path: '/faq', label: 'שאלות נפוצות' },
     { path: '/contact', label: 'צור קשר' },
     { path: '/support', label: 'תמיכה' },
     { path: '/auth/login', label: 'כניסה' },

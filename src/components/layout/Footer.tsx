@@ -55,7 +55,7 @@ export default function Footer() {
             <div>
               <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-white">{t.footer.support}</h4>
               <ul className="space-y-2.5">
-                <li><Link href="/faq" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.faq}</Link></li>
+                <li><Link href="/how-it-works#faq" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.faq}</Link></li>
                 <li><Link href="/contact" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.contact}</Link></li>
                 <li><Link href="/support" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.disputes}</Link></li>
               </ul>

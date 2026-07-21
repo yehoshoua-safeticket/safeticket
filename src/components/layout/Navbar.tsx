@@ -24,7 +24,7 @@ export default function Navbar() {
     { href: '/tickets', label: t.nav.buyer },
     { href: '/sell', label: t.nav.seller },
     { href: '/how-it-works', label: t.nav.howItWorks },
-    { href: '/faq', label: t.nav.faq },
+    { href: '/how-it-works#faq', label: t.nav.faq },
   ];
 
   useEffect(() => {

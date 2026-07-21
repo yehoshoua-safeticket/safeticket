@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import HomeHero from '@/components/home/HomeHero';
 import FeaturedSection, { FeaturedSkeleton } from '@/components/home/FeaturedSection';
 import CategorySection from '@/components/home/CategorySection';
-import HowItWorks from '@/components/home/HowItWorks';
 import { CATEGORY_TILES } from '@/lib/homepage';
 
 export default function Home() {
@@ -18,8 +17,6 @@ export default function Home() {
 
       {/* Static artwork: no data dependency, so these paint immediately. */}
       <CategorySection categories={CATEGORY_TILES} />
-
-      <HowItWorks />
     </>
   );
 }

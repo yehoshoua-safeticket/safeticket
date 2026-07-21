@@ -12,8 +12,8 @@ const FLOW_SCHEME = {
   doneIcon: '#4191E7',
 };
 
-/** How it works — simple 5-step flow that auto-advances. */
-export default function HowItWorks() {
+/** The escrow flow — simple 5-step sequence that auto-advances. */
+export default function StepFlow() {
   const { t } = useLocale();
   const [flowStep, setFlowStep] = useState(0);
 
@@ -23,12 +23,8 @@ export default function HowItWorks() {
   }, []);
 
   return (
-    <div className="py-12 sm:py-20">
-      <div className="mx-auto max-w-5xl px-6 sm:px-10">
-        <h2 className="mb-8 text-center text-2xl font-bold text-[var(--foreground)] sm:mb-12 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>
-          {t.home.flowTitle}
-        </h2>
-
+    <div className="py-4 sm:py-8">
+      <div className="mx-auto max-w-5xl">
         <div className="mx-auto flex max-w-2xl flex-row flex-wrap items-start justify-center gap-x-0 gap-y-6 sm:gap-y-8">
           {FLOW_ICONS.map((Icon, i) => {
             const active = i === flowStep;
