@@ -1,9 +1,9 @@
 'use client';
 
-import { use, useState, useEffect, useCallback, useRef } from 'react';
+import { use, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
-import { ArrowRight, Upload, FileText, Image as ImageIcon, File, X, Archive, Trash2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Upload, FileText, Image as ImageIcon, File, X, Archive, Trash2 } from 'lucide-react';
 import { SECTION_LABELS, SECTION_PAGES } from '@/lib/task-pages';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { useLocale } from '@/i18n/LocaleProvider';
@@ -37,6 +37,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
   const [internalUsers, setInternalUsers] = useState<InternalUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [taskOrder, setTaskOrder] = useState<{ id: string; active: boolean }[]>([]);
 
   const [description, setDescription] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
@@ -65,16 +66,18 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
   useEffect(() => {
     async function load() {
       const supabase = createClient();
-      const [{ data }, { data: admins }] = await Promise.all([
+      const [{ data }, { data: admins }, { data: order }] = await Promise.all([
         supabase
           .from('tasks')
           .select('*, assignee:profiles!assigned_to(id, full_name), creator:profiles!created_by(id, full_name)')
           .eq('id', id)
           .single(),
         supabase.from('profiles').select('id, full_name').in('role', ['admin', 'internal_user']).order('full_name'),
+        supabase.from('tasks').select('id, active').order('created_at', { ascending: false }),
       ]);
 
       if (!data) { setNotFound(true); setLoading(false); return; }
+      setTaskOrder((order || []) as { id: string; active: boolean }[]);
 
       const taskData = data as unknown as TaskData;
       setTask(taskData);
@@ -92,6 +95,18 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
   }, [id]);
 
   const pageOptions = section ? SECTION_PAGES[section as TaskSection] : [];
+
+  const { prevId, nextId, position, total } = useMemo(() => {
+    if (!task) return { prevId: null, nextId: null, position: 0, total: 0 };
+    const scoped = taskOrder.filter((t) => t.active === task.active).map((t) => t.id);
+    const index = scoped.indexOf(id);
+    return {
+      prevId: index > 0 ? scoped[index - 1] : null,
+      nextId: index >= 0 && index < scoped.length - 1 ? scoped[index + 1] : null,
+      position: index + 1,
+      total: scoped.length,
+    };
+  }, [task, taskOrder, id]);
 
   function handleSectionChange(val: TaskSection | '') {
     setSection(val);
@@ -228,6 +243,27 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
           )}
           {task && <StatusBadge status={task.status} />}
         </div>
+        {total > 0 && (
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              onClick={() => prevId && router.push(`/admin/tasks/${prevId}`)}
+              disabled={!prevId}
+              title={t.admin.taskForm.prevTask}
+              className="rounded-lg border border-[var(--input-border)] p-2 text-[var(--muted)] transition hover:bg-[var(--input-bg)] hover:text-[var(--foreground)] disabled:opacity-30 disabled:hover:bg-transparent"
+            >
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+            </button>
+            <span className="min-w-[3.5rem] text-center text-xs text-[var(--muted)]">{t.admin.taskForm.pagerPosition.replace('{current}', String(position)).replace('{total}', String(total))}</span>
+            <button
+              onClick={() => nextId && router.push(`/admin/tasks/${nextId}`)}
+              disabled={!nextId}
+              title={t.admin.taskForm.nextTask}
+              className="rounded-lg border border-[var(--input-border)] p-2 text-[var(--muted)] transition hover:bg-[var(--input-bg)] hover:text-[var(--foreground)] disabled:opacity-30 disabled:hover:bg-transparent"
+            >
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+            </button>
+          </div>
+        )}
         <div className="flex shrink-0 items-center gap-2">
           {task?.active ? (
             <button onClick={handleArchive} className="rounded-lg border border-[var(--input-border)] p-2 text-[var(--muted)] transition hover:bg-[var(--input-bg)] hover:text-[var(--foreground)]" title={t.admin.taskForm.archiveTitle}>

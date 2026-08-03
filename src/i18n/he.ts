@@ -745,6 +745,9 @@ export const he = {
       deletePermanentConfirm: 'מחק לצמיתות?',
       notFound: 'המשימה לא נמצאה',
       backToTasks: 'חזרה למשימות',
+      prevTask: 'משימה קודמת',
+      nextTask: 'משימה הבאה',
+      pagerPosition: '{current} / {total}',
     },
 
     team: {

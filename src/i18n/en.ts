@@ -747,6 +747,9 @@ export const en: Translations = {
       deletePermanentConfirm: 'Delete permanently?',
       notFound: 'Task not found',
       backToTasks: 'Back to tasks',
+      prevTask: 'Previous task',
+      nextTask: 'Next task',
+      pagerPosition: '{current} / {total}',
     },
 
     team: {
