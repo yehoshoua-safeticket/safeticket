@@ -88,6 +88,14 @@ export default function SignupPage() {
       }
     }
 
+    // signUp only mails a code when the project requires email confirmation. With
+    // auto-confirm on it returns a live session instead, so sending the user to the
+    // code screen would strand them waiting on a mail that is never sent.
+    if (data.session) {
+      router.push('/dashboard');
+      return;
+    }
+
     router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
   }
 
