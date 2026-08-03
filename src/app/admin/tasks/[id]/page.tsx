@@ -13,7 +13,6 @@ interface InternalUser { id: string; full_name: string; }
 
 interface TaskData {
   id: string;
-  name: string;
   description: string;
   assigned_to: string | null;
   created_by: string | null;
@@ -24,6 +23,7 @@ interface TaskData {
   active: boolean;
   files: TaskFile[];
   created_at: string;
+  done_at: string | null;
   assignee: { id: string; full_name: string } | null;
   creator: { id: string; full_name: string } | null;
 }
@@ -38,7 +38,6 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [status, setStatus] = useState<TaskStatus>('todo');
@@ -79,7 +78,6 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
 
       const taskData = data as unknown as TaskData;
       setTask(taskData);
-      setName(taskData.name);
       setDescription(taskData.description);
       setAssignedTo(taskData.assigned_to || '');
       setStatus(taskData.status);
@@ -150,7 +148,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   async function handleSave() {
-    if (!name.trim()) { setError(t.admin.taskForm.nameError); return; }
+    if (!description.trim()) { setError(t.admin.taskForm.descError); return; }
     setSaving(true);
     setError('');
     const supabase = createClient();
@@ -162,8 +160,8 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
       setError(e instanceof Error ? e.message : t.admin.taskForm.fileUploadError);
       return;
     }
+    const doneAt = status === 'done' ? (task?.done_at ?? new Date().toISOString()) : null;
     const { error: err } = await supabase.from('tasks').update({
-      name: name.trim(),
       description,
       assigned_to: assignedTo || null,
       status,
@@ -171,6 +169,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
       page: page || null,
       device,
       files: uploadedFiles,
+      done_at: doneAt,
     }).eq('id', id);
     setSaving(false);
     if (err) { setError(err.message); return; }
@@ -223,7 +222,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
           <ArrowRight className="h-5 w-5 rtl:rotate-180" />
         </button>
         <div className="flex flex-1 items-center gap-2 min-w-0">
-          <h1 className="truncate text-xl font-bold text-[var(--foreground)]">{task?.name}</h1>
+          <h1 className="truncate text-xl font-bold text-[var(--foreground)]">{task?.description}</h1>
           {task && !task.active && (
             <span className="shrink-0 rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600">{t.admin.taskForm.archiveBadge}</span>
           )}
@@ -250,7 +249,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
               <Trash2 className="h-4 w-4" />
             </button>
           )}
-          <button onClick={handleSave} disabled={saving || !name.trim()} className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50">
+          <button onClick={handleSave} disabled={saving || !description.trim()} className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50">
             {saving ? t.common.saving : t.common.save}
           </button>
         </div>
@@ -260,11 +259,6 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
 
       <div className="overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
         <div className="grid gap-5 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.nameLabel}</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={t.admin.taskForm.namePlaceholder} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
-          </div>
-
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.descLabel}</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.admin.taskForm.descPlaceholder} rows={3} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />

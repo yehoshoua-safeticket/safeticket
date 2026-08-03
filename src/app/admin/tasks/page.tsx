@@ -84,7 +84,6 @@ export default function TasksPage() {
   interface TaskColumn { key: string; header: string; sortValue?: (t: EmployeeTask) => string | number; }
 
   const allColumns: TaskColumn[] = [
-    { key: 'name',        header: t.admin.tasks.colName,        sortValue: (task) => task.name },
     { key: 'description', header: t.admin.tasks.colDescription, sortValue: (task) => task.description },
     { key: 'section',     header: t.admin.tasks.colSection,     sortValue: (task) => task.section || '' },
     { key: 'page',        header: t.admin.tasks.colPage,        sortValue: (task) => task.page || '' },
@@ -110,12 +109,7 @@ export default function TasksPage() {
     if (filterMine && task.assigned_to !== currentUserId) return false;
     for (const f of searchFilters) {
       const q = f.value.toLowerCase();
-      if (f.field === 'all') {
-        if (!task.name.toLowerCase().includes(q) && !task.description.toLowerCase().includes(q)) return false;
-      } else {
-        const val = f.field === 'name' ? task.name : task.description;
-        if (!val.toLowerCase().includes(q)) return false;
-      }
+      if (!task.description.toLowerCase().includes(q)) return false;
     }
     return true;
   }), [tasks, filterStatus, filterSection, filterMine, searchFilters, showArchived, currentUserId]);
@@ -170,7 +164,8 @@ export default function TasksPage() {
   async function bulkChangeStatus(status: TaskStatus) {
     setBulkSaving(true);
     const supabase = createClient();
-    await Promise.all([...selected].map(id => supabase.from('tasks').update({ status }).eq('id', id)));
+    const doneAt = status === 'done' ? new Date().toISOString() : null;
+    await Promise.all([...selected].map(id => supabase.from('tasks').update({ status, done_at: doneAt }).eq('id', id)));
     setBulkSaving(false);
     setSelected(new Set());
     await loadTasks();
@@ -210,21 +205,19 @@ export default function TasksPage() {
 
   function renderCell(key: string, task: EmployeeTask) {
     switch (key) {
-      case 'name':
+      case 'description':
         return (
-          <td key={key} className="px-5 py-3.5 text-sm font-medium text-[var(--foreground)]">
-            <span className="flex items-center gap-1.5">
-              {task.name}
+          <td key={key} className="px-5 py-3.5 text-sm text-[var(--foreground)]">
+            <span className="flex min-w-0 items-start gap-1.5">
+              <span className="line-clamp-3 min-w-0">{task.description}</span>
               {task.files.length > 0 && (
-                <span className="flex items-center gap-0.5 text-[var(--muted)]">
+                <span className="flex shrink-0 items-center gap-0.5 text-[var(--muted)]">
                   <Paperclip className="h-3 w-3" /><span className="text-[10px]">{task.files.length}</span>
                 </span>
               )}
             </span>
           </td>
         );
-      case 'description':
-        return <td key={key} className="px-5 py-3.5 text-sm text-[var(--muted)]"><span className="block truncate">{task.description}</span></td>;
       case 'section':
         return (
           <td key={key} className="px-5 py-3.5 text-sm text-[var(--muted)]">
@@ -278,10 +271,10 @@ export default function TasksPage() {
             className="mt-1 h-4 w-4 shrink-0 rounded border-[var(--input-border)] accent-[var(--accent)]"
           />
           <p className="min-w-0 flex-1 text-sm font-semibold text-[var(--foreground)]">
-            <span className="flex items-center gap-1.5">
-              {task.name}
+            <span className="flex min-w-0 items-start gap-1.5">
+              <span className="line-clamp-3 min-w-0">{task.description}</span>
               {task.files.length > 0 && (
-                <span className="flex items-center gap-0.5 text-[var(--muted)]">
+                <span className="flex shrink-0 items-center gap-0.5 text-[var(--muted)]">
                   <Paperclip className="h-3 w-3" /><span className="text-[10px]">{task.files.length}</span>
                 </span>
               )}
@@ -290,7 +283,6 @@ export default function TasksPage() {
           {show('status') && <span className="shrink-0"><StatusBadge status={task.status} /></span>}
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
-          {show('description') && task.description && <span className="min-w-0 truncate">{task.description}</span>}
           {show('section') && <span>{t.admin.tasks.colSection}: {task.section ? SECTION_LABELS[task.section] : '—'}</span>}
           {show('page') && task.page && <span className="font-mono text-xs">{task.page}</span>}
           {show('user') && <span className="font-medium text-[var(--foreground)]">{task.assignee?.full_name || '—'}</span>}
@@ -370,7 +362,6 @@ export default function TasksPage() {
         <FieldSearch
           fields={[
             { field: 'all', label: t.admin.tasks.fieldAll },
-            { field: 'name', label: t.admin.tasks.fieldName },
             { field: 'description', label: t.admin.tasks.fieldDescription },
           ]}
           filters={searchFilters}

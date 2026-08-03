@@ -153,7 +153,6 @@ export interface TaskFile {
 
 export interface EmployeeTask {
   id: string;
-  name: string;
   description: string;
   assigned_to: string | null;
   created_by: string | null;
@@ -164,6 +163,7 @@ export interface EmployeeTask {
   active: boolean;
   files: TaskFile[];
   created_at: string;
+  done_at: string | null;
   assignee: { id: string; full_name: string } | null;
   creator: { id: string; full_name: string } | null;
 }

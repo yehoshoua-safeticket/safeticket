@@ -16,7 +16,6 @@ export default function NewTaskPage() {
   const [currentUserId, setCurrentUserId] = useState('');
   const [currentUserName, setCurrentUserName] = useState('');
   const [internalUsers, setInternalUsers] = useState<InternalUser[]>([]);
-  const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [status, setStatus] = useState<TaskStatus>('todo');
@@ -111,7 +110,7 @@ export default function NewTaskPage() {
   }
 
   async function handleSave() {
-    if (!name.trim()) { setError(t.admin.taskForm.nameError); return; }
+    if (!description.trim()) { setError(t.admin.taskForm.descError); return; }
     setSaving(true);
     setError('');
     const supabase = createClient();
@@ -124,7 +123,6 @@ export default function NewTaskPage() {
       return;
     }
     const { error: err } = await supabase.from('tasks').insert({
-      name: name.trim(),
       description,
       assigned_to: assignedTo || null,
       created_by: currentUserId,
@@ -149,7 +147,7 @@ export default function NewTaskPage() {
         <div className="flex-1">
           <h1 className="text-xl font-bold text-[var(--foreground)]">{t.admin.taskForm.newTitle}</h1>
         </div>
-        <button onClick={handleSave} disabled={saving || !name.trim()} className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50">
+        <button onClick={handleSave} disabled={saving || !description.trim()} className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50">
           {saving ? t.common.saving : t.admin.taskForm.createButton}
         </button>
       </div>
@@ -158,11 +156,6 @@ export default function NewTaskPage() {
 
       <div className="overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
         <div className="grid gap-5 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.nameLabel}</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={t.admin.taskForm.namePlaceholder} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
-          </div>
-
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.descLabel}</label>
             <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.admin.taskForm.descPlaceholder} rows={3} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
