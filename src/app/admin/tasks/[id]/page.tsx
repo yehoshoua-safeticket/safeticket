@@ -3,9 +3,10 @@
 import { use, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
-import { ArrowRight, ArrowLeft, Upload, FileText, Image as ImageIcon, File, X, Archive, Trash2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Upload, Archive, Trash2 } from 'lucide-react';
 import { SECTION_LABELS, SECTION_PAGES } from '@/lib/task-pages';
 import StatusBadge from '@/components/ui/StatusBadge';
+import TaskFileList from '@/components/ui/TaskFileList';
 import { useLocale } from '@/i18n/LocaleProvider';
 import type { TaskStatus, TaskSection, TaskFile } from '@/types/database';
 
@@ -148,18 +149,6 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
       result.push(meta as TaskFile);
     }
     return result;
-  }
-
-  function formatSize(bytes: number) {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / 1048576).toFixed(1)} MB`;
-  }
-
-  function getFileIcon(type: string) {
-    if (type.startsWith('image/')) return <ImageIcon className="h-4 w-4 text-blue-500" />;
-    if (type.includes('pdf')) return <FileText className="h-4 w-4 text-red-500" />;
-    return <File className="h-4 w-4 text-[var(--muted)]" />;
   }
 
   async function handleSave() {
@@ -367,18 +356,7 @@ export default function TaskDetailPage({ params }: { params: Promise<{ id: strin
             <p className="text-xs text-[var(--muted)]">{t.admin.taskForm.filesHint}</p>
             <input ref={fileInputRef} type="file" multiple className="hidden" onChange={(e) => { if (e.target.files?.length) { addFiles(e.target.files); e.target.value = ''; } }} />
           </div>
-          {files.length > 0 && (
-            <div className="mt-2 space-y-1.5">
-              {files.map((f) => (
-                <div key={f.id} className="flex items-center gap-2 rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2">
-                  {getFileIcon(f.type)}
-                  <span className="flex-1 truncate text-xs text-[var(--foreground)]">{f.name}</span>
-                  <span className="text-[10px] text-[var(--muted)]">{formatSize(f.size)}</span>
-                  <button onClick={() => removeFile(f.id)} className="rounded p-0.5 text-[var(--muted)] hover:text-red-600"><X className="h-3.5 w-3.5" /></button>
-                </div>
-              ))}
-            </div>
-          )}
+          <TaskFileList files={files} onRemove={removeFile} />
         </div>
       </div>
     </div>
