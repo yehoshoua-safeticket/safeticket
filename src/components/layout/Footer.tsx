@@ -44,7 +44,7 @@ export default function Footer() {
           {/* Columns */}
           <div className="grid grid-cols-3 gap-6 sm:flex-1 sm:gap-8">
             <div>
-              <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-white">{t.footer.platform}</h4>
+              <h4 className="mb-3 text-base font-bold uppercase tracking-wider text-white">{t.footer.platform}</h4>
               <ul className="space-y-2.5">
                 <li><Link href="/tickets" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.tickets}</Link></li>
                 <li><Link href="/dashboard/sell" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.sellTicket}</Link></li>
@@ -53,7 +53,7 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-white">{t.footer.support}</h4>
+              <h4 className="mb-3 text-base font-bold uppercase tracking-wider text-white">{t.footer.support}</h4>
               <ul className="space-y-2.5">
                 <li><Link href="/how-it-works#faq" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.faq}</Link></li>
                 <li><Link href="/contact" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.contact}</Link></li>
@@ -62,7 +62,7 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-white">{t.footer.legal}</h4>
+              <h4 className="mb-3 text-base font-bold uppercase tracking-wider text-white">{t.footer.legal}</h4>
               <ul className="space-y-2.5">
                 <li><Link href="/terms" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.terms}</Link></li>
                 <li><Link href="/privacy" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.privacy}</Link></li>

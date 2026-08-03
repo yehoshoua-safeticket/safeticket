@@ -83,6 +83,13 @@ export default function SupportPage() {
             <p className="mt-1 text-sm text-[var(--muted)]">{t.supportPage.protectionDesc}</p>
           </div>
         </div>
+        <div className="mt-4 flex items-start gap-4 border-t border-emerald-200 pt-4">
+          <ShieldCheck className="h-6 w-6 shrink-0 text-[var(--accent-text)]" />
+          <div>
+            <h3 className="font-semibold text-[var(--foreground)]">{t.supportPage.protectionTitle2}</h3>
+            <p className="mt-1 text-sm text-[var(--muted)]">{t.supportPage.protectionDesc2}</p>
+          </div>
+        </div>
       </div>
 
       <div className="mb-12">

@@ -40,6 +40,24 @@ export default function SignupPage() {
 
     setLoading(true);
 
+    if (phone.trim()) {
+      try {
+        const res = await fetch('/api/auth/check-phone', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: phone.trim() }),
+        });
+        const checkData = await res.json();
+        if (checkData.taken) {
+          setError(t.auth.signup.errorPhoneTaken);
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Best-effort check — the unique index + upsert-error handling below still catches duplicates.
+      }
+    }
+
     const supabase = createClient();
     const { data, error: signupError } = await supabase.auth.signUp({
       email,
@@ -54,7 +72,7 @@ export default function SignupPage() {
     }
 
     if (data.user) {
-      await supabase.from('profiles').upsert({
+      const { error: upsertError } = await supabase.from('profiles').upsert({
         id: data.user.id,
         full_name: fullName,
         email,
@@ -62,6 +80,12 @@ export default function SignupPage() {
         verification_status: 'unverified',
         role: 'external_user',
       });
+      if (upsertError) {
+        const isDuplicatePhone = upsertError.code === '23505' && upsertError.message.toLowerCase().includes('phone');
+        setError(isDuplicatePhone ? t.auth.signup.errorPhoneTaken : upsertError.message);
+        setLoading(false);
+        return;
+      }
     }
 
     router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);

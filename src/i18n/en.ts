@@ -2,7 +2,7 @@ import { type Translations } from './he';
 
 export const en: Translations = {
   meta: {
-    title: 'SafeTicket – Buy & 123 Tickets Safely',
+    title: 'SafeTicket – Buy & Sell Tickets Safely',
     description: 'Buy and sell second-hand tickets with full escrow protection.',
   },
 
@@ -120,7 +120,7 @@ export const en: Translations = {
     support: 'Support',
     faq: 'FAQ',
     contact: 'Contact',
-    disputes: 'Disputes',
+    disputes: 'Report a problem',
     legal: 'Legal',
     terms: 'Terms of Service',
     privacy: 'Privacy Policy',
@@ -196,6 +196,7 @@ export const en: Translations = {
       errorPasswordMismatch: 'Passwords do not match',
       errorPasswordShort: 'Password must be at least 8 characters',
       errorPasswordWeak: 'Password must contain letters and numbers',
+      errorPhoneTaken: 'This phone number is already registered to another account',
     },
     verifyEmail: {
       title: 'Verify your email',
@@ -464,7 +465,6 @@ export const en: Translations = {
     flowSteps: [
       'Seller publishes a ticket',
       'Buyer pays SafeTicket',
-      'The money is held safely',
       'Buyer enters the event',
       'Seller receives the money',
     ],
@@ -506,9 +506,9 @@ export const en: Translations = {
     forBuyers: 'For Buyers',
     forSellers: 'For Sellers',
     ctaTitle: 'Ready to get started?',
-    ctaSubtitle: 'Join thousands of users who already trust SafeTicket',
-    findTickets: 'Find Tickets',
-    sellTickets: 'Sell Tickets',
+    ctaSubtitle: 'Buy and sell tickets safely, simply and fast — with SafeTicket.',
+    findTickets: 'Find a ticket',
+    sellTickets: 'Post a ticket',
     buyerSteps: [
       { title: 'Find tickets', desc: 'Search by event, artist, city, or date. All tickets at fair prices — no scalping. 10% service fee on ticket price.' },
       { title: 'Pay safely', desc: 'You pay SafeTicket, not the seller. Money is held in escrow until after the event. Secure payment by credit card.' },
@@ -552,8 +552,10 @@ export const en: Translations = {
   supportPage: {
     title: 'Support & Disputes',
     subtitle: 'We are here to resolve any issue',
-    protectionTitle: 'Full Buyer Protection',
-    protectionDesc: 'Your money is held in escrow until you confirm receipt of the tickets. If something is wrong, you get a full refund. Our team is available to resolve any issue within 48 hours.',
+    protectionTitle: 'Problem entering the event?',
+    protectionDesc: "Report it to us immediately and we'll look into the case.",
+    protectionTitle2: 'Quick review of every request',
+    protectionDesc2: "If you couldn't enter the event using the ticket you bought on SafeTicket, fill in the details in the form. Our support team will review the case and get back to you as soon as possible, in line with platform usage.",
     processTitle: 'Dispute Resolution Process',
     steps: [
       { label: 'Open Dispute', desc: 'Describe the issue' },

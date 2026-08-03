@@ -2,23 +2,23 @@
 
 import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
-import { Tag, CreditCard, Lock, DoorOpen, Wallet } from 'lucide-react';
+import { Tag, CreditCard, DoorOpen, Wallet } from 'lucide-react';
 import { useLocale } from '@/i18n/LocaleProvider';
 
-const FLOW_ICONS = [Tag, CreditCard, Lock, DoorOpen, Wallet];
+const FLOW_ICONS = [Tag, CreditCard, DoorOpen, Wallet];
 
 const FLOW_SCHEME = {
   activeIcon: '#000000',
   doneIcon: '#4a4a4a',
 };
 
-/** The escrow flow — simple 5-step sequence that auto-advances. */
+/** The escrow flow — simple 4-step sequence that auto-advances. */
 export default function StepFlow() {
   const { t } = useLocale();
   const [flowStep, setFlowStep] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setFlowStep((s) => (s + 1) % 6), 1500);
+    const id = setInterval(() => setFlowStep((s) => (s + 1) % (FLOW_ICONS.length + 1)), 1500);
     return () => clearInterval(id);
   }, []);
 
@@ -31,7 +31,7 @@ export default function StepFlow() {
             const done = i < flowStep;
             const s = FLOW_SCHEME;
             return (
-              <div key={i} className="flex basis-1/3 flex-col items-center">
+              <div key={i} className="flex basis-1/2 flex-col items-center sm:basis-1/4">
                 <motion.div
                   animate={{ scale: active ? 1.06 : 1, opacity: active || done ? 1 : 0.85 }}
                   transition={{ duration: 0.4 }}
