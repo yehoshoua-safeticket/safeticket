@@ -100,7 +100,9 @@ export default function SearchStrip() {
   ];
   const filterCount = [categoryParam, minPriceParam, maxPriceParam, sortParam].filter(Boolean).length;
 
-  const chip = 'flex items-center justify-center gap-1.5 rounded-lg border px-3.5 py-2.5 text-sm font-medium transition sm:justify-start';
+  // min-w-0 lets the chips shrink past their label width on narrow screens; without
+  // it the nowrap labels force the row wider than the viewport.
+  const chip = 'flex min-w-0 items-center justify-center gap-1.5 rounded-lg border px-3.5 py-2.5 text-sm font-medium transition sm:justify-start';
   const chipOn = 'border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-text)]';
   const chipOff = 'border-[var(--card-border)] bg-white text-[var(--muted)] hover:border-[var(--muted)]';
   const popover = 'absolute top-full z-50 mt-2 inset-x-5 rounded-lg border border-[var(--card-border)] bg-white p-3 shadow-xl sm:inset-x-auto sm:end-8 sm:w-80';
@@ -165,7 +167,7 @@ export default function SearchStrip() {
           aria-expanded={open === 'filter'}
         >
           <SlidersHorizontal className="h-4 w-4 shrink-0" />
-          <span>{t.filterBar.filter}</span>
+          <span className="truncate">{t.filterBar.filter}</span>
           {filterCount > 0
             ? <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[0.6rem] font-bold text-white">{filterCount}</span>
             : <ChevronDown className="h-3.5 w-3.5 shrink-0" />}
