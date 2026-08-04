@@ -36,7 +36,7 @@ export default function StaffLoginPage() {
       return;
     }
 
-    router.push('/admin');
+    router.push('/staff');
     router.refresh();
   }
 

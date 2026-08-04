@@ -17,6 +17,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [isStaff, setIsStaff] = useState(false);
   const [loading, setLoading] = useState(true);
   const { t, locale, setLocale } = useLocale();
 
@@ -29,9 +30,26 @@ export default function Navbar() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => { setUser(user); setLoading(false); });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
-    return () => subscription.unsubscribe();
+    let cancelled = false;
+
+    // A staff session is not a customer session: the public site treats it as a
+    // visitor rather than offering an account it can't meaningfully use. Resolving
+    // the role before clearing `loading` avoids flashing the account button first.
+    async function resolve(next: SupabaseUser | null) {
+      if (!next) {
+        if (!cancelled) { setUser(null); setIsStaff(false); setLoading(false); }
+        return;
+      }
+      const { data } = await supabase.from('profiles').select('role').eq('id', next.id).single();
+      if (cancelled) return;
+      setUser(next);
+      setIsStaff(data?.role === 'admin' || data?.role === 'internal_user');
+      setLoading(false);
+    }
+
+    supabase.auth.getUser().then(({ data: { user } }) => resolve(user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => resolve(session?.user ?? null));
+    return () => { cancelled = true; subscription.unsubscribe(); };
   }, []);
 
   // Lock background scroll while the full-screen mobile menu is open.
@@ -41,7 +59,9 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || '';
+  // Staff browse the public site as visitors; only a customer session gets an account.
+  const customer = user && !isStaff ? user : null;
+  const displayName = customer?.user_metadata?.full_name || customer?.email?.split('@')[0] || '';
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--chrome-border)] bg-[var(--chrome)] font-[family-name:var(--font-trial)] text-white">
@@ -67,7 +87,7 @@ export default function Navbar() {
             <LocaleSwitcher compact />
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin text-white/50" />
-            ) : user ? (
+            ) : customer ? (
               <>
                 <Link href="/dashboard" className="flex items-center gap-2 rounded border border-white/20 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-white/10">
                   <User className="h-4 w-4" /><span className="max-w-[120px] truncate">{displayName}</span>
@@ -132,7 +152,7 @@ export default function Navbar() {
               transition={{ delay: 0.08 + navLinks.length * 0.09, duration: 0.4 }}
               className="mt-auto space-y-3 px-6 pb-8 pt-8"
             >
-              {user ? (
+              {customer ? (
                 <>
                   <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex w-full items-center justify-center gap-2 rounded border border-white/20 py-3 text-sm font-medium text-white transition hover:bg-white/10">
                     <User className="h-4 w-4" />{displayName}
