@@ -11,12 +11,11 @@ import { useLocale } from '@/i18n/LocaleProvider';
 
 interface FormState {
   name: string;
-  email: string;
   username: string;
   password: string;
 }
 
-const emptyForm: FormState = { name: '', email: '', username: '', password: '' };
+const emptyForm: FormState = { name: '', username: '', password: '' };
 
 export default function TeamPage() {
   const router = useRouter();
@@ -54,11 +53,11 @@ export default function TeamPage() {
     for (const f of searchFilters) {
       const q = f.value.toLowerCase();
       if (f.field === 'all') {
-        if (!m.full_name.toLowerCase().includes(q) && !m.email.toLowerCase().includes(q)) return false;
+        if (!m.full_name.toLowerCase().includes(q) && !(m.username || '').toLowerCase().includes(q)) return false;
       } else if (f.field === 'full_name') {
         if (!m.full_name.toLowerCase().includes(q)) return false;
-      } else if (f.field === 'email') {
-        if (!m.email.toLowerCase().includes(q)) return false;
+      } else if (f.field === 'username') {
+        if (!(m.username || '').toLowerCase().includes(q)) return false;
       }
     }
     return true;
@@ -84,7 +83,7 @@ export default function TeamPage() {
   }
 
   async function handleCreate() {
-    if (!form.name.trim() || !form.email.trim() || !form.username.trim() || !form.password) return;
+    if (!form.name.trim() || !form.username.trim() || !form.password) return;
     setSaving(true);
     setError('');
     const res = await fetch('/api/admin/team', {
@@ -151,16 +150,6 @@ export default function TeamPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-[var(--muted)]">{t.admin.team.email}</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder={t.admin.team.emailPlaceholder}
-                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none"
-              />
-            </div>
-            <div>
               <label className="mb-1 block text-xs font-medium text-[var(--muted)]">{t.admin.team.username}</label>
               <input
                 value={form.username}
@@ -196,7 +185,7 @@ export default function TeamPage() {
           <div className="mt-4 flex items-center gap-3">
             <button
               onClick={handleCreate}
-              disabled={saving || !form.name || !form.email || !form.username || !form.password}
+              disabled={saving || !form.name || !form.username || !form.password}
               className="rounded-lg bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {saving ? t.admin.team.creating : t.admin.team.createAccount}
@@ -217,7 +206,7 @@ export default function TeamPage() {
           fields={[
             { field: 'all', label: t.admin.team.fieldAll },
             { field: 'full_name', label: t.admin.team.fieldName },
-            { field: 'email', label: t.admin.team.fieldEmail },
+            { field: 'username', label: t.admin.team.username },
           ]}
           filters={searchFilters}
           onChange={setSearchFilters}
@@ -259,7 +248,7 @@ export default function TeamPage() {
                   <input type="checkbox" checked={filtered.length > 0 && selected.size === filtered.length} onChange={toggleSelectAll} className="h-4 w-4 rounded border-[var(--input-border)] accent-[var(--accent)]" />
                 </th>
                 <th className="px-5 py-3.5 text-start text-xs font-medium uppercase tracking-wider text-[var(--muted)]">{t.admin.team.colName}</th>
-                <th className="px-5 py-3.5 text-start text-xs font-medium uppercase tracking-wider text-[var(--muted)]">{t.admin.team.colEmail}</th>
+                <th className="px-5 py-3.5 text-start text-xs font-medium uppercase tracking-wider text-[var(--muted)]">{t.admin.team.username}</th>
                 <th className="px-5 py-3.5 text-start text-xs font-medium uppercase tracking-wider text-[var(--muted)]">{t.admin.team.colJoined}</th>
               </tr>
             </thead>
@@ -284,7 +273,7 @@ export default function TeamPage() {
                       )}
                     </div>
                   </td>
-                  <td className="px-5 py-3.5 text-sm text-[var(--muted)]">{m.email}</td>
+                  <td className="px-5 py-3.5 font-mono text-sm text-[var(--muted)]" dir="ltr">{m.username || '—'}</td>
                   <td className="px-5 py-3.5 text-sm text-[var(--muted)]">
                     {new Date(m.created_at).toLocaleDateString('he-IL')}
                   </td>
@@ -320,7 +309,7 @@ export default function TeamPage() {
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 ps-7 text-sm text-[var(--muted)]">
-                  <span>{m.email}</span>
+                  <span className="font-mono" dir="ltr">{m.username || '—'}</span>
                   <span>{new Date(m.created_at).toLocaleDateString('he-IL')}</span>
                 </div>
               </li>

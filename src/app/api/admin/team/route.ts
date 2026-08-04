@@ -1,6 +1,7 @@
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase-server';
+import { staffEmail } from '@/lib/staff-email';
 
 async function getAdminClient() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -25,9 +26,9 @@ export async function POST(request: NextRequest) {
   const admin = await getAdminClient();
   if (!admin) return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' }, { status: 503 });
 
-  const { name, email, password, username } = await request.json();
-  if (!name || !email || !password || !username) {
-    return NextResponse.json({ error: 'name, email, username, and password are required' }, { status: 400 });
+  const { name, password, username } = await request.json();
+  if (!name || !password || !username) {
+    return NextResponse.json({ error: 'name, username, and password are required' }, { status: 400 });
   }
 
   // Staff sign in by username, so it is stored lowercased and matched exactly.
@@ -35,6 +36,10 @@ export async function POST(request: NextRequest) {
   if (!/^[a-z0-9._-]{3,32}$/.test(normalizedUsername)) {
     return NextResponse.json({ error: 'invalid_username' }, { status: 400 });
   }
+
+  // Derived, not supplied: a staff account must not have an address anyone could
+  // guess and replay against the public login form.
+  const email = staffEmail(normalizedUsername);
 
   const { data: existing } = await admin
     .from('profiles')
