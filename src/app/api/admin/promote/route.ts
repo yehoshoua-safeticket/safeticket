@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Not authenticated. Log in first at /auth/login' },
+        { error: 'Not authenticated. Log in first at /staff/login' },
         { status: 401 }
       );
     }
