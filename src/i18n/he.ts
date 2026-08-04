@@ -179,8 +179,9 @@ export const he = {
     staffLogin: {
       title: 'כניסת צוות',
       subtitle: 'התחברות למערכת הניהול',
+      username: 'שם משתמש',
       submit: 'התחברו',
-      notStaff: 'לחשבון זה אין גישה למערכת הניהול.',
+      invalidCredentials: 'שם המשתמש או הסיסמה שגויים.',
       genericError: 'ההתחברות נכשלה. נסו שוב.',
     },
     signup: {
@@ -766,6 +767,11 @@ export const he = {
       newMemberTitle: 'משתמש פנימי חדש',
       fullName: 'שם מלא',
       email: 'אימייל',
+      username: 'שם משתמש',
+      usernamePlaceholder: 'israel.i',
+      usernameHint: 'לפחות 3 תווים: אותיות באנגלית, ספרות, נקודה, מקף או קו תחתון',
+      usernameTaken: 'שם המשתמש כבר תפוס.',
+      usernameInvalid: 'שם משתמש לא תקין. אותיות באנגלית, ספרות, נקודה, מקף או קו תחתון (3-32 תווים).',
       tempPassword: 'סיסמה זמנית',
       namePlaceholder: 'ישראל ישראלי',
       emailPlaceholder: 'user@example.com',

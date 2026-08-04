@@ -3,10 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { createClient } from '@/lib/supabase';
 import { useLocale } from '@/i18n/LocaleProvider';
-
-const STAFF_ROLES = ['admin', 'internal_user'];
 
 export default function StaffLoginPage() {
   const router = useRouter();
@@ -21,32 +18,20 @@ export default function StaffLoginPage() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
+    const username = formData.get('username') as string;
     const password = formData.get('password') as string;
 
-    const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    // The username -> account lookup happens server-side, so no staff email is
+    // ever exposed to the browser.
+    const res = await fetch('/api/staff/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
 
-    if (signInError) {
-      setError(signInError.message);
-      setLoading(false);
-      return;
-    }
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setError(t.auth.staffLogin.genericError);
-      setLoading(false);
-      return;
-    }
-
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-
-    // A customer account authenticating here gets signed straight back out — this
-    // door only opens onto the management tool.
-    if (!profile || !STAFF_ROLES.includes(profile.role)) {
-      await supabase.auth.signOut();
-      setError(t.auth.staffLogin.notStaff);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setError(body.error === 'not_configured' ? t.auth.staffLogin.genericError : t.auth.staffLogin.invalidCredentials);
       setLoading(false);
       return;
     }
@@ -72,8 +57,8 @@ export default function StaffLoginPage() {
           )}
           <div className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.login.email}</label>
-              <input name="email" type="email" required placeholder="your@email.com" dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:outline-none" />
+              <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.staffLogin.username}</label>
+              <input name="username" type="text" required autoComplete="username" autoCapitalize="none" spellCheck={false} dir="ltr" className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-3 text-sm placeholder-[var(--muted)] focus:outline-none" />
             </div>
             <div>
               <label className="mb-1.5 block text-sm text-[var(--muted)]">{t.auth.login.password}</label>

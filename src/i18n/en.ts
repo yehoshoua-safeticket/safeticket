@@ -181,8 +181,9 @@ export const en: Translations = {
     staffLogin: {
       title: 'Staff sign-in',
       subtitle: 'Access to the management tool',
+      username: 'Username',
       submit: 'Sign In',
-      notStaff: 'This account has no access to the management tool.',
+      invalidCredentials: 'Incorrect username or password.',
       genericError: 'Sign-in failed. Please try again.',
     },
     signup: {
@@ -768,6 +769,11 @@ export const en: Translations = {
       newMemberTitle: 'New internal user',
       fullName: 'Full name',
       email: 'Email',
+      username: 'Username',
+      usernamePlaceholder: 'john.s',
+      usernameHint: 'At least 3 characters: letters, digits, dot, dash or underscore',
+      usernameTaken: 'That username is already taken.',
+      usernameInvalid: 'Invalid username. Letters, digits, dot, dash or underscore (3-32 characters).',
       tempPassword: 'Temporary password',
       namePlaceholder: 'John Smith',
       emailPlaceholder: 'user@example.com',

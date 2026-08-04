@@ -12,10 +12,11 @@ import { useLocale } from '@/i18n/LocaleProvider';
 interface FormState {
   name: string;
   email: string;
+  username: string;
   password: string;
 }
 
-const emptyForm: FormState = { name: '', email: '', password: '' };
+const emptyForm: FormState = { name: '', email: '', username: '', password: '' };
 
 export default function TeamPage() {
   const router = useRouter();
@@ -83,7 +84,7 @@ export default function TeamPage() {
   }
 
   async function handleCreate() {
-    if (!form.name.trim() || !form.email.trim() || !form.password) return;
+    if (!form.name.trim() || !form.email.trim() || !form.username.trim() || !form.password) return;
     setSaving(true);
     setError('');
     const res = await fetch('/api/admin/team', {
@@ -93,7 +94,14 @@ export default function TeamPage() {
     });
     const json = await res.json();
     setSaving(false);
-    if (!res.ok) { setError(json.error || t.admin.team.errorCreate); return; }
+    if (!res.ok) {
+      const known: Record<string, string> = {
+        username_taken: t.admin.team.usernameTaken,
+        invalid_username: t.admin.team.usernameInvalid,
+      };
+      setError(known[json.error] || json.error || t.admin.team.errorCreate);
+      return;
+    }
     setShowForm(false);
     setForm(emptyForm);
     load();
@@ -132,7 +140,7 @@ export default function TeamPage() {
               <X className="h-4 w-4" />
             </button>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-xs font-medium text-[var(--muted)]">{t.admin.team.fullName}</label>
               <input
@@ -151,6 +159,19 @@ export default function TeamPage() {
                 placeholder={t.admin.team.emailPlaceholder}
                 className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none"
               />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-[var(--muted)]">{t.admin.team.username}</label>
+              <input
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                placeholder={t.admin.team.usernamePlaceholder}
+                dir="ltr"
+                autoCapitalize="none"
+                spellCheck={false}
+                className="w-full rounded-lg border border-[var(--input-border)] bg-white px-3 py-2 text-sm focus:outline-none"
+              />
+              <p className="mt-1 text-[10px] text-[var(--muted)]">{t.admin.team.usernameHint}</p>
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-[var(--muted)]">{t.admin.team.tempPassword}</label>
@@ -175,7 +196,7 @@ export default function TeamPage() {
           <div className="mt-4 flex items-center gap-3">
             <button
               onClick={handleCreate}
-              disabled={saving || !form.name || !form.email || !form.password}
+              disabled={saving || !form.name || !form.email || !form.username || !form.password}
               className="rounded-lg bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {saving ? t.admin.team.creating : t.admin.team.createAccount}
