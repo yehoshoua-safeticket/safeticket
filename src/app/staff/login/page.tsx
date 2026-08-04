@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useLocale } from '@/i18n/LocaleProvider';
 
-export default function LoginPage() {
+const STAFF_ROLES = ['admin', 'internal_user'];
+
+export default function StaffLoginPage() {
   const router = useRouter();
   const { t } = useLocale();
   const [showPassword, setShowPassword] = useState(false);
@@ -24,38 +25,43 @@ export default function LoginPage() {
     const password = formData.get('password') as string;
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      setError(error.message);
+    if (signInError) {
+      setError(signInError.message);
       setLoading(false);
       return;
     }
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      setError(t.auth.login.genericError);
+      setError(t.auth.staffLogin.genericError);
       setLoading(false);
       return;
     }
 
-    // Honor a safe internal ?next= redirect (e.g. when bounced from checkout).
-    const nextParam = new URLSearchParams(window.location.search).get('next');
-    const safeNext = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : null;
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
 
-    // The customer-facing door never opens onto the management tool — staff sign in
-    // through their own route instead.
-    router.push(safeNext ?? '/dashboard');
+    // A customer account authenticating here gets signed straight back out — this
+    // door only opens onto the management tool.
+    if (!profile || !STAFF_ROLES.includes(profile.role)) {
+      await supabase.auth.signOut();
+      setError(t.auth.staffLogin.notStaff);
+      setLoading(false);
+      return;
+    }
+
+    router.push('/admin');
     router.refresh();
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <Shield className="mx-auto mb-4 h-8 w-8 text-[var(--accent)]" strokeWidth={1.8} />
-          <h1 className="text-2xl font-bold">{t.auth.login.title}</h1>
-          <p className="mt-2 text-sm text-[var(--muted)]">{t.auth.login.subtitle}</p>
+          <Lock className="mx-auto mb-4 h-8 w-8 text-[var(--accent)]" strokeWidth={1.8} />
+          <h1 className="text-2xl font-bold">{t.auth.staffLogin.title}</h1>
+          <p className="mt-2 text-sm text-[var(--muted)]">{t.auth.staffLogin.subtitle}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-8">
@@ -81,18 +87,9 @@ export default function LoginPage() {
           </div>
           <button type="submit" disabled={loading} className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--accent)] py-3 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60">
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {t.auth.login.submit}
+            {t.auth.staffLogin.submit}
           </button>
-          <div className="mt-4">
-            <Link href="/auth/forgot-password" className="text-xs text-[var(--accent-text)] hover:underline">
-              {t.auth.login.forgotPassword}
-            </Link>
-          </div>
         </form>
-
-        <p className="mt-6 text-center text-sm text-[var(--muted)]">
-          {t.auth.login.noAccount}{' '}<Link href="/auth/signup" className="text-[var(--accent-text)] hover:underline">{t.auth.login.createAccount}</Link>
-        </p>
       </div>
     </div>
   );

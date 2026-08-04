@@ -176,6 +176,13 @@ export const he = {
       createAccount: 'צרו חשבון',
       genericError: 'ההתחברות נכשלה. נסו שוב.',
     },
+    staffLogin: {
+      title: 'כניסת צוות',
+      subtitle: 'התחברות למערכת הניהול',
+      submit: 'התחברו',
+      notStaff: 'לחשבון זה אין גישה למערכת הניהול.',
+      genericError: 'ההתחברות נכשלה. נסו שוב.',
+    },
     signup: {
       title: 'צרו חשבון',
       subtitle: 'הצטרפו לפלטפורמה הבטוחה לכרטיסים יד שנייה',

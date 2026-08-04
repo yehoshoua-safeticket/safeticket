@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const auth = await requireAdmin();
 
   if (!auth.authorized) {
-    if (auth.error === 'Not authenticated') redirect('/auth/login');
+    if (auth.error === 'Not authenticated') redirect('/staff/login');
     redirect('/dashboard');
   }
 

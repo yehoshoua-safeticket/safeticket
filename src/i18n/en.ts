@@ -178,6 +178,13 @@ export const en: Translations = {
       createAccount: 'Create account',
       genericError: 'Sign-in failed. Please try again.',
     },
+    staffLogin: {
+      title: 'Staff sign-in',
+      subtitle: 'Access to the management tool',
+      submit: 'Sign In',
+      notStaff: 'This account has no access to the management tool.',
+      genericError: 'Sign-in failed. Please try again.',
+    },
     signup: {
       title: 'Create Account',
       subtitle: 'Join the secure second-hand ticket platform',
