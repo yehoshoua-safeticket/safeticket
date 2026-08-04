@@ -6,7 +6,7 @@ import { useLocale } from '@/i18n/LocaleProvider';
 import Logo from '@/components/ui/Logo';
 import { FaXTwitter, FaInstagram, FaFacebookF, FaYoutube } from 'react-icons/fa6';
 
-const HIDDEN_ON = ['/dashboard', '/admin'];
+const HIDDEN_ON = ['/dashboard', '/staff'];
 
 export default function Footer() {
   const pathname = usePathname();

@@ -40,14 +40,14 @@ export default function AccountSidebar({ role, fullName, email, verificationStat
   ];
 
   const adminNav = [
-    { href: '/admin', label: t.sidebar.overview, icon: LayoutDashboard, exact: true },
-    { href: '/admin/events', label: t.sidebar.events, icon: CalendarDays },
-    { href: '/admin/external_users', label: t.sidebar.externalUsers, icon: Users },
-    { href: '/admin/listings', label: t.sidebar.listings, icon: Tag },
-    { href: '/admin/disputes', label: t.sidebar.disputes, icon: AlertTriangle },
-    { href: '/admin/support', label: t.sidebar.support, icon: MessageCircle },
-    { href: '/admin/tasks', label: t.sidebar.tasks, icon: ClipboardList },
-    { href: '/admin/internal_users', label: t.sidebar.internalUsers, icon: UserCog },
+    { href: '/staff', label: t.sidebar.overview, icon: LayoutDashboard, exact: true },
+    { href: '/staff/events', label: t.sidebar.events, icon: CalendarDays },
+    { href: '/staff/external_users', label: t.sidebar.externalUsers, icon: Users },
+    { href: '/staff/listings', label: t.sidebar.listings, icon: Tag },
+    { href: '/staff/disputes', label: t.sidebar.disputes, icon: AlertTriangle },
+    { href: '/staff/support', label: t.sidebar.support, icon: MessageCircle },
+    { href: '/staff/tasks', label: t.sidebar.tasks, icon: ClipboardList },
+    { href: '/staff/internal_users', label: t.sidebar.internalUsers, icon: UserCog },
   ];
 
   function isActive(href: string, exact?: boolean) {

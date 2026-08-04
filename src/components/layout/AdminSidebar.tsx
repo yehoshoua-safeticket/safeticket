@@ -24,22 +24,22 @@ export default function AdminSidebar() {
   }, [mobileOpen]);
 
   const navItems = [
-    { href: '/admin', label: t.sidebar.overview, icon: LayoutDashboard },
-    { href: '/admin/events', label: t.sidebar.events, icon: CalendarDays },
-    { href: '/admin/featured', label: t.sidebar.featured, icon: Star },
-    { href: '/admin/category_covers', label: t.sidebar.categoryCovers, icon: ImageIcon },
-    { href: '/admin/faqs', label: t.sidebar.faqs, icon: HelpCircle },
-    { href: '/admin/external_users', label: t.sidebar.externalUsers, icon: Users },
-    { href: '/admin/verifications', label: t.sidebar.verifications, icon: ShieldCheck },
-    { href: '/admin/listings', label: t.sidebar.listings, icon: Tag },
-    { href: '/admin/disputes', label: t.sidebar.disputes, icon: AlertTriangle },
-    { href: '/admin/support', label: t.sidebar.support, icon: MessageCircle },
-    { href: '/admin/tasks', label: t.sidebar.tasks, icon: ClipboardList },
-    { href: '/admin/internal_users', label: t.sidebar.internalUsers, icon: UserCog },
+    { href: '/staff', label: t.sidebar.overview, icon: LayoutDashboard },
+    { href: '/staff/events', label: t.sidebar.events, icon: CalendarDays },
+    { href: '/staff/featured', label: t.sidebar.featured, icon: Star },
+    { href: '/staff/category_covers', label: t.sidebar.categoryCovers, icon: ImageIcon },
+    { href: '/staff/faqs', label: t.sidebar.faqs, icon: HelpCircle },
+    { href: '/staff/external_users', label: t.sidebar.externalUsers, icon: Users },
+    { href: '/staff/verifications', label: t.sidebar.verifications, icon: ShieldCheck },
+    { href: '/staff/listings', label: t.sidebar.listings, icon: Tag },
+    { href: '/staff/disputes', label: t.sidebar.disputes, icon: AlertTriangle },
+    { href: '/staff/support', label: t.sidebar.support, icon: MessageCircle },
+    { href: '/staff/tasks', label: t.sidebar.tasks, icon: ClipboardList },
+    { href: '/staff/internal_users', label: t.sidebar.internalUsers, icon: UserCog },
   ];
 
   function isActive(href: string) {
-    if (href === '/admin') return pathname === '/admin';
+    if (href === '/staff') return pathname === '/staff';
     return pathname.startsWith(href);
   }
 
@@ -70,7 +70,7 @@ export default function AdminSidebar() {
 
   const header = (
     <div className="flex flex-col gap-1.5 border-b border-[var(--chrome-border)] px-5 py-4">
-      <Link href="/admin" className="flex items-center" onClick={() => setMobileOpen(false)}>
+      <Link href="/staff" className="flex items-center" onClick={() => setMobileOpen(false)}>
         {wordmark}
       </Link>
       <span className="overline ps-0.5 text-white/45">BACKOFFICE · ניהול</span>
@@ -93,7 +93,7 @@ export default function AdminSidebar() {
 
       {/* Mobile header — Black Pearl */}
       <div className="flex h-14 items-center justify-between bg-[var(--chrome)] px-4 text-white lg:hidden">
-        <Link href="/admin" className="flex items-center" onClick={() => setMobileOpen(false)}>
+        <Link href="/staff" className="flex items-center" onClick={() => setMobileOpen(false)}>
           {wordmark}
         </Link>
         <button onClick={() => setMobileOpen(!mobileOpen)} className="inline-flex items-center justify-center rounded-md p-2 text-white" aria-label="Menu">

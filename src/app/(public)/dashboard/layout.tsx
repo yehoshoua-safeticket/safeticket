@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const role = (profile?.role ?? 'external_user') as UserRole;
 
-  if (role === 'admin' || role === 'internal_user') redirect('/admin');
+  if (role === 'admin' || role === 'internal_user') redirect('/staff');
 
   const fullName =
     profile?.full_name ||

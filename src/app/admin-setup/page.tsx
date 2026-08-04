@@ -35,7 +35,7 @@ export default function AdminSetupPage() {
       }
 
       setMessage(`✓ ${email} is now an admin!`);
-      setTimeout(() => router.push('/admin'), 2000);
+      setTimeout(() => router.push('/staff'), 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -86,7 +86,7 @@ export default function AdminSetupPage() {
             <li>1. Sign up at <code className="bg-gray-100 px-1 rounded">/auth/signup</code></li>
             <li>2. You're automatically logged in</li>
             <li>3. Use this form to promote yourself to admin</li>
-            <li>4. Access <code className="bg-gray-100 px-1 rounded">/admin</code> panel</li>
+            <li>4. Access <code className="bg-gray-100 px-1 rounded">/staff</code> panel</li>
           </ol>
         </div>
       </div>

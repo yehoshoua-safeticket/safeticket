@@ -1,0 +1,364 @@
+'use client';
+
+import { use, useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase';
+import { ArrowRight, ArrowLeft, Upload, Archive, Trash2 } from 'lucide-react';
+import { SECTION_LABELS, SECTION_PAGES } from '@/lib/task-pages';
+import StatusBadge from '@/components/ui/StatusBadge';
+import TaskFileList from '@/components/ui/TaskFileList';
+import { useLocale } from '@/i18n/LocaleProvider';
+import type { TaskStatus, TaskSection, TaskFile } from '@/types/database';
+
+interface InternalUser { id: string; full_name: string; }
+
+interface TaskData {
+  id: string;
+  description: string;
+  assigned_to: string | null;
+  created_by: string | null;
+  status: TaskStatus;
+  section: TaskSection | null;
+  page: string | null;
+  device: 'not_relevant' | 'mobile' | 'tablet' | 'computer' | null;
+  active: boolean;
+  files: TaskFile[];
+  created_at: string;
+  done_at: string | null;
+  assignee: { id: string; full_name: string } | null;
+  creator: { id: string; full_name: string } | null;
+}
+
+export default function TaskDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const { t } = useLocale();
+  const router = useRouter();
+
+  const [task, setTask] = useState<TaskData | null>(null);
+  const [internalUsers, setInternalUsers] = useState<InternalUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [taskOrder, setTaskOrder] = useState<{ id: string; active: boolean }[]>([]);
+
+  const [description, setDescription] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
+  const [status, setStatus] = useState<TaskStatus>('todo');
+  const [section, setSection] = useState<TaskSection | ''>('');
+  const [page, setPage] = useState('');
+  const [device, setDevice] = useState<'not_relevant' | 'mobile' | 'tablet' | 'computer'>('not_relevant');
+  const [files, setFiles] = useState<TaskFile[]>([]);
+
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [dragging, setDragging] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const pendingFiles = useRef<Map<string, File>>(new Map());
+
+  const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
+    { value: 'todo', label: t.status.todo },
+    { value: 'done', label: t.status.done },
+    { value: 'canceled', label: t.status.canceled },
+  ];
+
+  const SECTION_OPTIONS = Object.entries(SECTION_LABELS).map(([value, label]) => ({ value: value as TaskSection, label }));
+
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+      const [{ data }, { data: admins }, { data: order }] = await Promise.all([
+        supabase
+          .from('tasks')
+          .select('*, assignee:profiles!assigned_to(id, full_name), creator:profiles!created_by(id, full_name)')
+          .eq('id', id)
+          .single(),
+        supabase.from('profiles').select('id, full_name').in('role', ['admin', 'internal_user']).order('full_name'),
+        supabase.from('tasks').select('id, active').order('created_at', { ascending: false }),
+      ]);
+
+      if (!data) { setNotFound(true); setLoading(false); return; }
+      setTaskOrder((order || []) as { id: string; active: boolean }[]);
+
+      const taskData = data as unknown as TaskData;
+      setTask(taskData);
+      setDescription(taskData.description);
+      setAssignedTo(taskData.assigned_to || '');
+      setStatus(taskData.status);
+      setSection(taskData.section || '');
+      setPage(taskData.page || '');
+      setDevice(taskData.device || 'not_relevant');
+      setFiles(taskData.files || []);
+      setInternalUsers((admins || []) as InternalUser[]);
+      setLoading(false);
+    }
+    load();
+  }, [id]);
+
+  const pageOptions = section ? SECTION_PAGES[section as TaskSection] : [];
+
+  const { prevId, nextId, position, total } = useMemo(() => {
+    if (!task) return { prevId: null, nextId: null, position: 0, total: 0 };
+    const scoped = taskOrder.filter((t) => t.active === task.active).map((t) => t.id);
+    const index = scoped.indexOf(id);
+    return {
+      prevId: index > 0 ? scoped[index - 1] : null,
+      nextId: index >= 0 && index < scoped.length - 1 ? scoped[index + 1] : null,
+      position: index + 1,
+      total: scoped.length,
+    };
+  }, [task, taskOrder, id]);
+
+  function handleSectionChange(val: TaskSection | '') {
+    setSection(val);
+    setPage('');
+  }
+
+  const addFiles = useCallback((fileList: FileList) => {
+    const newFiles: TaskFile[] = Array.from(fileList).map((f) => {
+      const fid = `file-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      pendingFiles.current.set(fid, f);
+      return { id: fid, name: f.name, size: f.size, type: f.type, url: URL.createObjectURL(f) };
+    });
+    setFiles(prev => [...prev, ...newFiles]);
+  }, []);
+
+  function removeFile(fileId: string) {
+    setFiles(prev => {
+      const f = prev.find(x => x.id === fileId);
+      if (f && f.url.startsWith('blob:')) URL.revokeObjectURL(f.url);
+      pendingFiles.current.delete(fileId);
+      return prev.filter(x => x.id !== fileId);
+    });
+  }
+
+  // Upload newly-added files; keep already-persisted ones unchanged.
+  async function uploadFiles(): Promise<TaskFile[]> {
+    const result: TaskFile[] = [];
+    for (const f of files) {
+      const localFile = pendingFiles.current.get(f.id);
+      if (!localFile) { result.push(f); continue; }
+      const body = new FormData();
+      body.append('file', localFile);
+      const res = await fetch('/api/task-files', { method: 'POST', body });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || t.admin.taskForm.fileUploadError);
+      }
+      const { file: meta } = await res.json();
+      result.push(meta as TaskFile);
+    }
+    return result;
+  }
+
+  async function handleSave() {
+    if (!description.trim()) { setError(t.admin.taskForm.descError); return; }
+    setSaving(true);
+    setError('');
+    const supabase = createClient();
+    let uploadedFiles: TaskFile[];
+    try {
+      uploadedFiles = await uploadFiles();
+    } catch (e) {
+      setSaving(false);
+      setError(e instanceof Error ? e.message : t.admin.taskForm.fileUploadError);
+      return;
+    }
+    const doneAt = status === 'done' ? (task?.done_at ?? new Date().toISOString()) : null;
+    const { error: err } = await supabase.from('tasks').update({
+      description,
+      assigned_to: assignedTo || null,
+      status,
+      section: section || null,
+      page: page || null,
+      device,
+      files: uploadedFiles,
+      done_at: doneAt,
+    }).eq('id', id);
+    setSaving(false);
+    if (err) { setError(err.message); return; }
+    router.push('/staff/tasks');
+  }
+
+  async function handleArchive() {
+    const supabase = createClient();
+    await supabase.from('tasks').update({ active: false }).eq('id', id);
+    router.push('/staff/tasks');
+  }
+
+  async function handleRestore() {
+    const supabase = createClient();
+    await supabase.from('tasks').update({ active: true }).eq('id', id);
+    router.push('/staff/tasks');
+  }
+
+  async function handleDelete() {
+    if (!confirmDelete) { setConfirmDelete(true); return; }
+    setDeleting(true);
+    const supabase = createClient();
+    await supabase.from('tasks').delete().eq('id', id);
+    router.push('/staff/tasks');
+  }
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-12 text-center text-sm text-[var(--muted)]">{t.common.loading}</div>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-12 text-center">
+          <p className="text-[var(--muted)]">{t.admin.taskForm.notFound}</p>
+          <button onClick={() => router.push('/staff/tasks')} className="mt-4 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90">{t.admin.taskForm.backToTasks}</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
+      <div className="mb-8 flex items-center gap-3">
+        <button onClick={() => router.push('/staff/tasks')} className="rounded-lg p-2 text-[var(--muted)] transition hover:bg-[var(--input-bg)] hover:text-[var(--foreground)]">
+          <ArrowRight className="h-5 w-5 rtl:rotate-180" />
+        </button>
+        <div className="flex flex-1 items-center gap-2 min-w-0">
+          <h1 className="truncate text-xl font-bold text-[var(--foreground)]">{task?.description}</h1>
+          {task && !task.active && (
+            <span className="shrink-0 rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-600">{t.admin.taskForm.archiveBadge}</span>
+          )}
+          {task && <StatusBadge status={task.status} />}
+        </div>
+        {total > 0 && (
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              onClick={() => prevId && router.push(`/staff/tasks/${prevId}`)}
+              disabled={!prevId}
+              title={t.admin.taskForm.prevTask}
+              className="rounded-lg border border-[var(--input-border)] p-2 text-[var(--muted)] transition hover:bg-[var(--input-bg)] hover:text-[var(--foreground)] disabled:opacity-30 disabled:hover:bg-transparent"
+            >
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+            </button>
+            <span className="min-w-[3.5rem] text-center text-xs text-[var(--muted)]">{t.admin.taskForm.pagerPosition.replace('{current}', String(position)).replace('{total}', String(total))}</span>
+            <button
+              onClick={() => nextId && router.push(`/staff/tasks/${nextId}`)}
+              disabled={!nextId}
+              title={t.admin.taskForm.nextTask}
+              className="rounded-lg border border-[var(--input-border)] p-2 text-[var(--muted)] transition hover:bg-[var(--input-bg)] hover:text-[var(--foreground)] disabled:opacity-30 disabled:hover:bg-transparent"
+            >
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+            </button>
+          </div>
+        )}
+        <div className="flex shrink-0 items-center gap-2">
+          {task?.active ? (
+            <button onClick={handleArchive} className="rounded-lg border border-[var(--input-border)] p-2 text-[var(--muted)] transition hover:bg-[var(--input-bg)] hover:text-[var(--foreground)]" title={t.admin.taskForm.archiveTitle}>
+              <Archive className="h-4 w-4" />
+            </button>
+          ) : (
+            <button onClick={handleRestore} className="rounded-lg border border-[var(--accent)]/40 p-2 text-[var(--accent)] transition hover:bg-emerald-50" title={t.admin.taskForm.restoreTitle}>
+              <Archive className="h-4 w-4" />
+            </button>
+          )}
+          {confirmDelete ? (
+            <span className="flex items-center gap-1.5">
+              <span className="text-xs text-red-600">{t.admin.taskForm.deletePermanentConfirm}</span>
+              <button onClick={handleDelete} disabled={deleting} className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50">{t.common.confirm}</button>
+              <button onClick={() => setConfirmDelete(false)} className="rounded px-2 py-1 text-xs text-[var(--muted)] hover:bg-[var(--input-bg)]">{t.common.cancel}</button>
+            </span>
+          ) : (
+            <button onClick={handleDelete} className="rounded-lg border border-red-200 p-2 text-red-400 transition hover:bg-red-50 hover:text-red-600" title={t.admin.taskForm.deleteTitle}>
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+          <button onClick={handleSave} disabled={saving || !description.trim()} className="rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50">
+            {saving ? t.common.saving : t.common.save}
+          </button>
+        </div>
+      </div>
+
+      {error && <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+
+      <div className="overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.descLabel}</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t.admin.taskForm.descPlaceholder} rows={3} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--foreground)] placeholder-[var(--muted)] focus:outline-none" />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.sectionLabel}</label>
+            <select value={section} onChange={(e) => handleSectionChange(e.target.value as TaskSection | '')} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none">
+              <option value="">{t.admin.taskForm.sectionPlaceholder}</option>
+              {SECTION_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.pageLabel}</label>
+            <select value={page} onChange={(e) => setPage(e.target.value)} disabled={!section} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none disabled:opacity-40">
+              <option value="">{t.admin.taskForm.pagePlaceholder}</option>
+              {pageOptions.map((p) => <option key={p.path} value={p.path}>{p.label}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.deviceLabel}</label>
+            <select value={device} onChange={(e) => setDevice(e.target.value as typeof device)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none">
+              <option value="not_relevant">{t.admin.taskForm.deviceNotRelevant}</option>
+              <option value="mobile">{t.admin.taskForm.deviceMobile}</option>
+              <option value="tablet">{t.admin.taskForm.deviceTablet}</option>
+              <option value="computer">{t.admin.taskForm.deviceComputer}</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.assigneeLabel}</label>
+            <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none">
+              <option value="">{t.admin.taskForm.assigneePlaceholder}</option>
+              {internalUsers.map((u) => <option key={u.id} value={u.id}>{u.full_name}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.statusLabel}</label>
+            <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)} className="w-full rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm focus:outline-none">
+              {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.createdByLabel}</label>
+            <p className="rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--muted)]">{task?.creator?.full_name || '—'}</p>
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.createdAtLabel}</label>
+            <p className="rounded-lg border border-[var(--input-border)] bg-[var(--input-bg)] px-3 py-2.5 text-sm text-[var(--muted)]">
+              {task ? new Date(task.created_at).toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' }) : '—'}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <label className="mb-1.5 block text-sm font-medium text-[var(--muted)]">{t.admin.taskForm.filesLabel}</label>
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => { e.preventDefault(); setDragging(false); if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); }}
+            onClick={() => fileInputRef.current?.click()}
+            className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed px-4 py-6 transition ${dragging ? 'border-[var(--accent)] bg-emerald-50/50' : 'border-[var(--input-border)] hover:border-[var(--accent)]/50'}`}
+          >
+            <Upload className="h-5 w-5 text-[var(--muted)]" />
+            <p className="text-xs text-[var(--muted)]">{t.admin.taskForm.filesHint}</p>
+            <input ref={fileInputRef} type="file" multiple className="hidden" onChange={(e) => { if (e.target.files?.length) { addFiles(e.target.files); e.target.value = ''; } }} />
+          </div>
+          <TaskFileList files={files} onRemove={removeFile} />
+        </div>
+      </div>
+    </div>
+  );
+}
