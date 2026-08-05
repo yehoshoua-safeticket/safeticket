@@ -3,11 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import {
-  LayoutDashboard, ShoppingBag, Tag, Plus, ShieldCheck,
-  Users, CalendarDays, AlertTriangle, MessageCircle, ClipboardList, UserCog,
-  Menu, X, LogOut, Settings,
-} from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Tag, Plus, ShieldCheck, Users, CalendarDays, AlertTriangle, MessageCircle, ClipboardList, UserCog, Menu, X, LogOut, Settings, UserRound } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useLocale } from '@/i18n/LocaleProvider';
 import LocaleSwitcher from '@/components/ui/LocaleSwitcher';
@@ -32,6 +28,7 @@ export default function AccountSidebar({ role, fullName, email, verificationStat
 
   const userNav = [
     { href: '/dashboard', label: t.sidebar.dashboard, icon: LayoutDashboard, exact: true },
+    { href: '/dashboard/profile', label: t.sidebar.myProfile, icon: UserRound },
     { href: '/dashboard/buyer', label: t.sidebar.myOrders, icon: ShoppingBag },
     { href: '/dashboard/seller', label: t.sidebar.myListings, icon: Tag },
     { href: '/dashboard/sell', label: t.sidebar.sellTicket, icon: Plus },
