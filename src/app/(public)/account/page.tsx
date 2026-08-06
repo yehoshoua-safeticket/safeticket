@@ -82,10 +82,10 @@ export default function AccountOverviewPage() {
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <DashboardCard title={t.dashboard.myOrders} value={myOrders} icon={ShoppingBag} color="blue" />
-        <DashboardCard title={t.dashboard.activeListings} value={activeListings} icon={Tag} color="emerald" />
-        <DashboardCard title={t.dashboard.verificationStatus} value={(t.status as Record<string, string>)[profile.verification_status] ?? profile.verification_status} icon={ShieldCheck} color={profile.verification_status === 'verified' ? 'emerald' : 'yellow'} />
-        <DashboardCard title={t.dashboard.openDisputes} value={openDisputes} icon={AlertTriangle} color="red" />
+        <DashboardCard title={t.dashboard.myOrders} value={myOrders} icon={ShoppingBag} color="blue" href="/account/orders" />
+        <DashboardCard title={t.dashboard.activeListings} value={activeListings} icon={Tag} color="emerald" href="/account/listings" />
+        <DashboardCard title={t.dashboard.verificationStatus} value={(t.status as Record<string, string>)[profile.verification_status] ?? profile.verification_status} icon={ShieldCheck} color={profile.verification_status === 'verified' ? 'emerald' : 'yellow'} href="/account/verify" />
+        <DashboardCard title={t.dashboard.openDisputes} value={openDisputes} icon={AlertTriangle} color="red" href="/account/orders#disputes" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

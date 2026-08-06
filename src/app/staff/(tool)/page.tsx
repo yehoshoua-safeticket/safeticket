@@ -50,12 +50,12 @@ export default function AdminOverviewPage() {
 
       <div className="space-y-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          <DashboardCard title={t.admin.overview.users} value={userCount} icon={Users} color="blue" />
-          <DashboardCard title={t.admin.overview.events} value={eventCount} icon={CalendarPlus} color="emerald" />
-          <DashboardCard title={t.admin.overview.listings} value={listings.length} icon={Tag} color="purple" />
-          <DashboardCard title={t.admin.overview.pendingApproval} value={pendingListings.length} icon={Clock} color="yellow" />
-          <DashboardCard title={t.admin.overview.openDisputes} value={openDisputes.length} icon={AlertTriangle} color="red" />
-          <DashboardCard title={t.admin.overview.fraudAlerts} value={flaggedListings.length} icon={ShieldAlert} color="red" />
+          <DashboardCard title={t.admin.overview.users} value={userCount} icon={Users} color="blue" href="/staff/external_users" />
+          <DashboardCard title={t.admin.overview.events} value={eventCount} icon={CalendarPlus} color="emerald" href="/staff/events" />
+          <DashboardCard title={t.admin.overview.listings} value={listings.length} icon={Tag} color="purple" href="/staff/listings" />
+          <DashboardCard title={t.admin.overview.pendingApproval} value={pendingListings.length} icon={Clock} color="yellow" href="/staff/listings" />
+          <DashboardCard title={t.admin.overview.openDisputes} value={openDisputes.length} icon={AlertTriangle} color="red" href="/staff/disputes" />
+          <DashboardCard title={t.admin.overview.fraudAlerts} value={flaggedListings.length} icon={ShieldAlert} color="red" href="/staff/listings" />
         </div>
 
         {pendingListings.length > 0 && (

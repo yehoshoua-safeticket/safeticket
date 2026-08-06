@@ -106,7 +106,7 @@ export default function MyOrdersPage() {
       </div>
 
       {disputes.length > 0 && (
-        <div>
+        <div id="disputes" className="scroll-mt-6">
           <h2 className="mb-4 text-lg font-semibold text-[var(--foreground)]">{t.buyer.disputesSection}</h2>
           <div className="space-y-4">
             {disputes.map((dispute) => (
