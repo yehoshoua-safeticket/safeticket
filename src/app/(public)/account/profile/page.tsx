@@ -113,7 +113,7 @@ export default function ProfilePage() {
               <p className="flex items-center gap-2"><CalendarDays className="h-3.5 w-3.5 shrink-0" />{t.profile.memberSince} {memberSince}</p>
             </div>
           </div>
-          <Link href="/settings" className="shrink-0 rounded-lg border border-[var(--input-border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--input-bg)]">
+          <Link href="/account/settings" className="shrink-0 rounded-lg border border-[var(--input-border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] transition hover:bg-[var(--input-bg)]">
             {t.profile.editAccount}
           </Link>
         </div>
@@ -122,7 +122,7 @@ export default function ProfilePage() {
           <div className="mt-5 flex flex-wrap items-center gap-3 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-soft)] px-4 py-3">
             <ShieldCheck className="h-4 w-4 shrink-0 text-[var(--accent-text)]" />
             <p className="min-w-0 flex-1 text-sm text-[var(--accent-text)]">{t.profile.verifyPrompt}</p>
-            <Link href="/dashboard/verify" className="shrink-0 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90">
+            <Link href="/account/verify" className="shrink-0 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90">
               {t.profile.verifyCta}
             </Link>
           </div>
@@ -165,7 +165,7 @@ export default function ProfilePage() {
           ) : (
             <div className="py-2">
               <p className="text-sm text-[var(--muted)]">{t.profile.noListings}</p>
-              <Link href="/dashboard/sell" className="mt-3 inline-block rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90">
+              <Link href="/account/sell" className="mt-3 inline-block rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90">
                 {t.profile.sellFirst}
               </Link>
             </div>
@@ -178,7 +178,7 @@ export default function ProfilePage() {
         <section className="mt-6">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[var(--foreground)]">{t.profile.recentPurchases}</h3>
-            <Link href="/dashboard/buyer" className="flex items-center gap-1 text-xs text-[var(--accent-text)] hover:underline">
+            <Link href="/account/orders" className="flex items-center gap-1 text-xs text-[var(--accent-text)] hover:underline">
               {t.profile.viewAll}<ChevronLeft className="h-3 w-3 rtl:rotate-180" />
             </Link>
           </div>
@@ -201,7 +201,7 @@ export default function ProfilePage() {
         <section className="mt-6">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[var(--foreground)]">{t.profile.recentListings}</h3>
-            <Link href="/dashboard/seller" className="flex items-center gap-1 text-xs text-[var(--accent-text)] hover:underline">
+            <Link href="/account/listings" className="flex items-center gap-1 text-xs text-[var(--accent-text)] hover:underline">
               {t.profile.viewAll}<ChevronLeft className="h-3 w-3 rtl:rotate-180" />
             </Link>
           </div>
@@ -225,9 +225,9 @@ export default function ProfilePage() {
         <h3 className="mb-3 text-sm font-semibold text-[var(--foreground)]">{t.profile.quickActions}</h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { href: '/dashboard/sell', label: t.profile.actionSell, icon: Plus },
-            { href: '/dashboard/verify', label: t.profile.actionVerify, icon: ShieldCheck },
-            { href: '/settings', label: t.profile.actionSettings, icon: Settings },
+            { href: '/account/sell', label: t.profile.actionSell, icon: Plus },
+            { href: '/account/verify', label: t.profile.actionVerify, icon: ShieldCheck },
+            { href: '/account/settings', label: t.profile.actionSettings, icon: Settings },
             { href: '/support', label: t.profile.actionSupport, icon: LifeBuoy },
           ].map((a) => (
             <Link

@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-// Legacy route — the working identity-verification flow lives under the dashboard.
+// Legacy route — the working identity-verification flow lives inside the account area.
 export default function VerifyRedirect() {
-  redirect('/dashboard/verify');
+  redirect('/account/verify');
 }

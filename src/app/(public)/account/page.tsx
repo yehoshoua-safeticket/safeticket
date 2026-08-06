@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase';
 import type { Profile, Listing, Order } from '@/types/database';
 import { useLocale } from '@/i18n/LocaleProvider';
 
-export default function DashboardPage() {
+export default function AccountOverviewPage() {
   const { t } = useLocale();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [activeListings, setActiveListings] = useState(0);
@@ -72,7 +72,7 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-[var(--foreground)]">{t.dashboard.title.replace('{name}', profile.full_name)}</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">{t.dashboard.subtitle}</p>
         </div>
-        <Link href="/settings" className="shrink-0 rounded-lg bg-[var(--input-bg)] p-2 text-[var(--muted)] transition hover:text-[var(--foreground)]">
+        <Link href="/account/settings" className="shrink-0 rounded-lg bg-[var(--input-bg)] p-2 text-[var(--muted)] transition hover:text-[var(--foreground)]">
           <Settings className="h-5 w-5" />
         </Link>
       </div>
@@ -89,7 +89,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <Link href="/dashboard/buyer" className="group rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 transition hover:border-[var(--input-border)]">
+        <Link href="/account/orders" className="group rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 transition hover:border-[var(--input-border)]">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-blue-50 p-3">
               <ShoppingBag className="h-6 w-6 text-blue-600" />
@@ -100,7 +100,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </Link>
-        <Link href="/dashboard/seller" className="group rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 transition hover:border-[var(--input-border)]">
+        <Link href="/account/listings" className="group rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-6 transition hover:border-[var(--input-border)]">
           <div className="flex items-center gap-3">
             <div className="rounded-xl bg-[var(--accent-soft)] p-3">
               <Tag className="h-6 w-6 text-[var(--accent-text)]" />

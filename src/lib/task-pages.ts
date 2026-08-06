@@ -25,11 +25,13 @@ export const SECTION_PAGES: Record<TaskSection, SectionPage[]> = {
     { path: '/auth/forgot-password', label: 'שכחתי סיסמה' },
   ],
   user_space: [
-    { path: '/dashboard', label: 'לוח הבקרה' },
-    { path: '/dashboard/buyer', label: 'הזמנות שלי' },
-    { path: '/dashboard/seller', label: 'המודעות שלי' },
-    { path: '/dashboard/sell', label: 'מכור כרטיס' },
-    { path: '/dashboard/verify', label: 'אימות זהות' },
+    { path: '/account', label: 'לוח הבקרה' },
+    { path: '/account/profile', label: 'הפרופיל שלי' },
+    { path: '/account/orders', label: 'הזמנות שלי' },
+    { path: '/account/listings', label: 'המודעות שלי' },
+    { path: '/account/sell', label: 'מכור כרטיס' },
+    { path: '/account/verify', label: 'אימות זהות' },
+    { path: '/account/settings', label: 'הגדרות' },
     { path: '/checkout', label: 'תשלום' },
   ],
   backoffice: [

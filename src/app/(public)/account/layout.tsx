@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase-server';
 import AccountSidebar from '@/components/layout/AccountSidebar';
 import type { UserRole, VerificationStatus } from '@/types/database';
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 

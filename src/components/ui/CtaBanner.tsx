@@ -21,7 +21,7 @@ export default function CtaBanner({ className = '' }: { className?: string }) {
             <Link href="/tickets" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-8 py-3.5 font-bold text-white shadow-lg shadow-black/20 transition-all hover:shadow-xl hover:bg-[var(--accent-hover)]">
               <Search className="h-5 w-5" />{t.howItWorks.findTickets}
             </Link>
-            <Link href="/dashboard/sell" className="inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--input-border)] px-8 py-3.5 font-bold text-[var(--foreground)] transition hover:bg-[var(--input-bg)]">
+            <Link href="/account/sell" className="inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--input-border)] px-8 py-3.5 font-bold text-[var(--foreground)] transition hover:bg-[var(--input-bg)]">
               <Upload className="h-5 w-5" />{t.howItWorks.sellTickets}
             </Link>
           </div>

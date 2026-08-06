@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase';
 import type { Order, Dispute } from '@/types/database';
 import { useLocale } from '@/i18n/LocaleProvider';
 
-export default function BuyerDashboardPage() {
+export default function MyOrdersPage() {
   const { t, locale } = useLocale();
   const dateLocale = locale === 'he' ? 'he-IL' : 'en-US';
   const [orders, setOrders] = useState<Order[]>([]);

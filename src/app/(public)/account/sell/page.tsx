@@ -54,7 +54,7 @@ export default function SellPage() {
         .eq('id', user.id)
         .single();
       if (profile?.role === 'external_user' && profile?.verification_status !== 'verified') {
-        window.location.href = '/dashboard/verify';
+        window.location.href = '/account/verify';
         return;
       }
       setIsVerified(true);

@@ -92,7 +92,7 @@ export default function SignupPage() {
     // auto-confirm on it returns a live session instead, so sending the user to the
     // code screen would strand them waiting on a mail that is never sent.
     if (data.session) {
-      router.push('/dashboard');
+      router.push('/account');
       return;
     }
 

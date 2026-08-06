@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase';
 import type { Listing, Payout } from '@/types/database';
 import { useLocale } from '@/i18n/LocaleProvider';
 
-export default function SellerDashboardPage() {
+export default function MyListingsPage() {
   const { t } = useLocale();
   const [listings, setListings] = useState<Listing[]>([]);
   const [payouts, setPayouts] = useState<Payout[]>([]);
@@ -56,7 +56,7 @@ export default function SellerDashboardPage() {
           <h1 className="text-2xl font-bold text-[var(--foreground)]">{t.seller.title}</h1>
           <p className="mt-1 text-sm text-[var(--muted)]">{t.seller.subtitle}</p>
         </div>
-        <Link href="/dashboard/sell" className="flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90">
+        <Link href="/account/sell" className="flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90">
           <Plus className="h-4 w-4" />
           {t.seller.newListing}
         </Link>
@@ -105,7 +105,7 @@ export default function SellerDashboardPage() {
             ))}
           </div>
         ) : (
-          <EmptyState icon={Tag} title={t.seller.emptyActiveTitle} description={t.seller.emptyActiveDesc} action={{ label: t.seller.emptyActiveAction, href: '/dashboard/sell' }} />
+          <EmptyState icon={Tag} title={t.seller.emptyActiveTitle} description={t.seller.emptyActiveDesc} action={{ label: t.seller.emptyActiveAction, href: '/account/sell' }} />
         )}
       </div>
 

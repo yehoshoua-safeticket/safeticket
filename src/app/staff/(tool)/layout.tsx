@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (!auth.authorized) {
     if (auth.error === 'Not authenticated') redirect('/staff/login');
-    redirect('/dashboard');
+    redirect('/account');
   }
 
   return (
