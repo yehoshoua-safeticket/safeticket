@@ -342,7 +342,7 @@ Ship-ready when all are true:
 | An event / hero slide | Event detail → buy | `/tickets/[id]` |
 | Buy / "Find Tickets" | Purchase flow | `/tickets/[id]` → `/checkout` |
 | Sell | List a ticket | `/sell` |
-| Sign In / My Account | Auth / account | `/auth/login` · `/dashboard` |
+| Sign In / My Account | Auth / account | `/auth/login` · `/account` |
 | Help | Support | `/support` · `/faq` · `/how-it-works` |
 | Footer legal | Policies | `/terms` · `/privacy` · `/cookies` |
 
@@ -384,12 +384,12 @@ admin is dark.
 | Surface | Who | Theme | Shell | Nav component |
 |---|---|---|---|---|
 | **Storefront** (§1–9) | everyone | Light canvas + **pure-black** chrome bands | Top nav + sticky search strip + footer | `Navbar` / `SearchStrip` / `Footer` |
-| **Account dashboard** (`/dashboard`) | external users (buyers/sellers) | **Light** (white end-to-end) | Right-hand side-nav (RTL-first) | `AccountSidebar` |
-| **Admin "Backoffice"** (`/admin`) | internal users (staff) | **Black sidebar + light content** (mirrors the storefront's dark-chrome / white-content sandwich) | Side-nav | `AdminSidebar` |
+| **Account area** (`/account`) | external users (buyers/sellers) | **Light** (white end-to-end) | Right-hand side-nav (RTL-first) | `AccountSidebar` |
+| **Staff "Backoffice"** (`/staff`) | internal users (staff) | **Black sidebar + light content** (mirrors the storefront's dark-chrome / white-content sandwich) | Side-nav | `AdminSidebar` |
 
-### 10.1 External-users app — Account dashboard (LIGHT)
+### 10.1 External-users app — Account area (LIGHT)
 
-**Shell** (`dashboard/layout.tsx`): white page, `flex lg:flex-row-reverse` → the
+**Shell** (`account/layout.tsx`): white page, `flex lg:flex-row-reverse` → the
 sidebar sits on the **inline-end** (right in Hebrew), `<main>` fills the rest. Uses
 the public **light token set unchanged** (no override). Wrapped in `.no-anim` (the
 dashboard opts out of the storefront's button motion).

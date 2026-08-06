@@ -39,11 +39,11 @@ Optionally run `supabase/seed.sql` for sample event data.
 ```
 src/
 ├── app/                    # Next.js pages (App Router)
-│   ├── admin/              # Admin dashboard
+│   ├── staff/              # Staff management tool (off the public site)
 │   ├── auth/               # Login, Signup, Forgot Password
 │   ├── checkout/           # Buyer checkout flow
 │   ├── contact/            # Contact page
-│   ├── dashboard/          # User, Buyer, Seller dashboards
+│   ├── account/            # Customer area — orders, listings, profile, settings
 │   ├── faq/                # FAQ page
 │   ├── how-it-works/       # How it works page
 │   ├── sell/               # Sell ticket form

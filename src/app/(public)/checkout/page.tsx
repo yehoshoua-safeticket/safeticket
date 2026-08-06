@@ -148,7 +148,7 @@ function CheckoutInner() {
           {t.checkout.downloadTicket}
         </button>
         <div className="mt-8 flex justify-center gap-4">
-          <Link href="/dashboard/buyer" className="rounded-xl border border-[var(--input-border)] px-6 py-3 text-[var(--foreground)] transition hover:bg-[var(--input-bg)]">
+          <Link href="/account/orders" className="rounded-xl border border-[var(--input-border)] px-6 py-3 text-[var(--foreground)] transition hover:bg-[var(--input-bg)]">
             {t.checkout.viewOrders}
           </Link>
           <Link href="/tickets" className="rounded-xl border border-[var(--input-border)] px-6 py-3 text-[var(--foreground)] transition hover:bg-[var(--input-bg)]">

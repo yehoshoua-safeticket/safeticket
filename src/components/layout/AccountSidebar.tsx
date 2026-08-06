@@ -27,13 +27,13 @@ export default function AccountSidebar({ role, fullName, email, verificationStat
   const { t } = useLocale();
 
   const userNav = [
-    { href: '/dashboard', label: t.sidebar.dashboard, icon: LayoutDashboard, exact: true },
-    { href: '/dashboard/profile', label: t.sidebar.myProfile, icon: UserRound },
-    { href: '/dashboard/buyer', label: t.sidebar.myOrders, icon: ShoppingBag },
-    { href: '/dashboard/seller', label: t.sidebar.myListings, icon: Tag },
-    { href: '/dashboard/sell', label: t.sidebar.sellTicket, icon: Plus },
-    { href: '/dashboard/verify', label: t.sidebar.verifyIdentity, icon: ShieldCheck },
-    { href: '/settings', label: t.sidebar.settings, icon: Settings },
+    { href: '/account', label: t.sidebar.dashboard, icon: LayoutDashboard, exact: true },
+    { href: '/account/profile', label: t.sidebar.myProfile, icon: UserRound },
+    { href: '/account/orders', label: t.sidebar.myOrders, icon: ShoppingBag },
+    { href: '/account/listings', label: t.sidebar.myListings, icon: Tag },
+    { href: '/account/sell', label: t.sidebar.sellTicket, icon: Plus },
+    { href: '/account/verify', label: t.sidebar.verifyIdentity, icon: ShieldCheck },
+    { href: '/account/settings', label: t.sidebar.settings, icon: Settings },
   ];
 
   const adminNav = [

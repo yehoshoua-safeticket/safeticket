@@ -79,7 +79,7 @@ export default function VerifyEmailPage() {
       setTimeout(() => inputRefs.current[0]?.focus(), 50);
     } else {
       setVerified(true);
-      setTimeout(() => router.push('/dashboard'), 1500);
+      setTimeout(() => router.push('/account'), 1500);
     }
   }
 

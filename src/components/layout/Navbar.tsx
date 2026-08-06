@@ -89,7 +89,7 @@ export default function Navbar() {
               <Loader2 className="h-4 w-4 animate-spin text-white/50" />
             ) : customer ? (
               <>
-                <Link href="/dashboard" className="flex items-center gap-2 rounded border border-white/20 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-white/10">
+                <Link href="/account" className="flex items-center gap-2 rounded border border-white/20 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-white/10">
                   <User className="h-4 w-4" /><span className="max-w-[120px] truncate">{displayName}</span>
                 </Link>
                 <form action={logout}>
@@ -154,7 +154,7 @@ export default function Navbar() {
             >
               {customer ? (
                 <>
-                  <Link href="/dashboard" onClick={() => setIsOpen(false)} className="flex w-full items-center justify-center gap-2 rounded border border-white/20 py-3 text-sm font-medium text-white transition hover:bg-white/10">
+                  <Link href="/account" onClick={() => setIsOpen(false)} className="flex w-full items-center justify-center gap-2 rounded border border-white/20 py-3 text-sm font-medium text-white transition hover:bg-white/10">
                     <User className="h-4 w-4" />{displayName}
                   </Link>
                   <form action={logout}>

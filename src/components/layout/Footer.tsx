@@ -6,7 +6,7 @@ import { useLocale } from '@/i18n/LocaleProvider';
 import Logo from '@/components/ui/Logo';
 import { FaXTwitter, FaInstagram, FaFacebookF, FaYoutube } from 'react-icons/fa6';
 
-const HIDDEN_ON = ['/dashboard', '/staff'];
+const HIDDEN_ON = ['/account', '/staff'];
 
 export default function Footer() {
   const pathname = usePathname();
@@ -47,7 +47,7 @@ export default function Footer() {
               <h4 className="mb-3 text-base font-bold uppercase tracking-wider text-white">{t.footer.platform}</h4>
               <ul className="space-y-2.5">
                 <li><Link href="/tickets" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.tickets}</Link></li>
-                <li><Link href="/dashboard/sell" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.sellTicket}</Link></li>
+                <li><Link href="/account/sell" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.sellTicket}</Link></li>
                 <li><Link href="/how-it-works" className="text-sm font-bold text-white/70 transition hover:text-[var(--accent-on-dark)]">{t.footer.howItWorks}</Link></li>
               </ul>
             </div>

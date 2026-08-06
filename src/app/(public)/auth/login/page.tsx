@@ -45,7 +45,7 @@ export default function LoginPage() {
 
     // The customer-facing door never opens onto the management tool — staff sign in
     // through their own route instead.
-    router.push(safeNext ?? '/dashboard');
+    router.push(safeNext ?? '/account');
     router.refresh();
   }
 
