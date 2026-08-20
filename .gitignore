@@ -72,7 +72,9 @@ Thumbs.db
 logs/
 
 # local tooling & agent artifacts (not part of the app)
+# (.claude/settings.json, agents and skills stay tracked — they are shared config)
 .claude/settings.local.json
+.claude/worktrees/
 .playwright-mcp/
 .superpowers/
 
