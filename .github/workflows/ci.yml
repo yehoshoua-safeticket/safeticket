@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A new push to the same branch makes the previous run irrelevant.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test:run
+
+      # The real coverage for components and routes: a broken import, a bad
+      # Server/Client boundary or a type error in a page fails here even though
+      # nothing under app/ is unit-tested.
+      - name: Build
+        run: npm run build
+        env:
+          # Falls back to the values already committed in .env.example — the
+          # anon key is public by design (it ships to the browser). Set repo
+          # secrets to point CI at a dedicated project instead.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://hcxdooiirngjodlckjsv.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjeGRvb2lpcm5nam9kbGNranN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNDkxNDAsImV4cCI6MjA5NDcyNTE0MH0.DW4VkOtyjJh0RRe9AX97a--D7C_OjgcNzvAJ34Tnh28' }}

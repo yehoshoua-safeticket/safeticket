@@ -80,9 +80,22 @@ src/
 - Dispute workflow
 - Mobile-first responsive design
 
+## Testing
+
+```bash
+npm test           # Vitest, watch mode
+npm run test:run   # single run, what CI uses
+npm run typecheck  # tsc --noEmit
+npm run lint
+```
+
+Unit tests cover the pure helpers in `src/lib/` (`__tests__/`). Components and
+routes are not unit-tested — see `.github/workflows/ci.yml`, where `next build`
+is what actually exercises them.
+
 ## Deployment
 
-Ready for deployment on Vercel:
+Deployed on Netlify via `@netlify/plugin-nextjs` (see `netlify.toml`):
 
 ```bash
 npm run build
