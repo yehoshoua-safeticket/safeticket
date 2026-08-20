@@ -11,7 +11,7 @@ ROLES
 WHAT ADMIN CAN DO
 -----------------
   Backoffice (UI)
-  - Access all backoffice pages (/admin/*)
+  - Access all backoffice pages (/staff/*)
   - View, create, edit, and delete external users
   - View, create, edit, and delete internal users and admins
   - Change any user's role, name, email, phone
@@ -39,7 +39,7 @@ WHAT ADMIN CAN DO
 WHAT INTERNAL_USER CAN DO
 --------------------------
   Backoffice (UI)
-  - Access all backoffice pages (/admin/*)
+  - Access all backoffice pages (/staff/*)
   - View, create, edit, and delete external users
   - View internal users list (read-only by default — editing requires admin)
   - Change external users' role, name, email, phone, verification status

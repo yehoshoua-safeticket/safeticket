@@ -1,0 +1,14 @@
+# Supabase CLI project config.
+#
+# Deliberately minimal: only the settings this project actually depends on are
+# pinned here, so a CLI upgrade cannot silently conflict with a value we never
+# meant to fix. Everything else uses the CLI's defaults.
+#
+# The remote project is linked out-of-band, not from this file:
+#   supabase link --project-ref hcxdooiirngjodlckjsv
+
+project_id = "safe-ticket"
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]

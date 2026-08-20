@@ -31,8 +31,17 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ## Database Setup
 
-Run the SQL in `supabase/schema.sql` in your Supabase SQL editor to create all tables.
-Optionally run `supabase/seed.sql` for sample event data.
+Migrations live in `supabase/migrations/`, named by timestamp and applied with the
+Supabase CLI:
+
+```bash
+supabase link --project-ref hcxdooiirngjodlckjsv
+supabase db push
+```
+
+An existing database that already received these migrations by hand must first mark
+them as applied — see `supabase/README.md`, which also covers seeding and the
+one-off scripts in `supabase/scripts/`.
 
 ## Project Structure
 

@@ -51,7 +51,7 @@ export interface CategoryCover {
 
 export type FaqCategory = 'general' | 'buyers' | 'sellers' | 'security';
 
-// FAQ entries shown on the How-it-works page (add-faqs.sql). Hebrew is the
+// FAQ entries shown on the How-it-works page (migrations/20260721184547_add_faqs.sql). Hebrew is the
 // source of truth; the *_en fields fall back to it when left blank.
 export interface Faq {
   id: string;
