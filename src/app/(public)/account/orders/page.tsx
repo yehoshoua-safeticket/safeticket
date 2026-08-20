@@ -7,13 +7,17 @@ import DashboardCard from '@/components/ui/DashboardCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import EmptyState from '@/components/ui/EmptyState';
 import { createClient } from '@/lib/supabase';
-import type { Order, Dispute } from '@/types/database';
+import type { Dispute, Event, Listing, Order } from '@/types/database';
 import { useLocale } from '@/i18n/LocaleProvider';
+
+// The query joins the listing and its event, neither of which the bare Order
+// row type carries.
+type OrderRow = Order & { listing?: (Listing & { event?: Event | null }) | null };
 
 export default function MyOrdersPage() {
   const { t, locale } = useLocale();
   const dateLocale = locale === 'he' ? 'he-IL' : 'en-US';
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderRow[]>([]);
   const [disputes, setDisputes] = useState<Dispute[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -69,7 +73,7 @@ export default function MyOrdersPage() {
               <div key={order.id} className="rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-semibold text-[var(--foreground)]">{(order as any).listing?.event?.title || t.buyer.eventFallback}</p>
+                    <p className="font-semibold text-[var(--foreground)]">{order.listing?.event?.title || t.buyer.eventFallback}</p>
                     <p className="mt-1 text-sm text-[var(--muted)]">
                       {t.buyer.orderPrefix}{order.id.slice(-4)} · {new Date(order.created_at).toLocaleDateString(dateLocale)}
                     </p>

@@ -26,6 +26,29 @@ interface CreateForm {
 
 const emptyCreateForm: CreateForm = { full_name: '', email: '', phone: '', password: '' };
 
+// Declared at module scope: a component created inside the page body would be a
+// brand-new type on every render, throwing away the select's own state each time.
+// The labels are translated, so the options arrive as a prop.
+function GroupSelect({ value, onChange, exclude, options }: {
+  value: GroupKey;
+  onChange: (v: GroupKey) => void;
+  exclude?: GroupKey;
+  options: { value: GroupKey; label: string }[];
+}) {
+  return (
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value as GroupKey)}
+      className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm focus:outline-none"
+    >
+      {options
+        .filter(o => !exclude || o.value === 'none' || o.value !== exclude)
+        .map(o => <option key={o.value} value={o.value}>{o.label}</option>)
+      }
+    </select>
+  );
+}
+
 function roleBadgeClass(role: UserRole) {
   if (role === 'admin') return 'bg-purple-100 text-purple-700';
   if (role === 'internal_user') return 'bg-emerald-50 text-emerald-700';
@@ -148,7 +171,9 @@ export default function AdminUsersPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  // Awaited inside the effect so the state updates are visibly asynchronous:
+  // calling the loader bare reads as a synchronous setState to the compiler.
+  useEffect(() => { (async () => { await load(); })(); }, []);
 
   const filtered = useMemo(() => profiles.filter((p) => {
     for (const f of searchFilters) {
@@ -385,21 +410,6 @@ export default function AdminUsersPage() {
     );
   }
 
-  function GroupSelect({ value, onChange, exclude }: { value: GroupKey; onChange: (v: GroupKey) => void; exclude?: GroupKey }) {
-    return (
-      <select
-        value={value}
-        onChange={e => onChange(e.target.value as GroupKey)}
-        className="rounded-xl border border-[var(--input-border)] bg-[var(--input-bg)] px-4 py-2.5 text-sm focus:outline-none"
-      >
-        {GROUP_OPTIONS
-          .filter(o => !exclude || o.value === 'none' || o.value !== exclude)
-          .map(o => <option key={o.value} value={o.value}>{o.label}</option>)
-        }
-      </select>
-    );
-  }
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center justify-between">
@@ -523,6 +533,7 @@ export default function AdminUsersPage() {
         />
         <div className="flex items-center gap-2">
           <GroupSelect
+            options={GROUP_OPTIONS}
             value={groupBy}
             onChange={v => { setGroupBy(v); setGroupBy2('none'); setCollapsedGroups(new Set()); }}
           />
@@ -530,6 +541,7 @@ export default function AdminUsersPage() {
             <>
               <span className="text-xs text-[var(--muted)]">{t.groupBy.andThen}</span>
               <GroupSelect
+                options={GROUP_OPTIONS}
                 value={groupBy2}
                 onChange={v => { setGroupBy2(v); setCollapsedGroups(new Set()); }}
                 exclude={groupBy}

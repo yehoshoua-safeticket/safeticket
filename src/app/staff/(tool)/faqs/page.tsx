@@ -29,14 +29,16 @@ export default function AdminFaqsPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [error, setError] = useState('');
 
-  useEffect(() => { load(); }, []);
-
   async function load() {
     const res = await fetch('/api/admin/faqs').then((r) => r.json()).catch(() => ({ faqs: [], migrated: false }));
     setFaqs((res.faqs || []) as Draft[]);
     setMigrated(res.migrated !== false);
     setLoading(false);
   }
+
+  // Declared before the effect that uses it, and awaited inside: reading `load`
+  // above its declaration relied on hoisting and hid the update from the compiler.
+  useEffect(() => { (async () => { await load(); })(); }, []);
 
   function edit(id: string, patch: Partial<Faq>) {
     setFaqs((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch, dirty: true } : f)));

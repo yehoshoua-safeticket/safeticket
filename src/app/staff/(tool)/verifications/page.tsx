@@ -39,7 +39,9 @@ export default function AdminVerificationsPage() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  // Awaited inside the effect so the state updates are visibly asynchronous:
+  // calling the loader bare reads as a synchronous setState to the compiler.
+  useEffect(() => { (async () => { await load(); })(); }, [load]);
 
   const docLabel = (d: string) => d === 'passport' ? t.admin.verifications.docPassport : d === 'license' ? t.admin.verifications.docLicense : t.admin.verifications.docId;
 

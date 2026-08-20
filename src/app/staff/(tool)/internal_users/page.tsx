@@ -47,7 +47,9 @@ export default function TeamPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  // Awaited inside the effect so the state updates are visibly asynchronous:
+  // calling the loader bare reads as a synchronous setState to the compiler.
+  useEffect(() => { (async () => { await load(); })(); }, []);
 
   const filtered = useMemo(() => members.filter((m) => {
     for (const f of searchFilters) {

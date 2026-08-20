@@ -52,10 +52,19 @@ export default function Navbar() {
     return () => { cancelled = true; subscription.unsubscribe(); };
   }, []);
 
-  // Lock background scroll while the full-screen mobile menu is open.
+  // Closing the mobile menu also closes the language dropdown inside it. That is
+  // a state correction, not a side effect, so it happens during render rather
+  // than in the effect below.
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (prevIsOpen !== isOpen) {
+    setPrevIsOpen(isOpen);
+    if (!isOpen) setLangOpen(false);
+  }
+
+  // Lock background scroll while the full-screen mobile menu is open. Touching
+  // document.body is a genuine external system, so this stays an effect.
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
-    if (!isOpen) setLangOpen(false);
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 

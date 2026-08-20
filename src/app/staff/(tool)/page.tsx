@@ -29,7 +29,9 @@ export default function AdminOverviewPage() {
     setDisputes((disputesRes.data || []) as Dispute[]);
   }
 
-  useEffect(() => { loadData(); }, []);
+  // Awaited inside the effect so the state updates are visibly asynchronous:
+  // calling the loader bare reads as a synchronous setState to the compiler.
+  useEffect(() => { (async () => { await loadData(); })(); }, []);
 
   async function handleListingAction(id: string, status: 'active' | 'rejected') {
     const supabase = createClient();

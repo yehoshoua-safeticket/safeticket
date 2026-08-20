@@ -16,7 +16,9 @@ function CheckoutInner() {
 
   const [listing, setListing] = useState<Listing | null>(null);
   const [event, setEvent] = useState<Event | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Nothing to fetch without a listingId, so that case starts already resolved
+  // rather than being switched off synchronously inside the effect.
+  const [loading, setLoading] = useState(!!listingId);
   const [userId, setUserId] = useState<string | null>(null);
   const [authResolved, setAuthResolved] = useState(false);
   const [step, setStep] = useState<'review' | 'payment' | 'success'>('review');
@@ -26,6 +28,12 @@ function CheckoutInner() {
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState('');
   const [orderNumber, setOrderNumber] = useState('');
+
+  const [prevListingId, setPrevListingId] = useState(listingId);
+  if (prevListingId !== listingId) {
+    setPrevListingId(listingId);
+    setLoading(!!listingId);
+  }
 
   useEffect(() => {
     const supabase = createClient();
@@ -43,7 +51,7 @@ function CheckoutInner() {
       setAuthResolved(true);
     });
 
-    if (!listingId) { setLoading(false); return; }
+    if (!listingId) return;
     supabase
       .from('listings')
       .select('*, event:events(*)')
