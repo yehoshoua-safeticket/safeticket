@@ -865,7 +865,7 @@ export const en: Translations = {
       moveDown: 'Move down',
       empty: 'No questions yet. Add the first one.',
       deleteConfirm: 'Delete this question?',
-      notMigrated: 'The faqs table does not exist yet. Run supabase/add-faqs.sql.',
+      notMigrated: 'The faqs table does not exist yet. Run supabase/migrations/20260721184547_add_faqs.sql.',
       saved: 'Saved ✓',
       saveError: 'Could not save',
       catGeneral: 'General',

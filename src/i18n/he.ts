@@ -863,7 +863,7 @@ export const he = {
       moveDown: 'הזז למטה',
       empty: 'אין עדיין שאלות. הוסיפו את הראשונה.',
       deleteConfirm: 'למחוק את השאלה הזו?',
-      notMigrated: 'טבלת השאלות לא קיימת עדיין. הריצו את supabase/add-faqs.sql.',
+      notMigrated: 'טבלת השאלות לא קיימת עדיין. הריצו את supabase/migrations/20260721184547_add_faqs.sql.',
       saved: 'נשמר ✓',
       saveError: 'השמירה נכשלה',
       catGeneral: 'כללי',
