@@ -84,7 +84,7 @@ export default function AdminSetupPage() {
           <h3 className="font-medium text-sm mb-2">Setup Steps</h3>
           <ol className="text-xs text-gray-600 space-y-1">
             <li>1. Sign up at <code className="bg-gray-100 px-1 rounded">/auth/signup</code></li>
-            <li>2. You're automatically logged in</li>
+            <li>2. You&apos;re automatically logged in</li>
             <li>3. Use this form to promote yourself to admin</li>
             <li>4. Access <code className="bg-gray-100 px-1 rounded">/staff</code> panel</li>
           </ol>

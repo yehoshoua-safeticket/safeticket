@@ -33,9 +33,30 @@ export default function SearchStrip() {
   const [citySearch, setCitySearch] = useState('');
   const wrapRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setQuery(qParam); }, [qParam]);
-  useEffect(() => { setCustomFrom(fromParam); setCustomTo(toParam); }, [fromParam, toParam]);
-  useEffect(() => { if (open !== 'city') setCitySearch(''); }, [open]);
+  // Navigation can change the URL under us (back button, a link carrying
+  // filters), and the inputs have to follow. Comparing against the previous
+  // value during render is React's documented alternative to syncing in an
+  // effect: the correction lands before the browser paints, rather than as a
+  // second render after it. Each group is tracked separately so a change to one
+  // does not clobber what the user is mid-way through typing in another.
+  const [prevQuery, setPrevQuery] = useState(qParam);
+  if (prevQuery !== qParam) {
+    setPrevQuery(qParam);
+    setQuery(qParam);
+  }
+
+  const [prevRange, setPrevRange] = useState({ from: fromParam, to: toParam });
+  if (prevRange.from !== fromParam || prevRange.to !== toParam) {
+    setPrevRange({ from: fromParam, to: toParam });
+    setCustomFrom(fromParam);
+    setCustomTo(toParam);
+  }
+
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (open !== 'city') setCitySearch('');
+  }
 
   // Close any open popover on outside click / Escape.
   useEffect(() => {

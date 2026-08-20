@@ -7,12 +7,15 @@ import DashboardCard from '@/components/ui/DashboardCard';
 import StatusBadge from '@/components/ui/StatusBadge';
 import EmptyState from '@/components/ui/EmptyState';
 import { createClient } from '@/lib/supabase';
-import type { Listing, Payout } from '@/types/database';
+import type { Event, Listing, Payout } from '@/types/database';
 import { useLocale } from '@/i18n/LocaleProvider';
+
+// The query joins the event, which the bare Listing row type does not carry.
+type ListingRow = Listing & { event?: Event | null };
 
 export default function MyListingsPage() {
   const { t } = useLocale();
-  const [listings, setListings] = useState<Listing[]>([]);
+  const [listings, setListings] = useState<ListingRow[]>([]);
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -97,7 +100,7 @@ export default function MyListingsPage() {
             {activeListings.map((listing) => (
               <div key={listing.id} className="flex items-center justify-between rounded-xl border border-[var(--card-border)] bg-[var(--card)] p-4">
                 <div>
-                  <p className="font-medium text-[var(--foreground)]">{(listing as any).event?.title}</p>
+                  <p className="font-medium text-[var(--foreground)]">{listing.event?.title}</p>
                   <p className="text-sm text-[var(--muted)]">{t.seller.ticketsSummary.replace('{qty}', String(listing.quantity)).replace('{price}', String(listing.asking_price))}</p>
                 </div>
                 <StatusBadge status={listing.status} />
@@ -116,7 +119,7 @@ export default function MyListingsPage() {
             {pendingListings.map((listing) => (
               <div key={listing.id} className="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 p-4">
                 <div>
-                  <p className="font-medium text-[var(--foreground)]">{(listing as any).event?.title}</p>
+                  <p className="font-medium text-[var(--foreground)]">{listing.event?.title}</p>
                   <p className="text-sm text-[var(--muted)]">{t.seller.ticketsSummary.replace('{qty}', String(listing.quantity)).replace('{price}', String(listing.asking_price))}</p>
                 </div>
                 <StatusBadge status="pending_review" />
@@ -133,7 +136,7 @@ export default function MyListingsPage() {
             {rejectedListings.map((listing) => (
               <div key={listing.id} className="flex items-center justify-between rounded-xl border border-red-200 bg-red-50 p-4">
                 <div>
-                  <p className="font-medium text-[var(--foreground)]">{(listing as any).event?.title}</p>
+                  <p className="font-medium text-[var(--foreground)]">{listing.event?.title}</p>
                   <div className="flex items-center gap-2">
                     <XCircle className="h-4 w-4 text-red-600" />
                     <p className="text-sm text-red-600">{t.seller.suspectedFraud}</p>
