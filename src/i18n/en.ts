@@ -1174,7 +1174,7 @@ export const en: Translations = {
         { heading: '8. User Rights', body: '8.1 Subject to law, the User may request to review the information held about them, correct inaccurate information, or request deletion of certain information.\n8.2 Such requests should be directed to us in writing using the contact details below.\n8.3 We may refuse a request, in whole or in part, if permitted by law or if retaining the information is required for legal, regulatory, or operational purposes.' },
         { heading: '9. Cookies and Tracking Technologies', body: '9.1 The Site uses cookies and similar technologies for ongoing operation, improving the user experience, data analysis, and security.\n9.2 Cookie settings can be managed through the web browser, although blocking them may impair some of the Site\'s functions.' },
         { heading: '10. Transfer of Information Outside Israel', body: '10.1 Some information may be stored or processed on servers located outside Israel.\n10.2 Any such transfer will be carried out solely subject to Israeli law.' },
-        { heading: '11. Contact Us', body: '11.1 For any question, request, or complaint regarding privacy, please contact:\nEmail: privacy@safeticket.co.il\nAddress: Golda Meir Blvd 255, Jerusalem' },
+        { heading: '11. Contact Us', body: '11.1 For any question, request, or complaint regarding privacy, please contact:\nEmail: cs@safeticket.co.il\nAddress: Golda Meir Blvd 255, Jerusalem' },
       ],
     },
   },
