@@ -4,6 +4,13 @@ import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, Check } from 'lucide-react';
 import { useLocale } from '@/i18n/LocaleProvider';
 
+// The display strings live in i18n (the address is written differently per
+// locale); these are the machine-readable forms the links point at, identical
+// in every language.
+const SUPPORT_EMAIL = 'cs@safeticket.co.il';
+const SUPPORT_PHONE_E164 = '+972507169977';
+const OFFICE_MAP_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Golda Meir Blvd 255, Jerusalem')}`;
+
 export default function ContactPage() {
   const { t } = useLocale();
   const [submitted, setSubmitted] = useState(false);
@@ -74,16 +81,17 @@ export default function ContactPage() {
             <h3 className="mb-4 font-semibold text-[var(--foreground)]">{t.contact.contactInfo}</h3>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-[var(--accent-text)]" />
-                <span className="text-sm text-[var(--muted)]">cs@safeticket.co.il</span>
+                <Mail className="h-5 w-5 shrink-0 text-[var(--accent-text)]" />
+                <a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm text-[var(--muted)] transition hover:text-[var(--accent-text)]">{SUPPORT_EMAIL}</a>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-[var(--accent-text)]" />
-                <span className="text-sm text-[var(--muted)]">{t.contact.phone}</span>
+                <Phone className="h-5 w-5 shrink-0 text-[var(--accent-text)]" />
+                {/* dir="ltr" so the number is not reordered by the RTL layout. */}
+                <a href={`tel:${SUPPORT_PHONE_E164}`} dir="ltr" className="text-sm text-[var(--muted)] transition hover:text-[var(--accent-text)]">{t.contact.phone}</a>
               </div>
               <div className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-[var(--accent-text)]" />
-                <span className="text-sm text-[var(--muted)]">{t.contact.location}</span>
+                <MapPin className="h-5 w-5 shrink-0 text-[var(--accent-text)]" />
+                <a href={OFFICE_MAP_URL} target="_blank" rel="noopener noreferrer" className="text-sm text-[var(--muted)] transition hover:text-[var(--accent-text)]">{t.contact.location}</a>
               </div>
             </div>
           </div>
