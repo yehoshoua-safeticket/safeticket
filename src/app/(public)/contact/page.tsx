@@ -75,7 +75,7 @@ export default function ContactPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-[var(--accent-text)]" />
-                <span className="text-sm text-[var(--muted)]">support@safeticket.co.il</span>
+                <span className="text-sm text-[var(--muted)]">cs@safeticket.co.il</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-[var(--accent-text)]" />
